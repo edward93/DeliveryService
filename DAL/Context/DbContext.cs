@@ -13,6 +13,14 @@ namespace DAL.Context
         {
         }
 
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
+        public DbSet<DriverUpload> DriverUploads { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+
         public static DbContext Create()
         {
             return new DbContext();
