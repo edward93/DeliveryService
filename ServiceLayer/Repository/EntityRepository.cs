@@ -8,20 +8,20 @@ namespace ServiceLayer.Repository
 {
     public class EntityRepository : IEntityRepository
     {
-        private readonly IDbContext _dbContext;
+        protected readonly IDbContext DbContext;
 
         public EntityRepository(IDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
         }
         public async Task<IEnumerable<T>> GetAllEntitiesAsync<T>() where T : Entity
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await DbContext.Set<T>().ToListAsync();
         }
 
         public async Task<T> GetByIdAsync<T>(int entityId) where T : Entity
         {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(c => c.Id == entityId);
+            return await DbContext.Set<T>().FirstOrDefaultAsync(c => c.Id == entityId);
         }
     }
 }

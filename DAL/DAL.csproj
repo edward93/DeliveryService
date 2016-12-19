@@ -69,7 +69,6 @@
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\Rating.cs" />
     <Compile Include="Entities\User.cs" />
-    <Compile Include="Enums\Address.cs" />
     <Compile Include="Enums\CardType.cs" />
     <Compile Include="Enums\Country.cs" />
     <Compile Include="Enums\DriverStatus.cs" />
