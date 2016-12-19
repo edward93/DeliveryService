@@ -1,9 +1,14 @@
 using System;
-using DAL.Context;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using DAL.Context;
+using DAL.Entities;
+using Infrastructure.Config;
+using DeliveryService.Infrastructure;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace DeliveryService.App_Start
 {
@@ -39,13 +44,18 @@ namespace DeliveryService.App_Start
             // container.LoadConfiguration();
 
             // TODO: Register your types here
-            container.RegisterType<IDbContext, DbContext>();
+            container.RegisterType<IDbContext, DbContext>(new PerRequestLifetimeManager());
+            container.RegisterType<IConfig, Config>(new PerRequestLifetimeManager());
 
             // register Repositories
-            container.RegisterType<IEntityRepository, EntityRepository>();
+            container.RegisterType<IEntityRepository, EntityRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IAddressRepository, AddressRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<ICardRepository, CardRepository>(new PerRequestLifetimeManager());
 
             // register Services
-            container.RegisterType<IEntityService, EntityService>();
+            container.RegisterType<IEntityService, EntityService>(new PerRequestLifetimeManager());
+            container.RegisterType<IAddressService, AddressService>(new PerRequestLifetimeManager());
+            container.RegisterType<ICardService, CardService>(new PerRequestLifetimeManager());
         }
     }
 }
