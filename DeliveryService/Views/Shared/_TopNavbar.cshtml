@@ -102,10 +102,14 @@
                     </li>
                 </ul>
             </li>
-            <li>
-                <a href="@Url.Action("Login", "Pages")">
-                    <i class="fa fa-sign-out"></i> Log out
-                </a>
+            <li class="@Html.IsSelected("Logout")">
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <a href="javascript:document.getElementById('logoutForm').submit()">
+                        <i class="fa fa-sign-out" style="margin-right:19px"></i> <span class="nav-label" data-i18n="nav.mailbox">Log Out</span>
+                    </a>
+                }
             </li>
         </ul>
     </nav>

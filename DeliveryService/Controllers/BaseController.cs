@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace DeliveryService.Controllers
 {
+    [Authorize]
     public class BaseController : Controller
     {
         protected readonly IConfig Config;
