@@ -11,5 +11,7 @@ namespace ServiceLayer.Service
     {
         Task<Driver> GetDriverById(int id);
         Task<IEnumerable<Driver>> GetDrivers();
+        Task<Driver> AddDriver(Driver driver);
+
     }
 }

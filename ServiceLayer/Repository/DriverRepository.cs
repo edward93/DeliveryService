@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using DAL.Entities;
 
 namespace ServiceLayer.Repository
 {
-    public class DriverRepository: EntityRepository, IDriverRepository
+    public class DriverRepository : EntityRepository, IDriverRepository
     {
         public DriverRepository(IDbContext dbContext) : base(dbContext)
         {
@@ -24,6 +25,13 @@ namespace ServiceLayer.Repository
         public async Task<Driver> GetDriverById(int id)
         {
             return await DbContext.Drivers.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Driver> AddDriver(Driver driver)
+        {
+            DbContext.Drivers.AddOrUpdate(driver);
+            await DbContext.SaveChangesAsync();
+            return driver;
         }
     }
 }

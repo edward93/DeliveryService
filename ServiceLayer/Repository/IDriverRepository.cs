@@ -11,5 +11,6 @@ namespace ServiceLayer.Repository
     {
         Task<IEnumerable<Driver>> GetDriversList();
         Task<Driver> GetDriverById(int id);
+        Task<Driver> AddDriver(Driver driver);
     }
 }

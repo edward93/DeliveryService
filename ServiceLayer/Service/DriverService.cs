@@ -26,5 +26,10 @@ namespace ServiceLayer.Service
         {
             return await _driverRepository.GetDriversList();
         }
+
+        public Task<Driver> AddDriver(Driver driver)
+        {
+            return await _driverRepository.AddDriver(driver)
+        }
     }
 }
