@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using DAL.Constants;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -17,6 +18,9 @@ using DeliveryService.API.Models;
 using DeliveryService.API.Providers;
 using DeliveryService.API.Results;
 using DAL.Entities;
+using DAL.Enums;
+using Infrastructure.Helpers;
+using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
 {
@@ -24,6 +28,7 @@ namespace DeliveryService.API.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
+        private readonly IPersonService _personService;
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
 
@@ -32,10 +37,12 @@ namespace DeliveryService.API.Controllers
         }
 
         public AccountController(ApplicationUserManager userManager,
-            ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
+            ISecureDataFormat<AuthenticationTicket> accessTokenFormat,
+            IPersonService personService)
         {
             UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
+            _personService = personService;
         }
 
         public ApplicationUserManager UserManager
@@ -337,8 +344,41 @@ namespace DeliveryService.API.Controllers
             {
                 return GetErrorResult(result);
             }
+            // Get the newly created user
+            var currentUser = await UserManager.FindByEmailAsync(user.Email);
 
-            return Ok();
+            var serviceResult = new ServiceResult();
+            try
+            {
+                // Create person model
+                await _personService.CreatePersonAsync(model.GetPerson(currentUser));
+
+                // Assign Member role to user
+                var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Member);
+
+                if (roleResult.Succeeded)
+                {
+                    UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
+                    serviceResult.Success = true;
+                    serviceResult.Messages.Add(MessageType.Info, "Person was successfully created!");
+                }
+                else
+                {
+                    // If any errors generate the error message and return json
+                    serviceResult.Success = false;
+                    serviceResult.Messages.Add(MessageType.Error, "Error while creating person!");
+                    serviceResult.Messages.Add(MessageType.Error, roleResult.Errors.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                // If any errors generate the error message and return json
+                serviceResult.Success = false;
+                serviceResult.Messages.Add(MessageType.Error, "Error while creating person!");
+                serviceResult.Messages.Add(MessageType.Error, ex.ToString());
+            }
+
+            return Json(serviceResult);
         }
 
         // POST api/Account/RegisterExternal

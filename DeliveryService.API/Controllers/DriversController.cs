@@ -6,33 +6,57 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using DAL.Entities;
+using DAL.Enums;
+using Infrastructure.Config;
+using Infrastructure.Helpers;
+using Microsoft.AspNet.Identity;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
 {
-    public class DriversController : BaseApiController
+    public class DriverController : BaseApiController
     {
         private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IPersonService> _personService;
 
-        public DriversController(IDriverService service)
+        public DriverController(IDriverService service, IConfig config,
+            IPersonService personService) : base(config)
         {
             _driverService = new Lazy<IDriverService>(() => service);
+            _personService = new Lazy<IPersonService>(() => personService);
         }
 
-        [HttpGet]
-        [AllowAnonymous]
+        [HttpPost]
         public async Task<IHttpActionResult> Test()
         {
-
-            var driverList = await _driverService.Value.GetDrivers();
             return Json("The unitiy for API seems fine");
         }
 
         [HttpPost]
-        [Authorize]
-        public IHttpActionResult AddDriver(Driver driver)
+        public async Task<IHttpActionResult> AddDriver(Driver driver)
         {
-            return Ok(_driverService.Value.AddDriver(driver));
+            ServiceResult result = new ServiceResult();
+            try
+            {
+                var currentPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                driver.Approved = false;
+                driver.Status = DriverStatus.Offline;
+                driver.Person = currentPerson;
+                driver.Id = currentPerson.Id;
+
+                var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
+
+                result.Success = true;
+                result.Data = createdDriver;
+                result.Messages.Add(MessageType.Info, "The Driver was successfuly created");
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Messages.Add(MessageType.Error, "Error while creating driver");
+                result.Messages.Add(MessageType.Error, ex.ToString());
+            }
+            return Json(result);
         }
     }
 }

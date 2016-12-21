@@ -17,19 +17,9 @@ namespace ServiceLayer.Service
             _driverRepository = repository;
         }
 
-        public async Task<Driver> GetDriverById(int id)
+        public async Task<Driver> CreateDriverAsync(Driver driver)
         {
-            return await _driverRepository.GetDriverById(id);
-        }
-
-        public async Task<IEnumerable<Driver>> GetDrivers()
-        {
-            return await _driverRepository.GetDriversList();
-        }
-
-        public async Task<Driver> AddDriver(Driver driver)
-        {
-            return await _driverRepository.AddDriver(driver);
+            return await _driverRepository.CreateDriverAsync(driver);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace DeliveryService.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = Config.Messages["TestMessage"];
 
             return View();
         }

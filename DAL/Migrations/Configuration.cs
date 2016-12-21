@@ -1,41 +1,25 @@
 using System.Security.Claims;
+using DAL.Constants;
 using DAL.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity.Migrations;
 
 namespace DAL.Migrations
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DAL.Context.DbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Context.DbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(DAL.Context.DbContext context)
+        protected override void Seed(Context.DbContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
-
-
             var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
-            rm.Create(new IdentityRole("Member"));
-            rm.Create(new IdentityRole("Admin"));
+            rm.Create(new IdentityRole(Roles.Member));
+            rm.Create(new IdentityRole(Roles.Admin));
 
             var um = new UserManager<User>(new UserStore<User>(context));
             var user = new User
@@ -47,8 +31,8 @@ namespace DAL.Migrations
 
             um.Create(user, "password1");
             var currentUser = um.FindByEmail(user.Email);
-            um.AddToRole(currentUser.Id, "Admin");
-            um.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, "Admin"));
+            um.AddToRole(currentUser.Id, Roles.Admin);
+            um.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Admin));
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DAL.Entities;
 using Infrastructure.Config;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
@@ -23,7 +24,7 @@ namespace DeliveryService.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            var driversList = await _driverService.Value.GetDrivers();
+            var driversList = await _driverService.Value.GetAllEntitiesAsync<Driver>();
             return View();
         }
 

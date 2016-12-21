@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using DAL.Entities;
+using DAL.Enums;
 using Newtonsoft.Json;
 
 namespace DeliveryService.API.Models
@@ -48,6 +50,37 @@ namespace DeliveryService.API.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
+        public int Age { get; set; }
+        [Required]
+        public Sex Sex { get; set; }
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+
+        public Person GetPerson(User user)
+        {
+            return new Person
+            {
+                IsDeleted = false,
+                Age = Age,
+                CreatedBy = 0,
+                CreatedDt = DateTime.UtcNow,
+                DateOfBirth = DateOfBirth,
+                Email = Email,
+                FirstName = FirstName,
+                LastName = LastName,
+                Sex = Sex,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow,
+                User = user,
+                UserId = user.Id
+            };
+        }
     }
 
     public class RegisterExternalBindingModel

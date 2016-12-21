@@ -78,6 +78,7 @@
     <Compile Include="Enums\VehicleType.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Constants\Roles.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

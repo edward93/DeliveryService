@@ -7,11 +7,9 @@ using DAL.Entities;
 
 namespace ServiceLayer.Service
 {
-    public interface IDriverService
+    public interface IDriverService : IEntityService
     {
-        Task<Driver> GetDriverById(int id);
-        Task<IEnumerable<Driver>> GetDrivers();
-        Task<Driver> AddDriver(Driver driver);
+        Task<Driver> CreateDriverAsync(Driver driver);
 
     }
 }

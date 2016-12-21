@@ -9,8 +9,6 @@ namespace ServiceLayer.Repository
 {
     public interface IDriverRepository: IEntityRepository
     {
-        Task<IEnumerable<Driver>> GetDriversList();
-        Task<Driver> GetDriverById(int id);
-        Task<Driver> AddDriver(Driver driver);
+        Task<Driver> CreateDriverAsync(Driver driver);
     }
 }

@@ -9,7 +9,10 @@ namespace Infrastructure.Helpers
     /// </summary>
     public class ServiceResult
     {
-
+        public ServiceResult()
+        {
+            Messages = new Dictionary<MessageType, string>();
+        }
         public bool Success { get; set; }
         public object Data { get; set; }
         public Dictionary<MessageType, string> Messages { get; set; }

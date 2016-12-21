@@ -17,17 +17,7 @@ namespace ServiceLayer.Repository
 
         }
 
-        public async Task<IEnumerable<Driver>> GetDriversList()
-        {
-            return await DbContext.Drivers.ToListAsync();
-        }
-
-        public async Task<Driver> GetDriverById(int id)
-        {
-            return await DbContext.Drivers.FirstOrDefaultAsync(c => c.Id == id);
-        }
-
-        public async Task<Driver> AddDriver(Driver driver)
+        public async Task<Driver> CreateDriverAsync(Driver driver)
         {
             DbContext.Drivers.AddOrUpdate(driver);
             await DbContext.SaveChangesAsync();
