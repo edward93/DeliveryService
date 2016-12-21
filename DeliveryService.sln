@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{537BD4F6-7FD2-4E0C-94F6-B6728BBBFC6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.API", "DeliveryService.API\DeliveryService.API.csproj", "{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{537BD4F6-7FD2-4E0C-94F6-B6728BBBFC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{537BD4F6-7FD2-4E0C-94F6-B6728BBBFC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{537BD4F6-7FD2-4E0C-94F6-B6728BBBFC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
