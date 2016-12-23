@@ -31,35 +31,19 @@ namespace DeliveryService.API.Controllers
     {
         private readonly IPersonService _personService;
         private const string LocalLoginProvider = "Local";
-        private ApplicationUserManager _userManager;
+
 
         public AccountController(IConfig config):base(config)
         {
-
         }
 
-        public AccountController(ApplicationUserManager userManager,
-            ISecureDataFormat<AuthenticationTicket> accessTokenFormat,
-            IPersonService personService, IConfig config) :base(config)
+        public AccountController(IPersonService personService, IConfig config) :base(config)
         {
-            UserManager = userManager;
-            AccessTokenFormat = accessTokenFormat;
             _personService = personService;
         }
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
+        
 
-        public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
@@ -416,16 +400,7 @@ namespace DeliveryService.API.Controllers
             return Ok();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && _userManager != null)
-            {
-                _userManager.Dispose();
-                _userManager = null;
-            }
-
-            base.Dispose(disposing);
-        }
+        
 
         #region Helpers
 

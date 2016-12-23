@@ -17,8 +17,6 @@ namespace DeliveryService.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
 
         public AccountController(IConfig config) : base(config)
         {
