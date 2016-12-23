@@ -58,5 +58,27 @@ namespace DeliveryService.API.Controllers
             }
             return Json(result);
         }
+
+        [HttpPost]
+        public async Task<IHttpActionResult> UpdateDriver(Driver driver)
+        {
+            ServiceResult result = new ServiceResult();
+            try
+            {
+                var updatedDriver = await _driverService.Value.UpdateDriverAsync(driver);
+
+                result.Success = true;
+                result.Data = updatedDriver;
+                result.Messages.Add(MessageType.Info, "The Driver was successfuly created");
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Messages.Add(MessageType.Error, "Error while creating driver");
+                result.Messages.Add(MessageType.Error, ex.ToString());
+            }
+            return Json(result);
+        }
     }
 }

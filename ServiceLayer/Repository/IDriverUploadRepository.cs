@@ -10,5 +10,6 @@ namespace ServiceLayer.Repository
     public interface IDriverUploadRepository : IEntityRepository
     {
         Task<DriverUpload> GetDriverUploadByDriverIdAsync(int id);
+        Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload);
     }
 }

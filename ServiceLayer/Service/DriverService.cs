@@ -21,5 +21,10 @@ namespace ServiceLayer.Service
         {
             return await _driverRepository.CreateDriverAsync(driver);
         }
+
+        public async Task<Driver> UpdateDriverAsync(Driver driver)
+        {
+            return await _driverRepository.CreateDriverAsync(driver);
+        }
     }
 }

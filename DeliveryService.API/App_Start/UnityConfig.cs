@@ -1,10 +1,14 @@
 using Microsoft.Practices.Unity;
 using System.Web.Http;
-using DAL.Context;
 using Infrastructure.Config;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
 using Unity.WebApi;
+using DeliveryService.API.Infrastructure;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using DAL.Entities;
+using DAL.Context;
 
 namespace DeliveryService.API
 {
@@ -22,19 +26,23 @@ namespace DeliveryService.API
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
 
             container.RegisterType<IDbContext, DbContext>(new HierarchicalLifetimeManager());
-            //container.RegisterType<IConfig, Config>(new PerRequestLifetimeManager());
+            container.RegisterType<IConfig, Config>(new HierarchicalLifetimeManager());
 
             // register Repositories
             container.RegisterType<IEntityRepository, EntityRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IAddressRepository, AddressRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<ICardRepository, CardRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverRepository, DriverRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverUploadRepository, DriverUploadRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IPersonRepository, PersonRepository>(new HierarchicalLifetimeManager());
 
             // register Services
             container.RegisterType<IEntityService, EntityService>(new HierarchicalLifetimeManager());
             container.RegisterType<IAddressService, AddressService>(new HierarchicalLifetimeManager());
             container.RegisterType<ICardService, CardService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverService, DriverService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverUploadService, DriverUploadService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IPersonService, PersonService>(new HierarchicalLifetimeManager());
         }
     }
 }

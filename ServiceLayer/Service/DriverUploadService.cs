@@ -17,5 +17,10 @@ namespace ServiceLayer.Service
         {
             return await _driverUploadRepository.GetDriverUploadByDriverIdAsync(id);
         }
+
+        public async Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload)
+        {
+            return await _driverUploadRepository.CreateDriverUpload(driverUpload);
+        }
     }
 }

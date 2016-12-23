@@ -19,6 +19,7 @@ using DeliveryService.API.Providers;
 using DeliveryService.API.Results;
 using DAL.Entities;
 using DAL.Enums;
+using Infrastructure.Config;
 using Infrastructure.Helpers;
 using ServiceLayer.Service;
 
@@ -26,19 +27,20 @@ namespace DeliveryService.API.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]
-    public class AccountController : ApiController
+    public class AccountController : BaseApiController
     {
         private readonly IPersonService _personService;
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
 
-        public AccountController()
+        public AccountController(IConfig config):base(config)
         {
+
         }
 
         public AccountController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat,
-            IPersonService personService)
+            IPersonService personService, IConfig config) :base(config)
         {
             UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
