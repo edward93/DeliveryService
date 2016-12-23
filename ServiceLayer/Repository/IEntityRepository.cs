@@ -8,5 +8,6 @@ namespace ServiceLayer.Repository
     {
         Task<T> GetByIdAsync<T>(int entityId) where T : Entity;
         Task<IEnumerable<T>> GetAllEntitiesAsync<T>() where T : Entity;
+        Task<T> RemoveEntity<T>(int entityId) where  T : Entity;
     }
 }

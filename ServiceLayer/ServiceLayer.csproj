@@ -38,6 +38,10 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -50,10 +54,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\AddressRepository.cs" />
+    <Compile Include="Repository\CardRepository.cs" />
+    <Compile Include="Repository\DriverRepository.cs" />
+    <Compile Include="Repository\DriverUploadRepository.cs" />
     <Compile Include="Repository\EntityRepository.cs" />
+    <Compile Include="Repository\IAddressRepository.cs" />
+    <Compile Include="Repository\ICardRepository.cs" />
+    <Compile Include="Repository\IDriverRepository.cs" />
+    <Compile Include="Repository\IDriverUploadRepository.cs" />
     <Compile Include="Repository\IEntityRepository.cs" />
+    <Compile Include="Repository\IPersonRepository.cs" />
+    <Compile Include="Repository\PersonRepository.cs" />
+    <Compile Include="Service\AddressService.cs" />
+    <Compile Include="Service\CardService.cs" />
+    <Compile Include="Service\DriverService.cs" />
+    <Compile Include="Service\DriverUploadService.cs" />
     <Compile Include="Service\EntityService.cs" />
+    <Compile Include="Service\IAddressService.cs" />
+    <Compile Include="Service\ICardService.cs" />
+    <Compile Include="Service\IDriverService.cs" />
+    <Compile Include="Service\IDriverUploadService.cs" />
     <Compile Include="Service\IEntityService.cs" />
+    <Compile Include="Service\IPersonService.cs" />
+    <Compile Include="Service\PersonService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
