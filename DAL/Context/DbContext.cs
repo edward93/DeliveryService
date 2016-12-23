@@ -9,7 +9,7 @@ namespace DAL.Context
     public class DbContext : IdentityDbContext<User>, IDbContext
     {
         public DbContext()
-            : base("DefaultConnection_", throwIfV1Schema: false)
+            : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
 
