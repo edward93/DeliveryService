@@ -1,5 +1,8 @@
-﻿using System.Web;
+﻿using System.Security.Claims;
+using System.Web;
 using System.Web.Mvc;
+using DAL.Constants;
+using DeliveryService.App_Start;
 using Infrastructure.Config;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -7,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 namespace DeliveryService.Controllers
 {
     [Authorize]
+    [Authorize(Roles = "Admin")]
     public class BaseController : Controller
     {
         protected readonly IConfig Config;
@@ -18,37 +22,6 @@ namespace DeliveryService.Controllers
         {
             Config = config;
         }
-        //[InjectionConstructor]
-        //public BaseController(IPersonService personService)
-        //{
-        //    _personService = personService;
-        //}
-
-        //protected override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    if (Request.IsAuthenticated)
-        //    {
-        //        var userId = User.Identity.GetUserId();
-        //        var person = _personService.GetByUserId(userId);
-        //        if (Session["User"] == null)
-        //            Session["User"] = person;
-        //    }
-        //    base.OnActionExecuting(filterContext);
-
-        //}
-
-        //public PersonDto CurrentUser
-        //{
-        //    get
-        //    {
-        //        if (!Request.IsAuthenticated) return null;
-        //        var userId = User.Identity.GetUserId();
-        //        var person = _personService.GetByUserId(userId);
-        //        if (Session["User"] == null)
-        //            Session["User"] = person;
-        //        return person;
-        //    }
-        //}
 
         public ApplicationSignInManager SignInManager
         {

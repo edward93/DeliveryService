@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
 using DAL.Context;
@@ -14,9 +15,17 @@ namespace ServiceLayer.Repository
 
         public async Task<Person> CreatePersonAsync(Person person)
         {
-            DbContext.Persons.AddOrUpdate(person);
-            await DbContext.SaveChangesAsync();
-            return person;
+            try
+            {
+                DbContext.Persons.AddOrUpdate(person);
+                await DbContext.SaveChangesAsync();
+                return person;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public async Task<Person> GetPersonByUserIdAsync(string userId)

@@ -23,6 +23,7 @@ namespace DAL.Entities
         public string UserId { get; set; }
 
         public virtual User User { get; set; }
+        public virtual Driver Driver { get; set; }
 
     }
 }

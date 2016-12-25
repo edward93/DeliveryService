@@ -68,16 +68,16 @@ namespace DeliveryService.API.Models
             {
                 IsDeleted = false,
                 Age = Age,
-                CreatedBy = 0,
+                CreatedBy = 2,
                 CreatedDt = DateTime.UtcNow,
                 DateOfBirth = DateOfBirth,
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
                 Sex = Sex,
-                UpdatedBy = 0,
+                UpdatedBy = 2,
                 UpdatedDt = DateTime.UtcNow,
-                User = user,
+               // User = user,
                 UserId = user.Id
             };
         }

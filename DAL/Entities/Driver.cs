@@ -5,10 +5,13 @@ using DAL.Enums;
 
 namespace DAL.Entities
 {
+
     public class Driver : Entity
     {
-        [Key, ForeignKey("Person")]
-        public new int Id { get; set; }
+
+        [Key]
+        [ForeignKey("Person")]
+        public int PersonId { get; set; }
         [Required]
         public VehicleType VehicleType { get; set; }
         public string VehicleRegistrationNumber { get; set; }

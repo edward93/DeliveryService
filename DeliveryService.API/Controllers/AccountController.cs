@@ -29,20 +29,22 @@ namespace DeliveryService.API.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : BaseApiController
     {
-        private readonly IPersonService _personService;
+        private readonly Lazy<IPersonService> _personService;
+        private readonly Lazy<IDriverService> _driverService;
         private const string LocalLoginProvider = "Local";
 
 
-        public AccountController(IConfig config):base(config)
+        public AccountController(IConfig config) : base(config)
         {
         }
 
-        public AccountController(IPersonService personService, IConfig config) :base(config)
+        public AccountController(IPersonService personService, IConfig config, IDriverService driverService) : base(config)
         {
-            _personService = personService;
+            _driverService = new Lazy<IDriverService>(() => driverService);
+            _personService = new Lazy<IPersonService>(() => personService);
         }
 
-        
+
 
 
         // GET api/Account/UserInfo
@@ -119,7 +121,7 @@ namespace DeliveryService.API.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -252,9 +254,9 @@ namespace DeliveryService.API.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -312,10 +314,10 @@ namespace DeliveryService.API.Controllers
             return logins;
         }
 
-        // POST api/Account/Register
+        // POST api/Account/RegisterDriver
         [AllowAnonymous]
-        [Route("Register")]
-        public async Task<IHttpActionResult> Register(RegisterBindingModel model)
+        [Route("RegisterDriver")]
+        public async Task<IHttpActionResult> RegisterDriver(RegisterBindingModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -337,7 +339,7 @@ namespace DeliveryService.API.Controllers
             try
             {
                 // Create person model
-                await _personService.CreatePersonAsync(model.GetPerson(currentUser));
+                Person person = await _personService.Value.CreatePersonAsync(model.GetPerson(currentUser));
 
                 // Assign Member role to user
                 var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Member);
@@ -347,6 +349,18 @@ namespace DeliveryService.API.Controllers
                     UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
                     serviceResult.Success = true;
                     serviceResult.Messages.Add(MessageType.Info, "Person was successfully created!");
+
+                    Driver driver = new Driver
+                    {
+                        Approved = false,
+                        Status = DriverStatus.Offline,
+                        Person = person,
+                        PersonId = person.Id
+                    };
+                    var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
+                    serviceResult.Data = createdDriver;
+                    serviceResult.Messages.Add(MessageType.Info, "The Driver was successfuly created");
+
                 }
                 else
                 {
@@ -395,12 +409,12 @@ namespace DeliveryService.API.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }
 
-        
+
 
         #region Helpers
 
