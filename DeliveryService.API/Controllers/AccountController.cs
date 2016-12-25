@@ -355,7 +355,7 @@ namespace DeliveryService.API.Controllers
                         Approved = false,
                         Status = DriverStatus.Offline,
                         Person = person,
-                        PersonId = person.Id
+                        Id = person.Id
                     };
                     var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
                     serviceResult.Data = createdDriver;
