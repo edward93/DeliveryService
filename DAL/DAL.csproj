@@ -64,7 +64,7 @@
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\Driver.cs" />
     <Compile Include="Entities\DriverUpload.cs" />
-    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Entities\Feedback.cs" />
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\Rating.cs" />

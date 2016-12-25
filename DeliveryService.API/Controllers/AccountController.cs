@@ -21,6 +21,7 @@ using DAL.Entities;
 using DAL.Enums;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
+using Newtonsoft.Json;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
@@ -347,38 +348,43 @@ namespace DeliveryService.API.Controllers
                 if (roleResult.Succeeded)
                 {
                     UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
-                    serviceResult.Success = true;
-                    serviceResult.Messages.Add(MessageType.Info, "Person was successfully created!");
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Person was successfully created!");
 
-                    Driver driver = new Driver
+                    var driver = new Driver
                     {
                         Approved = false,
                         Status = DriverStatus.Offline,
-                        Person = person,
-                        Id = person.Id
+                        Id = person.Id,
+                        CreatedDt = DateTime.UtcNow,
+                        UpdatedDt = DateTime.UtcNow,
+                        CreatedBy = person.Id,
+                        UpdatedBy = person.Id
                     };
                     var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
                     serviceResult.Data = createdDriver;
-                    serviceResult.Messages.Add(MessageType.Info, "The Driver was successfuly created");
-
+                    serviceResult.Messages.AddMessage(MessageType.Info, "The Driver was successfuly created");
+                    serviceResult.Success = true;
                 }
                 else
                 {
                     // If any errors generate the error message and return json
                     serviceResult.Success = false;
-                    serviceResult.Messages.Add(MessageType.Error, "Error while creating person!");
-                    serviceResult.Messages.Add(MessageType.Error, roleResult.Errors.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating person!");
+                    serviceResult.Messages.AddMessage(MessageType.Error, roleResult.Errors.ToString());
                 }
             }
             catch (Exception ex)
             {
                 // If any errors generate the error message and return json
                 serviceResult.Success = false;
-                serviceResult.Messages.Add(MessageType.Error, "Error while creating person!");
-                serviceResult.Messages.Add(MessageType.Error, ex.ToString());
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating person!");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
 
-            return Json(serviceResult);
+            return Json(serviceResult, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
         }
 
         // POST api/Account/RegisterExternal

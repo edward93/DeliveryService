@@ -11,11 +11,11 @@ namespace Infrastructure.Helpers
     {
         public ServiceResult()
         {
-            Messages = new Dictionary<MessageType, string>();
+            Messages = new List<Message<MessageType, string>>();
         }
         public bool Success { get; set; }
         public object Data { get; set; }
-        public Dictionary<MessageType, string> Messages { get; set; }
+        public List<Message<MessageType, string>> Messages { get; set; }
 
         public string DisplayMessage ()
         {

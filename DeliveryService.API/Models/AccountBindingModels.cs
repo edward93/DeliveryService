@@ -55,8 +55,6 @@ namespace DeliveryService.API.Models
         [Required]
         public string LastName { get; set; }
         [Required]
-        public int Age { get; set; }
-        [Required]
         public Sex Sex { get; set; }
         [Required]
         public DateTime DateOfBirth { get; set; }
@@ -67,7 +65,6 @@ namespace DeliveryService.API.Models
             return new Person
             {
                 IsDeleted = false,
-                Age = Age,
                 CreatedBy = 2,
                 CreatedDt = DateTime.UtcNow,
                 DateOfBirth = DateOfBirth,

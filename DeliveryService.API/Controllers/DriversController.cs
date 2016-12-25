@@ -48,13 +48,13 @@ namespace DeliveryService.API.Controllers
 
                 result.Success = true;
                 result.Data = createdDriver;
-                result.Messages.Add(MessageType.Info, "The Driver was successfuly created");
+                result.Messages.AddMessage(MessageType.Info, Config.Messages["DriverCreationSuccess"]);
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Messages.Add(MessageType.Error, "Error while creating driver");
-                result.Messages.Add(MessageType.Error, ex.ToString());
+                result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
+                result.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
             return Json(result);
         }
@@ -69,14 +69,14 @@ namespace DeliveryService.API.Controllers
 
                 result.Success = true;
                 result.Data = updatedDriver;
-                result.Messages.Add(MessageType.Info, "The Driver was successfuly created");
+                result.Messages.AddMessage(MessageType.Info, "The Driver was successfuly created");
 
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Messages.Add(MessageType.Error, "Error while creating driver");
-                result.Messages.Add(MessageType.Error, ex.ToString());
+                result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
+                result.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
             return Json(result);
         }

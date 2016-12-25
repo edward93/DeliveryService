@@ -1,14 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using DAL.Enums;
 
 namespace DAL.Entities
 {
-    public class Driver : Entity
+    public class Driver : IEntity
     {
         [Key, ForeignKey("Person")]
-        public new int Id { get; set; }
+        public int Id { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
+
+
         [Required]
         public VehicleType VehicleType { get; set; }
         public string VehicleRegistrationNumber { get; set; }
@@ -16,12 +24,11 @@ namespace DAL.Entities
         public bool Approved { get; set; }
         [Required]
         public DriverStatus Status { get; set; }
-
         public virtual Rating Rating { get; set; }
         public virtual ICollection<Card> Cards { get; set; }
         public virtual Person Person { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
 
-
+        
     }
 }
