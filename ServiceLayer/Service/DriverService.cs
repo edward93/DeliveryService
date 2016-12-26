@@ -26,5 +26,10 @@ namespace ServiceLayer.Service
         {
             return await _driverRepository.CreateDriverAsync(driver);
         }
+
+        public async Task<Driver> GetDriverByPersonAsync(string personId)
+        {
+            return await _driverRepository.GetDriverByPersonId(personId);
+        }
     }
 }

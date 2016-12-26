@@ -185,7 +185,6 @@ h3, h4, h5 {
 
 .nav-header {
     padding: 33px 25px;
-  
 }
 
 .pace-done .nav-header {
@@ -845,6 +844,10 @@ body.canvas-menu.mini-navbar nav.navbar-static-side {
             background-color: #f9b66d;
             border-color: #f9b66d;
         }
+
+.icon-danger {
+    color: #ec4758;
+}
 
 .btn-danger {
     background-color: #ED5565;

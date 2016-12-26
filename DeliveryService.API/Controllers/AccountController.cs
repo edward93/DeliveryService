@@ -320,6 +320,7 @@ namespace DeliveryService.API.Controllers
         [Route("RegisterDriver")]
         public async Task<IHttpActionResult> RegisterDriver(RegisterBindingModel model)
         {
+            model.DateOfBirth = DateTime.Parse(model.DateOfBirthApi);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

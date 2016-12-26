@@ -9,7 +9,7 @@ namespace ServiceLayer.Service
 {
     public interface IDriverUploadService : IEntityService
     {
-        Task<DriverUpload> GetDriverUploadsByDriverIdAsync(int id);
+        Task<IEnumerable<DriverUpload>> GetDriverUploadsByDriverIdAsync(int id);
         Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload);
     }
 }

@@ -16,16 +16,25 @@ namespace DeliveryService.Controllers
     {
 
         private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IDriverUploadService> _driverUploadService;
 
         public DriversController(IConfig config,
-            IDriverService service) : base(config)
+            IDriverService driverService, IDriverUploadService uploadService) : base(config)
         {
-            _driverService = new Lazy<IDriverService>(() => service);
+            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
         }
         public async Task<ActionResult> Index()
         {
             var driversList = await _driverService.Value.GetAllEntitiesAsync<Driver>();
-            return View();
+            return View(driversList);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetDriverDocuments(int driverId)
+        {
+            var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driverId);
+            return Json(driverDocuments);
         }
 
         [HttpGet]

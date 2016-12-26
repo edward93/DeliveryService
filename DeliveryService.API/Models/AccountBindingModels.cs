@@ -56,8 +56,9 @@ namespace DeliveryService.API.Models
         public string LastName { get; set; }
         [Required]
         public Sex Sex { get; set; }
-        [Required]
         public DateTime DateOfBirth { get; set; }
+
+        public string DateOfBirthApi { get; set; }
 
 
         public Person GetPerson(User user)

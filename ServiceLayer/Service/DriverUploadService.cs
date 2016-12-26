@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DAL.Entities;
 using ServiceLayer.Repository;
 
@@ -13,7 +14,7 @@ namespace ServiceLayer.Service
             _driverUploadRepository = repository;
         }
 
-        public async Task<DriverUpload> GetDriverUploadsByDriverIdAsync(int id)
+        public async Task<IEnumerable<DriverUpload>> GetDriverUploadsByDriverIdAsync(int id)
         {
             return await _driverUploadRepository.GetDriverUploadByDriverIdAsync(id);
         }

@@ -14,17 +14,19 @@ using DeliveryService.API.ApiModels;
 using DeliveryService.API.ViewModel.Enums;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
+using Microsoft.AspNet.Identity;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
 {
     public class DriverFilesController : BaseApiController
     {
-        const string StoragePath = @"T:\WebApiTest";
-        private readonly IDriverUploadService _driverUploadService;
-        public DriverFilesController(IConfig config, IDriverUploadService service) : base(config)
+        private readonly Lazy<IDriverUploadService> _driverUploadService;
+        private readonly Lazy<IDriverService> _driverService;
+        public DriverFilesController(IConfig config, IDriverUploadService uploadService, IDriverService driverService) : base(config)
         {
-            _driverUploadService = service;
+            _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
+            _driverService = new Lazy<IDriverService>(() => driverService);
         }
 
         [HttpPost]
@@ -36,16 +38,19 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<HttpResponseMessage> PostFile()
         {
+            var userId = User.Identity.GetUserId();
+
             if (!Request.Content.IsMimeMultipartContent())
             {
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
-            DriverDocumentTypeEnum documentType;
+            UploadType documentType;
             if (HttpContext.Current.Request.Form["documentType"] != null)
                 documentType =
-                   (DriverDocumentTypeEnum)Convert.ToInt32(HttpContext.Current.Request.Form["documentType"]);
+                   (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["documentType"]);
             else
                 return Request.CreateResponse(HttpStatusCode.NotAcceptable, "This request is not properly formatted");
 
@@ -64,8 +69,27 @@ namespace DeliveryService.API.Controllers
                     {
                         return Request.CreateResponse(HttpStatusCode.NotAcceptable, "This request is not properly formatted");
                     }
+                    var document = PrepareFile(file, documentType);
 
-                    File.Move(file.LocalFileName, PrepareFile(file, documentType));
+
+                    File.Move(file.LocalFileName, document.Item1);
+                    Driver driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+
+                    var driverUpload = new DriverUpload
+                    {
+                        Driver = driver,
+                        IsApproved = false,
+                        ExpireDate = DateTime.UtcNow,
+                        FilePath = document.Item2,
+                        UploadType = documentType,
+                        CreatedBy = driver.Person.Id,
+                        UpdatedBy = driver.Person.Id,
+                        UpdatedDt = DateTime.UtcNow,
+                        CreatedDt = DateTime.UtcNow
+                    };
+
+                    await _driverUploadService.Value.CreateDriverUpload(driverUpload);
+
                 }
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
@@ -75,7 +99,7 @@ namespace DeliveryService.API.Controllers
             }
         }
 
-        private string PrepareFile(MultipartFileData file, DriverDocumentTypeEnum documentType)
+        private Tuple<string, string> PrepareFile(MultipartFileData file, UploadType documentType)
         {
             string fileName = file.Headers.ContentDisposition.FileName;
             if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
@@ -90,17 +114,23 @@ namespace DeliveryService.API.Controllers
             string filePath = "~/Uploads/DriverDocuments/";
             switch (documentType)
             {
-                case DriverDocumentTypeEnum.Address:
-                    filePath += "Address";
+                case UploadType.ProofOfAddress:
+                    filePath += "ProofOfAddress";
                     break;
-                case DriverDocumentTypeEnum.Insurance:
+                case UploadType.Insurance:
                     filePath += "Insurance";
                     break;
-                case DriverDocumentTypeEnum.License:
+                case UploadType.License:
                     filePath += "License";
                     break;
-                case DriverDocumentTypeEnum.Passport:
+                case UploadType.Passport:
                     filePath += "Passport";
+                    break;
+                case UploadType.Photo:
+                    filePath += "Photo";
+                    break;
+                default:
+                    filePath += "Other";
                     break;
             }
 
@@ -108,7 +138,7 @@ namespace DeliveryService.API.Controllers
             var filepath = Path.Combine(HttpContext.Current.Server.MapPath(filePath), fileName);
             var path = HttpContext.Current.Server.MapPath(filePath);
             Directory.CreateDirectory(path);
-            return filepath;
+            return Tuple.Create(path + "/" + fileName, fileName);
         }
 
         private string GetTimestamp(DateTime value)

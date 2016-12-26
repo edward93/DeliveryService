@@ -5,10 +5,11 @@ namespace DAL.Enums
     public enum UploadType
     {
         Passport = 0,
-        Insurance,
+        Insurance = 1,
         [Display(Name = "Proof of Address")]
-        ProofOfAddress,
-        Photo,
-        Other
+        ProofOfAddress = 2,
+        Photo = 3,
+        License = 4,
+        Other = 5
     }
 }

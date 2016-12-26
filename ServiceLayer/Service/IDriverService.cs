@@ -11,5 +11,6 @@ namespace ServiceLayer.Service
     {
         Task<Driver> CreateDriverAsync(Driver driver);
         Task<Driver> UpdateDriverAsync(Driver driver);
+        Task<Driver> GetDriverByPersonAsync(string personId);
     }
 }
