@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using DAL.Entities;
+using DAL.UnitOfWork;
 using Infrastructure.Config;
+using Newtonsoft.Json;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
 namespace DeliveryService.Controllers
@@ -30,17 +32,30 @@ namespace DeliveryService.Controllers
             return View(driversList);
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetDriverDocuments(int driverId)
+        [HttpPost]
+        public async Task<ContentResult> GetDriverDocuments(int driverId)
         {
             var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driverId);
-            return Json(driverDocuments);
+            var list = JsonConvert.SerializeObject(driverDocuments,
+                Formatting.None,
+                new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+            return Content(list);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeleteDriver(int driverId)
+        {
+            var result = await _driverService.Value.DeleteDriver(driverId);
+            return Json(result);
         }
 
         [HttpGet]
-        public  ActionResult GetDriversList()
+        public ActionResult GetDriversList()
         {
-             return null;
+            return null;
         }
     }
 }

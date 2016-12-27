@@ -69,6 +69,10 @@
       <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -142,9 +146,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http.Formatting">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
@@ -807,6 +808,9 @@
     <Content Include="Scripts\plugins\ladda\ladda.jquery.min.js" />
     <Content Include="Scripts\plugins\ladda\ladda.min.js" />
     <Content Include="Scripts\plugins\ladda\spin.min.js" />
+    <Content Include="Scripts\plugins\loader\fakeLoader.js" />
+    <Content Include="Scripts\plugins\loader\fakeLoader.min.js" />
+    <Content Include="Scripts\plugins\loader\jquery.blockUI.js" />
     <Content Include="Scripts\plugins\masonary\masonry.pkgd.min.js" />
     <Content Include="Scripts\plugins\metisMenu\metisMenu.min.js" />
     <Content Include="Scripts\plugins\morris\morris.js" />
@@ -880,9 +884,11 @@
     <Content Include="Views\Shared\_SkinConfig.cshtml" />
     <Content Include="Views\Drivers\Index.cshtml" />
     <Content Include="Views\DashBoard\Index.cshtml" />
+    <Content Include="Views\Drivers\Partials\_DriverModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Partials\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

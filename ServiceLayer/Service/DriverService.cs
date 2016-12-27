@@ -26,10 +26,20 @@ namespace ServiceLayer.Service
         {
             return await _driverRepository.CreateDriverAsync(driver);
         }
-
         public async Task<Driver> GetDriverByPersonAsync(string personId)
         {
             return await _driverRepository.GetDriverByPersonId(personId);
+        }
+        public async Task<bool> DeleteDriver(int driverId)
+        {
+            var driver = await _driverRepository.GetByIdAsync<Driver>(driverId);
+            if (driver != null)
+            {
+                driver.IsDeleted = true;
+                await UpdateDriverAsync(driver);
+                return true;
+            }
+            return false;
         }
     }
 }

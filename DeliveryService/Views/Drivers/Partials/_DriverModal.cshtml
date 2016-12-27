@@ -1,0 +1,202 @@
+﻿
+<div class="modal fade" id="previewDriver" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">Edit Driver Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="wizard">
+                            <div class="wizard-inner">
+                                <div class="connecting-line"></div>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Documents">
+                                            <span class="round-tab">
+                                                <i class="glyphicon glyphicon-picture"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" style="margin-left: 40%">
+                                        <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Earnings">
+                                            <span class="round-tab">
+                                                <i class="fa fa-money"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <form role="form">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" role="tabpanel" id="step1">
+                                        <div class="wrapper wrapper-content">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="ibox float-e-margins">
+                                                        <div class="ibox-content">
+                                                            <div class="lightBoxGallery" id="lstDocuments">
+                                                                <div id="blueimp-gallery" class="blueimp-gallery">
+                                                                    <div class="slides"></div>
+                                                                    <h3 class="title"></h3>
+                                                                    <a class="prev">‹</a>
+                                                                    <a class="next">›</a>
+                                                                    <a class="close">×</a>
+                                                                    <a class="play-pause"></a>
+                                                                    <ol class="indicator"></ol>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" role="tabpanel" id="step2">
+                                        <h3>Step 2</h3>
+                                        <p>This is step 2</p>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <ul class="list-inline pull-right">
+                    <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
+                    <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<style>
+    /* Local style for demo purpose */
+
+    .lightBoxGallery {
+        text-align: center;
+    }
+
+        .lightBoxGallery img {
+            margin: 5px;
+        }
+</style>
+@section Styles {
+    @Styles.Render("~/Content/plugins/blueimp/css/")
+}
+@section Scripts {
+    @Scripts.Render("~/plugins/lightboxGallery")
+}
+<script>
+    var UploadType = {
+        Passport: { value: 0, name: "Passport", code: "S" },
+        Insurance: { value: 1, name: "Insurance", code: "M" },
+        ProofOfAddress: { value: 2, name: "ProofOfAddress", code: "L" },
+        Photo: { value: 0, name: "Photo", code: "S" },
+        License: { value: 1, name: "License", code: "M" },
+        Other: { value: 2, name: "Other", code: "L" }
+    };
+
+    $(document).ready(function () {
+        //Initialize tooltips
+        $('.nav-tabs > li a[title]').tooltip();
+        //Wizard
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+            var $target = $(e.target);
+
+            if ($target.parent().hasClass('disabled')) {
+                return false;
+            }
+        });
+
+        $(".next-step").click(function (e) {
+
+            var $active = $('.wizard .nav-tabs li.active');
+            $active.next().removeClass('disabled');
+            nextTab($active);
+
+        });
+        $(".prev-step").click(function (e) {
+
+            var $active = $('.wizard .nav-tabs li.active');
+            prevTab($active);
+
+        });
+
+        $(document).on('click', "#btnPreviewDriver", function () {
+            var driverIdForPreview = $(this).attr('data-id');
+            getDriverDocuments(parseInt(driverIdForPreview));
+        });
+    });
+
+    function nextTab(elem) {
+        $(elem).next().find('a[data-toggle="tab"]').click();
+    }
+    function prevTab(elem) {
+        $(elem).prev().find('a[data-toggle="tab"]').click();
+    }
+    function getDriverDocuments(driverId) {
+        window.BlockUi();
+        $.post("/Drivers/GetDriverDocuments",
+            { driverId: driverId },
+            function (data) {
+                $("#previewDriver").modal("show");
+                window.UnBlockUi();
+                InitDocuments(data);
+            });
+    }
+
+    function InitDocuments(data) {
+        var result = JSON.parse(data);
+        for (var i = 0; i < result.length; i++) {
+
+            var docType = result[i].UploadType;
+            var isApproved = result[i].IsApproved;
+            var filePath = result[i].FilePath;
+            var fullPath = createDocumentFullPath(docType, filePath);
+            createDocumentsView(fullPath, isApproved);
+        }
+    }
+
+    function createDocumentsView(fullPath, isApproved) {
+        var elem = document.createElement("img");
+        elem.setAttribute("src", fullPath);
+        elem.setAttribute("data-id", isApproved);
+        document.getElementById("lstDocuments").appendChild(elem);
+    }
+
+    function createDocumentFullPath(doctype, fileName) {
+        var filePath = "/Uploads/DriverDocuments/";
+        switch (doctype) {
+            case UploadType.ProofOfAddress.value:
+                filePath += "ProofOfAddress";
+                break;
+            case UploadType.Insurance.value:
+                filePath += "Insurance";
+                break;
+            case UploadType.License.value:
+                filePath += "License";
+                break;
+            case UploadType.Passport.value:
+                filePath += "Passport";
+                break;
+            case UploadType.Photo.value:
+                filePath += "Photo";
+                break;
+            default:
+                filePath += "Other";
+                break;
+        }
+        filePath += "/" + fileName;
+        return filePath;
+    }
+
+</script>

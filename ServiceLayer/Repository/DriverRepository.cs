@@ -28,5 +28,7 @@ namespace ServiceLayer.Repository
         {
             return await DbContext.Drivers.FirstOrDefaultAsync(c => c.Person.UserId == personId);
         }
+
+     
     }
 }

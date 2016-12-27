@@ -61,22 +61,21 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr>
+                                <tr id="driver_@item.Id">
                                     <td>@item.Person.FirstName</td>
                                     <td>@item.Person.LastName</td>
                                     <td>@item.Person.Email</td>
                                     <td>@item.Status</td>
-                                    @*<td>@item.Approved</td>  fa fa-close*@
                                     <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
                                     <td>@item.Person.DateOfBirth</td>
                                     <td>@item.Person.Sex</td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit">
-                                                <span class="glyphicon glyphicon-pencil">
+                                            <button class="btn btn-primary btn-xs" data-title="Preview" data-id="@item.Id" id="btnPreviewDriver">
+                                                <span class="fa fa-eye">
                                                 </span>
                                             </button>
-                                            <button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete">
+                                            <button class="btn btn-danger btn-xs" data-title="Delete" data-id="@item.Id" id="btnDeleteDriver">
                                                 <span class="glyphicon glyphicon-trash">
                                                 </span>
                                             </button>
@@ -104,239 +103,17 @@
     </div>
 </div>
 
-<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title custom_align" id="Heading">Edit Driver Details</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="wizard">
-                            <div class="wizard-inner">
-                                <div class="connecting-line"></div>
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li role="presentation" class="active">
-                                        <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1">
-                                            <span class="round-tab">
-                                                <i class="glyphicon glyphicon-pencil"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li role="presentation" class="disabled" style="margin-left: 40%">
-                                        <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2">
-                                            <span class="round-tab">
-                                                <i class="glyphicon glyphicon-picture"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <form role="form">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" role="tabpanel" id="step1">
-                                        <h3>Step 1</h3>
-                                        <p>This is step 1</p>
-                                    </div>
-                                    <div class="tab-pane" role="tabpanel" id="step2">
-                                        <h3>Step 2</h3>
-                                        <p>This is step 2</p>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer ">
-                <ul class="list-inline pull-right">
-                    <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
-                    <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
-                </ul>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-
-<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title custom_align" id="Heading">Delete this entry</h4>
-            </div>
-            <div class="modal-body">
-
-                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to delete this Record?</div>
-
-            </div>
-            <div class="modal-footer ">
-                <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> No</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
-    <style>
-        .wizard {
-            margin: 20px auto;
-            background: #fff;
-        }
-
-            .wizard .nav-tabs {
-                position: relative;
-                margin: 40px auto;
-                margin-bottom: 0;
-                border-bottom-color: #e0e0e0;
-            }
-
-            .wizard > div.wizard-inner {
-                position: relative;
-            }
-
-        .connecting-line {
-            height: 2px;
-            background: #e0e0e0;
-            position: absolute;
-            width: 80%;
-            margin: 0 auto;
-            left: 0;
-            right: 0;
-            top: 50%;
-            z-index: 1;
-        }
-
-        .wizard .nav-tabs > li.active > a, .wizard .nav-tabs > li.active > a:hover, .wizard .nav-tabs > li.active > a:focus {
-            color: #555555;
-            cursor: default;
-            border: 0;
-            border-bottom-color: transparent;
-        }
-
-        span.round-tab {
-            width: 70px;
-            height: 70px;
-            line-height: 70px;
-            display: inline-block;
-            border-radius: 100px;
-            background: #fff;
-            border: 2px solid #e0e0e0;
-            z-index: 2;
-            position: absolute;
-            left: 0;
-            text-align: center;
-            font-size: 25px;
-        }
-
-            span.round-tab i {
-                color: #555555;
-            }
-
-        .wizard li.active span.round-tab {
-            background: #fff;
-            border: 2px solid #5bc0de;
-        }
-
-            .wizard li.active span.round-tab i {
-                color: #5bc0de;
-            }
-
-        span.round-tab:hover {
-            color: #333;
-            border: 2px solid #333;
-        }
-
-        .wizard .nav-tabs > li {
-            width: 30%;
-        }
-
-        .wizard li:after {
-            content: " ";
-            position: absolute;
-            left: 46%;
-            opacity: 0;
-            margin: 0 auto;
-            bottom: 0px;
-            border: 5px solid transparent;
-            border-bottom-color: #5bc0de;
-            transition: 0.1s ease-in-out;
-        }
-
-        .wizard li.active:after {
-            content: " ";
-            position: absolute;
-            left: 46%;
-            opacity: 1;
-            margin: 0 auto;
-            bottom: 0px;
-            border: 10px solid transparent;
-            border-bottom-color: #5bc0de;
-        }
-
-        .wizard .nav-tabs > li a {
-            width: 70px;
-            height: 70px;
-            margin: 20px auto;
-            border-radius: 100%;
-            padding: 0;
-        }
-
-            .wizard .nav-tabs > li a:hover {
-                background: transparent;
-            }
-
-        .wizard .tab-pane {
-            position: relative;
-            padding-top: 50px;
-        }
-
-        .wizard h3 {
-            margin-top: 0;
-        }
-
-        @@media( max-width : 585px ) {
-
-            .wizard {
-                width: 90%;
-                height: auto !important;
-            }
-
-            span.round-tab {
-                font-size: 16px;
-                width: 50px;
-                height: 50px;
-                line-height: 50px;
-            }
-
-            .wizard .nav-tabs > li a {
-                width: 50px;
-                height: 50px;
-                line-height: 50px;
-            }
-
-            .wizard li.active:after {
-                content: " ";
-                position: absolute;
-                left: 35%;
-            }
-        }
-    </style>
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    @Styles.Render("~/plugins/toastrStyles")
 }
 @section Scripts {
     @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+    @Scripts.Render("~/plugins/toastr")
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             $('#tblDriversList').DataTable({
                 dom: '<"html5buttons"B>lTfgitp',
@@ -345,60 +122,56 @@
                     { extend: 'csv' },
                     { extend: 'excel', title: 'ExampleFile' },
                     { extend: 'pdf', title: 'ExampleFile' },
-
                     {
                         extend: 'print',
-                        customize: function (win) {
+                        customize: function(win) {
                             $(win.document.body).addClass('white-bg');
                             $(win.document.body).css('font-size', '10px');
                             $(win.document.body).find('table')
-                                    .addClass('compact')
-                                    .css('font-size', 'inherit');
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
                         }
                     }
                 ]
 
             });
 
+            $(document).on('click',
+                '#btnDeleteDriver',
+                function() {
+                    var driverIdForDelete = $(this).attr('data-id');
+                    swal({
+                            title: "Are you sure?",
+                            text: "You will not be able to recover your rider!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, delete!",
+                            closeOnConfirm: true
+                        },
+                        function(isConfirm) {
+                            if (isConfirm)
+                                deleteUser(parseInt(driverIdForDelete));
+
+                        });
+                });
         });
 
-        $(document).ready(function () {
-            //Initialize tooltips
-            $('.nav-tabs > li a[title]').tooltip();
-
-            //Wizard
-            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-
-                var $target = $(e.target);
-
-                if ($target.parent().hasClass('disabled')) {
-                    return false;
-                }
-            });
-
-            $(".next-step").click(function (e) {
-
-                var $active = $('.wizard .nav-tabs li.active');
-                $active.next().removeClass('disabled');
-                nextTab($active);
-
-            });
-            $(".prev-step").click(function (e) {
-
-                var $active = $('.wizard .nav-tabs li.active');
-                prevTab($active);
-
-            });
-        });
-
-        function nextTab(elem) {
-            $(elem).next().find('a[data-toggle="tab"]').click();
+        function deleteUser(driverId) {
+            BlockUi();
+            $.post("/Drivers/DeleteDriver",
+                { driverId: driverId },
+                function(data) {
+                    console.log(data);
+                    UnBlockUi();
+                    $("#driver_" + driverId).remove();
+                    swal("Deleted!", "Your driver has been deleted.", "success");
+                });
         }
-        function prevTab(elem) {
-            $(elem).prev().find('a[data-toggle="tab"]').click();
-        }
-
 
     </script>
 }
+
+
+@Html.Partial("~/Views/Drivers/Partials/_DriverModal.cshtml")
 

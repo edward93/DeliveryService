@@ -16,7 +16,8 @@
     <!-- Styles section -->
     @Styles.Render("~/Content/css")
     @Styles.Render("~/font-awesome/css")
-
+    @Scripts.Render("~/bundles/jquery")
+    
 </head>
 <body>
     <!-- Skin configuration box -->
@@ -41,7 +42,7 @@
     </div>
     <!-- End wrapper-->
     <!-- Section for main scripts render -->
-    @Scripts.Render("~/bundles/jquery")
+    
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/plugins/slimScroll")
     @Scripts.Render("~/bundles/main")
@@ -49,5 +50,25 @@
     @Scripts.Render("~/bundles/skinConfig")
     <!-- Handler for local scripts -->
     @RenderSection("scripts", required: false)
+    <script src="~/Scripts/plugins/loader/jquery.blockUI.js"></script>
 </body>
 </html>
+<script>
+    function BlockUi() {
+        $('body').block({
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                opacity: .5,
+                color: '#fff'
+            }
+        });
+    }
+
+    function UnBlockUi() {
+        $('body').unblock();
+    }
+</script>
