@@ -157,7 +157,6 @@
     function InitDocuments(data) {
         var result = JSON.parse(data);
         for (var i = 0; i < result.length; i++) {
-
             var docType = result[i].UploadType;
             var isApproved = result[i].IsApproved;
             var filePath = result[i].FilePath;
@@ -174,7 +173,7 @@
     }
 
     function createDocumentFullPath(doctype, fileName) {
-        var filePath = "/Uploads/DriverDocuments/";
+        var filePath = "@Url.Content("~/Uploads/DriverDocuments/")";
         switch (doctype) {
             case UploadType.ProofOfAddress.value:
                 filePath += "ProofOfAddress";

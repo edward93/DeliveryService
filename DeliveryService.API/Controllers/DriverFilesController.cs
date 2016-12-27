@@ -30,16 +30,8 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        public Task<IHttpActionResult> AddFileForDriver()
-        {
-            ServiceResult result = new ServiceResult();
-
-            return null;
-        }
-
-        [HttpPost]
         [Authorize]
-        public async Task<HttpResponseMessage> PostFile()
+        public async Task<HttpResponseMessage> AddFileForDriver()
         {
             var userId = User.Identity.GetUserId();
 
@@ -111,7 +103,7 @@ namespace DeliveryService.API.Controllers
                 fileName = Path.GetFileName(fileName);
             }
 
-            string filePath = "~/Uploads/DriverDocuments/";
+            string filePath = "../DeliveryService/Uploads/DriverDocuments/";
             switch (documentType)
             {
                 case UploadType.ProofOfAddress:
@@ -133,12 +125,15 @@ namespace DeliveryService.API.Controllers
                     filePath += "Other";
                     break;
             }
+            var extension = Path.GetExtension(fileName);
+            //TODO: check extension 
+            fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{GetTimestamp(DateTime.UtcNow)}{extension}";
+            var path = Path.GetFullPath(HttpContext.Current.Server.MapPath("~/") + filePath);
 
-            fileName = GetTimestamp(DateTime.UtcNow) + fileName;
-            var filepath = Path.Combine(HttpContext.Current.Server.MapPath(filePath), fileName);
-            var path = HttpContext.Current.Server.MapPath(filePath);
+            var filepath = Path.Combine(path, fileName);
+            //var path = HttpContext.Current.Server.MapPath(filePath);
             Directory.CreateDirectory(path);
-            return Tuple.Create(path + "/" + fileName, fileName);
+            return Tuple.Create(filepath, fileName);
         }
 
         private string GetTimestamp(DateTime value)

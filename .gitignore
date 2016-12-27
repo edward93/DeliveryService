@@ -9,6 +9,8 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+DeliveryService.API/Uploads
+DeliveryService/Uploads
 
 # Build results
 [Dd]ebug/

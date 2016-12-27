@@ -10,6 +10,7 @@ using DAL.Enums;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
@@ -24,12 +25,6 @@ namespace DeliveryService.API.Controllers
         {
             _driverService = new Lazy<IDriverService>(() => service);
             _personService = new Lazy<IPersonService>(() => personService);
-        }
-
-        [HttpPost]
-        public async Task<IHttpActionResult> Test()
-        {
-            return Json("The unitiy for API seems fine");
         }
 
         [HttpPost]
@@ -78,7 +73,10 @@ namespace DeliveryService.API.Controllers
                 result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
                 result.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
-            return Json(result);
+            return Json(result, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
         }
     }
 }
