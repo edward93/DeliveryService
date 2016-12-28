@@ -22,7 +22,7 @@ namespace DAL.Entities
         [Required]
         public UploadType UploadType { get; set; }
         [Required]
-        public string FilePath { get; set; }
+        public string FileName { get; set; }
         public DateTime ExpireDate { get; set; }
         public string Description { get; set; }
         [Required]
