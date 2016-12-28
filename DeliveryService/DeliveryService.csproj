@@ -290,6 +290,8 @@
     <Content Include="Content\plugins\iCheck\custom.css" />
     <Content Include="Content\plugins\iCheck\green%402x.png" />
     <Content Include="Content\plugins\iCheck\green.png" />
+    <Content Include="Content\plugins\imageOverlay\imageOverlay.css" />
+    <Content Include="Content\plugins\imageOverlay\imageOverlayBase.css" />
     <Content Include="Content\plugins\images\bootstrap-colorpicker\alpha-horizontal.png" />
     <Content Include="Content\plugins\images\bootstrap-colorpicker\alpha.png" />
     <Content Include="Content\plugins\images\bootstrap-colorpicker\hue-horizontal.png" />

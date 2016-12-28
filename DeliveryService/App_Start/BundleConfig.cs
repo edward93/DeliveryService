@@ -131,6 +131,9 @@ namespace DeliveryService
                       "~/Scripts/plugins/codemirror/codemirror.js",
                       "~/Scripts/plugins/codemirror/mode/javascript/javascript.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
+                    "~/Scripts/modernizr-*"));
+
             // codeEditor 
             bundles.Add(new ScriptBundle("~/plugins/nestable").Include(
                       "~/Scripts/plugins/nestable/jquery.nestable.js"));
@@ -406,7 +409,9 @@ namespace DeliveryService
                       "~/Scripts/plugins/bootstrap-markdown/bootstrap-markdown.js",
                       "~/Scripts/plugins/bootstrap-markdown/markdown.js"));
 
-
+            bundles.Add(new StyleBundle("~/plugins/imageOverlay").Include(
+                "~/Content/plugins/imageOverlay/imageOverlay.css",
+                "~/Content/plugins/imageOverlay/imageOverlayBase.css"));
         }
     }
 }
