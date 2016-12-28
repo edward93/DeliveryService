@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\IConfig.cs" />
+    <Compile Include="Extensions\DateTimeExtension.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\ListHelpers.cs" />
     <Compile Include="Helpers\Message.cs" />

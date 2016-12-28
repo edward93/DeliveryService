@@ -13,6 +13,7 @@ using DAL.Enums;
 using DeliveryService.API.ApiModels;
 using DeliveryService.API.ViewModel.Enums;
 using Infrastructure.Config;
+using Infrastructure.Extensions;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
@@ -150,27 +151,14 @@ namespace DeliveryService.API.Controllers
                     break;
             }
 
-            if (!HasImageExtension(fileName)) return Tuple.Create("", "", false);
+            if (!Utilities.HasImageExtension(fileName)) return Tuple.Create("", "", false);
 
             var extension = Path.GetExtension(fileName);
-            fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{GetTimestamp(DateTime.UtcNow)}{extension}";
+            fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.UtcNow.Timestamp()}{extension}";
             var path = Path.GetFullPath(HttpContext.Current.Server.MapPath("~/") + filePath);
             var filepath = Path.Combine(path, fileName);
             Directory.CreateDirectory(path);
             return Tuple.Create(filepath, fileName, true);
         }
-
-        public bool HasImageExtension(string source)
-        {
-            return (source.EndsWith(".png") || source.EndsWith(".jpg") ||
-                source.EndsWith(".jpeg") || source.EndsWith(".tif") || source.EndsWith(".bmp"));
-        }
-
-        private string GetTimestamp(DateTime value)
-        {
-            return value.ToString("yyyyMMddHHmmssffff");
-        }
-
-
     }
 }
