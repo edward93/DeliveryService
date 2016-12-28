@@ -79,7 +79,7 @@ namespace DeliveryService.API.Controllers
                             Driver = driver,
                             IsApproved = false,
                             ExpireDate = DateTime.UtcNow,
-                            FilePath = document.Item2,
+                            FileName = document.Item2,
                             UploadType = documentType,
                             CreatedBy = driver.Person.Id,
                             UpdatedBy = driver.Person.Id,
