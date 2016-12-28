@@ -15,6 +15,7 @@ using DeliveryService.API.ViewModel.Enums;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
@@ -31,20 +32,23 @@ namespace DeliveryService.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<HttpResponseMessage> AddFileForDriver()
+        public async Task<IHttpActionResult> AddFileForDriver()
         {
+            var serviceResult = new ServiceResult();
             var userId = User.Identity.GetUserId();
-
             if (!Request.Content.IsMimeMultipartContent())
             {
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
-            UploadType documentType;
+            UploadType documentType = UploadType.Other;
             if (HttpContext.Current.Request.Form["documentType"] != null)
                 documentType =
-                   (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["documentType"]);
+                    (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["documentType"]);
             else
-                return Request.CreateResponse(HttpStatusCode.NotAcceptable, "This request is not properly formatted");
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
+            }
 
             string root = HttpContext.Current.Server.MapPath("~/App_Data");
             var provider = new MultipartFormDataStreamProvider(root);
@@ -59,39 +63,50 @@ namespace DeliveryService.API.Controllers
                 {
                     if (string.IsNullOrEmpty(file.Headers.ContentDisposition.FileName))
                     {
-                        return Request.CreateResponse(HttpStatusCode.NotAcceptable, "This request is not properly formatted");
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error,
+                            "This request is not properly formatted");
                     }
+
                     var document = PrepareFile(file, documentType);
-
-
-                    File.Move(file.LocalFileName, document.Item1);
-                    Driver driver = await _driverService.Value.GetDriverByPersonAsync(userId);
-
-                    var driverUpload = new DriverUpload
+                    if (document.Item3)
                     {
-                        Driver = driver,
-                        IsApproved = false,
-                        ExpireDate = DateTime.UtcNow,
-                        FilePath = document.Item2,
-                        UploadType = documentType,
-                        CreatedBy = driver.Person.Id,
-                        UpdatedBy = driver.Person.Id,
-                        UpdatedDt = DateTime.UtcNow,
-                        CreatedDt = DateTime.UtcNow
-                    };
+                        File.Move(file.LocalFileName, document.Item1);
+                        Driver driver = await _driverService.Value.GetDriverByPersonAsync(userId);
 
-                    await _driverUploadService.Value.CreateDriverUpload(driverUpload);
+                        var driverUpload = new DriverUpload
+                        {
+                            Driver = driver,
+                            IsApproved = false,
+                            ExpireDate = DateTime.UtcNow,
+                            FilePath = document.Item2,
+                            UploadType = documentType,
+                            CreatedBy = driver.Person.Id,
+                            UpdatedBy = driver.Person.Id,
+                            UpdatedDt = DateTime.UtcNow,
+                            CreatedDt = DateTime.UtcNow
+                        };
 
+                        await _driverUploadService.Value.CreateDriverUpload(driverUpload);
+                    }
                 }
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Json(serviceResult, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
             }
             catch (Exception e)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, e);
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+                return Json(serviceResult, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
             }
         }
 
-        private Tuple<string, string> PrepareFile(MultipartFileData file, UploadType documentType)
+        private Tuple<string, string, bool> PrepareFile(MultipartFileData file, UploadType documentType)
         {
             string fileName = file.Headers.ContentDisposition.FileName;
             if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
@@ -125,15 +140,22 @@ namespace DeliveryService.API.Controllers
                     filePath += "Other";
                     break;
             }
-            var extension = Path.GetExtension(fileName);
-            //TODO: check extension 
-            fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{GetTimestamp(DateTime.UtcNow)}{extension}";
-            var path = Path.GetFullPath(HttpContext.Current.Server.MapPath("~/") + filePath);
+            if (HasImageExtension(fileName))
+            {
+                var extension = Path.GetExtension(fileName);
+                fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{GetTimestamp(DateTime.UtcNow)}{extension}";
+                var path = Path.GetFullPath(HttpContext.Current.Server.MapPath("~/") + filePath);
+                var filepath = Path.Combine(path, fileName);
+                Directory.CreateDirectory(path);
+                return Tuple.Create(filepath, fileName, true);
+            }
+            return Tuple.Create("", "", false);
+        }
 
-            var filepath = Path.Combine(path, fileName);
-            //var path = HttpContext.Current.Server.MapPath(filePath);
-            Directory.CreateDirectory(path);
-            return Tuple.Create(filepath, fileName);
+        public bool HasImageExtension(string source)
+        {
+            return (source.EndsWith(".png") || source.EndsWith(".jpg") ||
+                source.EndsWith(".jpeg") || source.EndsWith(".tif") || source.EndsWith(".bmp"));
         }
 
         private string GetTimestamp(DateTime value)

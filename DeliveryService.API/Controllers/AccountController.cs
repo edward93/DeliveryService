@@ -32,6 +32,7 @@ namespace DeliveryService.API.Controllers
     {
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IAddressService> _addressService;
         private const string LocalLoginProvider = "Local";
 
 
@@ -39,10 +40,11 @@ namespace DeliveryService.API.Controllers
         {
         }
 
-        public AccountController(IPersonService personService, IConfig config, IDriverService driverService) : base(config)
+        public AccountController(IPersonService personService, IConfig config, IDriverService driverService, IAddressService addressService) : base(config)
         {
             _driverService = new Lazy<IDriverService>(() => driverService);
             _personService = new Lazy<IPersonService>(() => personService);
+            _addressService = new Lazy<IAddressService>(() => addressService);
         }
 
 
@@ -320,7 +322,6 @@ namespace DeliveryService.API.Controllers
         [Route("RegisterDriver")]
         public async Task<IHttpActionResult> RegisterDriver(RegisterBindingModel model)
         {
-            model.DateOfBirth = DateTime.Parse(model.DateOfBirthApi);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -351,11 +352,15 @@ namespace DeliveryService.API.Controllers
                     UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
                     serviceResult.Messages.AddMessage(MessageType.Info, "Person was successfully created!");
 
+                    model.Address.CreatedDt = DateTime.UtcNow;
+                    model.Address.UpdatedDt = DateTime.UtcNow;
+
                     var driver = new Driver
                     {
                         Approved = false,
                         Status = DriverStatus.Offline,
                         Id = person.Id,
+                        Addresses = new List<Address> { model.Address },
                         CreatedDt = DateTime.UtcNow,
                         UpdatedDt = DateTime.UtcNow,
                         CreatedBy = person.Id,

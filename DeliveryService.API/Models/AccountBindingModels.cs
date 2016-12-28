@@ -57,9 +57,8 @@ namespace DeliveryService.API.Models
         [Required]
         public Sex Sex { get; set; }
         public DateTime DateOfBirth { get; set; }
-
-        public string DateOfBirthApi { get; set; }
-
+        public string Phone { get; set; }
+        public Address Address { get; set; }
 
         public Person GetPerson(User user)
         {
@@ -73,9 +72,9 @@ namespace DeliveryService.API.Models
                 FirstName = FirstName,
                 LastName = LastName,
                 Sex = Sex,
+                Phone = Phone,
                 UpdatedBy = 2,
                 UpdatedDt = DateTime.UtcNow,
-               // User = user,
                 UserId = user.Id
             };
         }
