@@ -40,10 +40,17 @@ namespace DeliveryService.API.Controllers
             {
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
-            UploadType documentType = UploadType.Other;
-            if (HttpContext.Current.Request.Form["documentType"] != null)
+            var documentType = UploadType.Other;
+            var expireDate = DateTime.UtcNow;
+            var desc = HttpContext.Current.Request.Form["Description"] ?? string.Empty;
+
+            if (HttpContext.Current.Request.Form["DocumentType"] != null &&
+                HttpContext.Current.Request.Form["ExpireDate"] != null)
+            {
                 documentType =
-                    (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["documentType"]);
+                    (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
+                expireDate = Convert.ToDateTime(HttpContext.Current.Request.Form["ExpireDate"]);
+            }
             else
             {
                 serviceResult.Success = false;
@@ -69,28 +76,30 @@ namespace DeliveryService.API.Controllers
                     }
 
                     var document = PrepareFile(file, documentType);
-                    if (document.Item3)
+
+                    if (!document.Item3) continue;
+
+                    File.Move(file.LocalFileName, document.Item1);
+                    var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+
+                    var driverUpload = new DriverUpload
                     {
-                        File.Move(file.LocalFileName, document.Item1);
-                        Driver driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+                        Driver = driver,
+                        Description = desc,
+                        DocumentStatus = DocumentStatus.WaitingForApproval,
+                        ExpireDate = expireDate,
+                        FileName = document.Item2,
+                        UploadType = documentType,
+                        CreatedBy = driver.Person.Id,
+                        UpdatedBy = driver.Person.Id,
+                        UpdatedDt = DateTime.UtcNow,
+                        CreatedDt = DateTime.UtcNow
+                    };
 
-                        var driverUpload = new DriverUpload
-                        {
-                            Driver = driver,
-                            DocumentStatus = DocumentStatus.WaitingForApproval,
-                            ExpireDate = DateTime.UtcNow,
-                            FileName = document.Item2,
-                            UploadType = documentType,
-                            CreatedBy = driver.Person.Id,
-                            UpdatedBy = driver.Person.Id,
-                            UpdatedDt = DateTime.UtcNow,
-                            CreatedDt = DateTime.UtcNow
-                        };
+                    await _driverUploadService.Value.CreateDriverUpload(driverUpload);
 
-                        await _driverUploadService.Value.CreateDriverUpload(driverUpload);
-                        serviceResult.Success = true;
-                        serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
-                    }
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
                 }
                 
             }
@@ -140,16 +149,15 @@ namespace DeliveryService.API.Controllers
                     filePath += "Other";
                     break;
             }
-            if (HasImageExtension(fileName))
-            {
-                var extension = Path.GetExtension(fileName);
-                fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{GetTimestamp(DateTime.UtcNow)}{extension}";
-                var path = Path.GetFullPath(HttpContext.Current.Server.MapPath("~/") + filePath);
-                var filepath = Path.Combine(path, fileName);
-                Directory.CreateDirectory(path);
-                return Tuple.Create(filepath, fileName, true);
-            }
-            return Tuple.Create("", "", false);
+
+            if (!HasImageExtension(fileName)) return Tuple.Create("", "", false);
+
+            var extension = Path.GetExtension(fileName);
+            fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{GetTimestamp(DateTime.UtcNow)}{extension}";
+            var path = Path.GetFullPath(HttpContext.Current.Server.MapPath("~/") + filePath);
+            var filepath = Path.Combine(path, fileName);
+            Directory.CreateDirectory(path);
+            return Tuple.Create(filepath, fileName, true);
         }
 
         public bool HasImageExtension(string source)
