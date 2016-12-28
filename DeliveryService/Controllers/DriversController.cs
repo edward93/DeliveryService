@@ -60,12 +60,6 @@ namespace DeliveryService.Controllers
             return Json(result);
         }
 
-        [HttpGet]
-        public ActionResult GetDriversList()
-        {
-            return null;
-        }
-
         [HttpPost]
         public async Task<JsonResult> ApproveDriverDocument(int documentId)
         {

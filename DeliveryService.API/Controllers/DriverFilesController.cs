@@ -39,6 +39,7 @@ namespace DeliveryService.API.Controllers
             var userId = User.Identity.GetUserId();
             if (!Request.Content.IsMimeMultipartContent())
             {
+                //TODO: The line below should be fixed. No exceptions should be thrown outside of tyr catch block
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
             var documentType = UploadType.Other;
