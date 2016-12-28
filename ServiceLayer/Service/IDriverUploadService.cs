@@ -11,5 +11,7 @@ namespace ServiceLayer.Service
     {
         Task<IEnumerable<DriverUpload>> GetDriverUploadsByDriverIdAsync(int id);
         Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload);
+        Task ApproveDriverDocumentAsync(int documentId, int personId);
+        Task RejectDriverDocumentAsync(int documentId, int personId, string reason);
     }
 }

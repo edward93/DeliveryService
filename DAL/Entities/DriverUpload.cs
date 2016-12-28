@@ -26,7 +26,7 @@ namespace DAL.Entities
         public DateTime ExpireDate { get; set; }
         public string Description { get; set; }
         [Required]
-        public bool IsApproved { get; set; }
+        public DocumentStatus DocumentStatus { get; set; }
         public string RejectionComment { get; set; }
 
         public virtual Driver Driver { get; set; }

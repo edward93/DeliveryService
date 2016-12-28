@@ -77,7 +77,7 @@ namespace DeliveryService.API.Controllers
                         var driverUpload = new DriverUpload
                         {
                             Driver = driver,
-                            IsApproved = false,
+                            DocumentStatus = DocumentStatus.WaitingForApproval,
                             ExpireDate = DateTime.UtcNow,
                             FileName = document.Item2,
                             UploadType = documentType,
@@ -88,22 +88,22 @@ namespace DeliveryService.API.Controllers
                         };
 
                         await _driverUploadService.Value.CreateDriverUpload(driverUpload);
+                        serviceResult.Success = true;
+                        serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
                     }
                 }
-                return Json(serviceResult, new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
+                
             }
             catch (Exception e)
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
-                return Json(serviceResult, new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
             }
+
+            return Json(serviceResult, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
         }
 
         private Tuple<string, string, bool> PrepareFile(MultipartFileData file, UploadType documentType)

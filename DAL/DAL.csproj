@@ -71,6 +71,7 @@
     <Compile Include="Entities\User.cs" />
     <Compile Include="Enums\CardType.cs" />
     <Compile Include="Enums\Country.cs" />
+    <Compile Include="Enums\DocumentStatus.cs" />
     <Compile Include="Enums\DriverStatus.cs" />
     <Compile Include="Enums\MessageType.cs" />
     <Compile Include="Enums\Sex.cs" />

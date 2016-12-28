@@ -23,5 +23,15 @@ namespace ServiceLayer.Service
         {
             return await _driverUploadRepository.CreateDriverUpload(driverUpload);
         }
+
+        public async Task ApproveDriverDocumentAsync(int documentId, int personId)
+        {
+            await _driverUploadRepository.ApproveDriverDocumentAsync(documentId, personId);
+        }
+
+        public async Task RejectDriverDocumentAsync(int documentId, int personId, string reason)
+        {
+            await _driverUploadRepository.RejectDriverDocumentAsync(documentId, personId, reason);
+        }
     }
 }

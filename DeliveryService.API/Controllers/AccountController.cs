@@ -352,15 +352,14 @@ namespace DeliveryService.API.Controllers
                     UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
                     serviceResult.Messages.AddMessage(MessageType.Info, "Person was successfully created!");
 
-                    model.Address.CreatedDt = DateTime.UtcNow;
-                    model.Address.UpdatedDt = DateTime.UtcNow;
+                    var driverAddress = model.GetAddress();
 
                     var driver = new Driver
                     {
                         Approved = false,
                         Status = DriverStatus.Offline,
                         Id = person.Id,
-                        Addresses = new List<Address> { model.Address },
+                        Addresses = new List<Address> { driverAddress },
                         CreatedDt = DateTime.UtcNow,
                         UpdatedDt = DateTime.UtcNow,
                         CreatedBy = person.Id,
@@ -383,7 +382,7 @@ namespace DeliveryService.API.Controllers
             {
                 // If any errors generate the error message and return json
                 serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating person!");
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while registering driver");
                 serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
 

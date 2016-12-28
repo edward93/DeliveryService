@@ -58,8 +58,34 @@ namespace DeliveryService.API.Models
         public Sex Sex { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Phone { get; set; }
-        public Address Address { get; set; }
 
+#region Address
+        public string AddressLine1 { get; set; }
+        public string Addressline2 { get; set; }
+        public Country Country { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string ZipCode { get; set; }
+#endregion
+
+        //public Address Address { get; set; }
+        public Address GetAddress()
+        {
+            return new Address
+            {
+                CreatedDt = DateTime.UtcNow,
+                AddressLine1 = AddressLine1,
+                AddressLine2 = Addressline2,
+                City = City,
+                Country = Country,
+                CreatedBy = 2,
+                IsDeleted = false,
+                UpdatedBy = 2,
+                State = State,
+                ZipCode = ZipCode,
+                UpdatedDt = DateTime.UtcNow
+            };
+        }
         public Person GetPerson(User user)
         {
             return new Person

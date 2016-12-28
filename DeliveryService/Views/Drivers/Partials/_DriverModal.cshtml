@@ -205,18 +205,19 @@
     function InitDocuments(data) {
         var result = JSON.parse(data);
         for (var i = 0; i < result.length; i++) {
+            var documentId = result[i].Id;
             var docType = result[i].UploadType;
-            var isApproved = result[i].IsApproved;
-            var filePath = result[i].FilePath;
+            var documentState = result[i].DocumentState;
+            var filePath = result[i].FileName;
             var fullPath = createDocumentFullPath(docType, filePath);
-            createDocumentsView(fullPath, isApproved, docType);
+            createDocumentsView(fullPath, documentId, docType);
         }
     }
 
-    function createDocumentsView(fullPath, isApproved, docType) {
+    function createDocumentsView(fullPath, documentId, docType) {
         var elem = document.createElement("img");
         elem.setAttribute("src", fullPath);
-        elem.setAttribute("data-id", isApproved);
+        elem.setAttribute("data-id", documentId);
         elem.setAttribute("class", "driverDocuments");
         switch (docType) {
             case UploadType.ProofOfAddress.value:
