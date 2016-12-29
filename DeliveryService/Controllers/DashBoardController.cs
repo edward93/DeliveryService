@@ -40,8 +40,8 @@ namespace DeliveryService.Controllers
             model.AllAmount = 0;
             model.TodayEarned = 0;
             model.AllEarned = 0;
-            model.TodayCablrFee = 0;
-            model.AllCablrFee = 0;
+            model.TodayAddRiderFee = 0;
+            model.AllAddRiderFee = 0;
 
             return model;
         }
