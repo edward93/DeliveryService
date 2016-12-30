@@ -37,32 +37,39 @@
                                                 <div class="col-lg-12">
                                                     <div class="row firsDocRow">
                                                         <div class="effect-1 effects clearfix">
-                                                            <div class="col-lg-6 img" id="Passport">
+                                                          
+                                                            <div class="col-lg-6 img">
+                                                                <h5>Passport</h5>
+                                                                <img id="Passport" src="~/Images/passport.png" class="driverDocuments"/>
                                                                 <div class="overlay">
                                                                     <a href="#" class="expand">+</a>
-                                                                    <!-- <a class="close-overlay hidden">x</a> -->
                                                                 </div>
                                                             </div>
-                                                            <div class="col-lg-6 img" id="Insurance">
+                                                          
+                                                            <div class="col-lg-6 img">
+                                                                <h5>Insuracne</h5>
+                                                                <img id="Insurance" src="~/Images/insurance.png" class="driverDocuments"/>
                                                                 <div class="overlay">
                                                                     <a href="#" class="expand">+</a>
-                                                                    <!-- <a class="close-overlay hidden">x</a> -->
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div  class="effect-1 effects clearfix">
-                                                            <div class="col-lg-6 img" id="ProofOfAddress">
+                                                        <div class="effect-1 effects clearfix">
+                                                            <div class="col-lg-6 img">
+                                                                <h5>Proof Of Address</h5>
+                                                                <img id="ProofOfAddress" src="~/Images/proofOfAddres.png" class="driverDocuments"/>
                                                                 <div class="overlay">
                                                                     <a href="#" class="expand">+</a>
-                                                                    <!-- <a class="close-overlay hidden">x</a> -->
                                                                 </div>
                                                             </div>
-                                                            <div class="col-lg-6 img" id="License">
+                                                           
+                                                            <div class="col-lg-6 img">
+                                                                <h5>License</h5>
+                                                                <img id="License" src="~/Images/license.png" class="driverDocuments"/>
                                                                 <div class="overlay">
                                                                     <a href="#" class="expand">+</a>
-                                                                    <!-- <a class="close-overlay hidden">x</a> -->
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -106,7 +113,6 @@
         }
 
     .driverDocuments {
-        
     }
 
     .firsDocRow {
@@ -202,6 +208,10 @@
             });
     }
 
+    function ClearModal() {
+
+    }
+
     function InitDocuments(data) {
         var result = JSON.parse(data);
         for (var i = 0; i < result.length; i++) {
@@ -221,19 +231,29 @@
         elem.setAttribute("class", "driverDocuments");
         switch (docType) {
             case UploadType.ProofOfAddress.value:
-                document.getElementById(UploadType.ProofOfAddress.name).appendChild(elem);
+                var proofOfAdddress = document.getElementById(UploadType.ProofOfAddress.name);
+                proofOfAdddress.setAttribute("src", fullPath);
+                proofOfAdddress.setAttribute("data-id", documentId);
                 break;
             case UploadType.Insurance.value:
-                document.getElementById(UploadType.Insurance.name).appendChild(elem);
+                var insurance = document.getElementById(UploadType.Insurance.name);
+                insurance.setAttribute("src", fullPath);
+                insurance.setAttribute("data-id", documentId);
                 break;
             case UploadType.License.value:
-                document.getElementById(UploadType.License.name).appendChild(elem);
+                var license = document.getElementById(UploadType.License.name);
+                license.setAttribute("src", fullPath);
+                license.setAttribute("data-id", documentId);
                 break;
             case UploadType.Passport.value:
-                document.getElementById(UploadType.Passport.name).appendChild(elem);
+                var passport = document.getElementById(UploadType.Passport.name);
+                passport.setAttribute("src", fullPath);
+                passport.setAttribute("data-id", documentId);
                 break;
             case UploadType.Photo.value:
-                document.getElementById(UploadType.Photo.name).appendChild(elem);
+                var photo = document.getElementById(UploadType.Photo.name);
+                photo.setAttribute("src", fullPath);
+                photo.setAttribute("data-id", documentId);
                 break;
             default:
                 break;
