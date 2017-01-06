@@ -17,9 +17,16 @@ namespace DeliveryService
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
                       "~/fonts/font-awesome/css/font-awesome.min.css", new CssRewriteUrlTransform()));
 
+
             // jQuery
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-2.1.1.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/lightBox").Include(
+                "~/Scripts/plugins/lightBox/lightbox.min.js"));
+
+            bundles.Add(new StyleBundle("~/plugins/lightBox").Include(
+                "~/Content/plugins/lightBox/lightbox.min.css"));
 
             // jQueryUI CSS
             bundles.Add(new ScriptBundle("~/Scripts/plugins/jquery-ui/jqueryuiStyles").Include(

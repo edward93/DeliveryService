@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DAL.Constants;
 using DAL.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -124,7 +125,15 @@ namespace DeliveryService.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    
+                    var currentUser = await UserManager.FindByEmailAsync(user.Email);
+
+                    // Assign Member role to user
+                    var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Admin);
+
+                    if (roleResult.Succeeded)
+                    {
+                        UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Admin));
+                    }
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -141,6 +150,7 @@ namespace DeliveryService.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+        
 
         //
         // GET: /Account/ConfirmEmail

@@ -26,7 +26,7 @@ namespace DeliveryService.Controllers
         private readonly Lazy<IPersonService> _personService;
 
         public DriversController(IConfig config,
-            IDriverService driverService, 
+            IDriverService driverService,
             IDriverUploadService uploadService,
             IPersonService personService) : base(config)
         {
@@ -61,17 +61,26 @@ namespace DeliveryService.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ApproveDriverDocument(int documentId)
+        public async Task<JsonResult> ApproveDriverDocument(int documentId, int driverId)
         {
             var serviceResult = new ServiceResult();
             try
             {
-                var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
-                serviceResult.Success = true;
-                serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
+                var person = await _personService.Value.GetByIdAsync<Person>(driverId);
+                if (person != null)
+                {
+                    await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
+                }
+                else
+                {
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, $"Driver id was invalid : {driverId})");
+                }
+               
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, $"Error while approving the document (Id: {documentId})");
@@ -93,12 +102,20 @@ namespace DeliveryService.Controllers
                 }
                 else
                 {
-                    var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                    await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id, model.RejectionComment);
-                    serviceResult.Success = true;
-                    serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
+                    var person = await _personService.Value.GetByIdAsync<Person>(model.DriverId);
+                    if (person != null)
+                    {
+                        await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id, model.RejectionComment);
+                        serviceResult.Success = true;
+                        serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
+                    }
+                    else
+                    {
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error, $"Driver id was invalid : {model.DriverId})");
+                    }
                 }
-                
+
             }
             catch (Exception)
             {
