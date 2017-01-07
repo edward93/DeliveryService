@@ -1,9 +1,11 @@
+using System;
 using System.Security.Claims;
 using DAL.Constants;
 using DAL.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity.Migrations;
+using DAL.Enums;
 
 namespace DAL.Migrations
 {
@@ -33,6 +35,25 @@ namespace DAL.Migrations
             var currentUser = um.FindByEmail(user.Email);
             um.AddToRole(currentUser.Id, Roles.Admin);
             um.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Admin));
+
+            var adminPerson = new Person
+            {
+                IsDeleted = false,
+                CreatedBy = 2,
+                CreatedDt = DateTime.UtcNow,
+                DateOfBirth = DateTime.UtcNow.AddYears(-21),
+                Email = "admin@gmail.com",
+                FirstName = "Admin",
+                LastName = "Admin",
+                Sex = Sex.Male,
+                Phone = "123456789",
+                UpdatedBy = 2,
+                UpdatedDt = DateTime.UtcNow,
+                UserId = user.Id
+            };
+
+            context.Persons.AddOrUpdate(adminPerson);
+            context.SaveChanges();
         }
     }
 }

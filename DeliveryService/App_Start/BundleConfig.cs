@@ -11,6 +11,7 @@ namespace DeliveryService
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",
                       "~/Content/animate.css",
+                      "~/Content/globalStyles.css",
                       "~/Content/style.css"));
 
             // Font Awesome icons

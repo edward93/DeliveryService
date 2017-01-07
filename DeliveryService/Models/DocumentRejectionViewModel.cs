@@ -7,8 +7,6 @@ namespace DeliveryService.Models
         [Required]
         public int DocumentId { get; set; }
         [Required]
-        public int DriverId { get; set; }
-        [Required]
         public string RejectionComment { get; set; }
     }
 }

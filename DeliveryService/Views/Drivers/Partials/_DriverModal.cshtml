@@ -42,9 +42,9 @@
                                                                 <h5>Passport</h5>
                                                                 <img id="Passport" src="~/Images/passport.png" class="no-img" />
                                                                 <div class="row overlay Passport">
-                                                                    <div class="col-lg-4"><a href="#" class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
                                                                 </div>
                                                             </div>
 
@@ -52,9 +52,9 @@
                                                                 <h5>Insuracne</h5>
                                                                 <img id="Insurance" src="~/Images/insurance.png" class="no-img" />
                                                                 <div class="row overlay Insurance">
-                                                                    <div class="col-lg-4"><a href="#" class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -65,9 +65,9 @@
                                                                 <h5>Proof Of Address</h5>
                                                                 <img id="ProofOfAddress" src="~/Images/proofOfAddres.png" class="no-img" />
                                                                 <div class="row overlay ProofOfAddress">
-                                                                    <div class="col-lg-4"><a href="#" class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
                                                                 </div>
                                                             </div>
 
@@ -79,8 +79,8 @@
                                                                         <a href="#"
                                                                            data-toggle="tab" data-placement="top" title="Hooray!" class="expand previewDriverDocument"><span class="fa fa-search"></span></a>
                                                                     </div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4"><a href="#" class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                    <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -112,30 +112,6 @@
     <!-- /.modal-dialog -->
 </div>
 
-<style>
-    /* Local style for demo purpose */
-
-    .lightBoxGallery {
-        text-align: center;
-    }
-
-        .lightBoxGallery img {
-            margin: 5px;
-        }
-
-    .firsDocRow {
-        margin-bottom: 30px;
-    }
-
-    .acceptDriverDocument {
-    }
-
-    .previewDriverDocument {
-    }
-
-    .rejectDriverDocument {
-    }
-</style>
 <script>
     var driverId;
     var UploadType = {
@@ -209,18 +185,21 @@
             getDriverDocuments(parseInt(driverIdForPreview));
         });
 
-        $(document).on('click', ".acceptDriverDocument", function () {
+        $(document).on('click', ".acceptDriverDocument", function (e) {
+            e.preventDefault();
             var documentId = $(this).parent().parent().attr('data-id');
-            ApproveDriverDocument(documentId);
+            ApproveDriverDocument(documentId, e);
         });
 
-        $(document).on('click', ".previewDriverDocument", function () {
+        $(document).on('click', ".previewDriverDocument", function (e) {
+            e.preventDefault();
             var documentId = $(this).parent().parent().attr('data-id');
         });
 
-        $(document).on('click', ".rejectDriverDocument", function () {
+        $(document).on('click', ".rejectDriverDocument", function (e) {
+            e.preventDefault();
             var documentId = $(this).parent().parent().attr('data-id');
-            RejectDriverDocument(documentId);
+            RejectDriverDocument(documentId, e);
         });
 
     });
@@ -242,28 +221,33 @@
             });
     }
 
-    function ApproveDriverDocument(documentId) {
+    function ApproveDriverDocument(documentId, e) {
+        var currentButton = $(e.currentTarget);
         if (documentId) {
             window.BlockUi();
             $.post("/Drivers/ApproveDriverDocument",
-                { documentId: documentId, driverId: driverId },
+                { documentId: documentId },
                 function (data) {
                     window.UnBlockUi();
-                    for (var i = 0; i < data.Messages.length; i++) {
-                        if (data.Success)
+                    if (data.Success) {
+                        currentButton.addClass('disabled approveSelected');
+                        for (let i = 0; i < data.Messages.length; i++) {
                             toastr.success(data.Messages[i].Value);
-                        else
+                        }
+                    } else {
+                        for (let i = 0; i < data.Messages.length; i++) {
                             toastr.error(data.Messages[i].Value);
+                        }
                     }
                 });
         }
     }
 
-    function RejectDriverDocument(documentId) {
-
+    function RejectDriverDocument(documentId, e) {
+        var currentButton = $(e.currentTarget);
+        var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
         if (documentId != undefined) {
             var data = {
-                DriverId: driverId,
                 DocumentId: documentId,
                 RejectionComment: "ddd"
             };
@@ -272,13 +256,18 @@
             $.post("/Drivers/RejectDriverDocument",
                 { model: data },
                 function (data) {
-                    for (var i = 0; i < data.Messages.length; i++) {
-                        if (data.Success)
-                            toastr.success(data.Messages[i].Value);
-                        else
-                            toastr.error(data.Messages[i].Value);
-                    }
                     window.UnBlockUi();
+                    if (data.Success) {
+                        currentButton.addClass('disabled rejectSelected');
+                        approveButton.addClass('disabled');
+                        for (let i = 0; i < data.Messages.length; i++) {
+                            toastr.success(data.Messages[i].Value);
+                        }
+                    } else {
+                        for (let i = 0; i < data.Messages.length; i++) {
+                            toastr.error(data.Messages[i].Value);
+                        }
+                    }
                 });
         }
     }
@@ -295,16 +284,15 @@
             var documentState = result[i].DocumentState;
             var filePath = result[i].FileName;
             var fullPath = createDocumentFullPath(docType, filePath);
-            createDocumentsView(fullPath, documentId, docType);
+            createDocumentsView(fullPath, documentId, docType, result);
         }
     }
 
-    function createDocumentsView(fullPath, documentId, docType) {
+    function createDocumentsView(fullPath, documentId, docType, data) {
         var elem = document.createElement("img");
         elem.setAttribute("src", fullPath);
         elem.setAttribute("data-id", documentId);
         elem.setAttribute("class", "driverDocuments");
-
 
         switch (docType) {
             case UploadType.ProofOfAddress.value:
@@ -312,8 +300,11 @@
                 proofOfAdddress.setAttribute("src", fullPath);
                 proofOfAdddress.removeAttribute("class");
                 proofOfAdddress.setAttribute("data-id", documentId);
-                var proofOfAddressconteiner = document.getElementsByClassName(UploadType.ProofOfAddress.name);
+                var proofOfAddressconteiner = $("." + UploadType.ProofOfAddress.name);
                 proofOfAddressconteiner.attr("data-id", documentId);
+
+                setStatuses(UploadType.ProofOfAddress.name, data.filter(a => a.UploadType === UploadType.ProofOfAddress.value)[0].DocumentStatus);
+
                 break;
             case UploadType.Insurance.value:
                 var insurance = document.getElementById(UploadType.Insurance.name);
@@ -322,35 +313,54 @@
                 insurance.removeAttribute("class");
                 var insuranceConteiner = $("." + UploadType.Insurance.name);
                 insuranceConteiner.attr("data-id", documentId);
+
+                setStatuses(UploadType.Insurance.name, data.filter(a => a.UploadType === UploadType.Insurance.value)[0].DocumentStatus);
+
                 break;
             case UploadType.License.value:
                 var license = document.getElementById(UploadType.License.name);
                 license.setAttribute("src", fullPath);
                 license.setAttribute("data-id", documentId);
                 license.removeAttribute("class");
-                var licenseConteiner = document.getElementsByClassName(UploadType.License.name);
+                var licenseConteiner = $("." + UploadType.License.name);
                 licenseConteiner.attr("data-id", documentId);
+                setStatuses(UploadType.License.name, data.filter(a => a.UploadType === UploadType.License.value)[0].DocumentStatus);
+
                 break;
             case UploadType.Passport.value:
                 var passport = document.getElementById(UploadType.Passport.name);
                 passport.setAttribute("src", fullPath);
                 passport.setAttribute("data-id", documentId);
                 passport.removeAttribute("class");
-                var passportConteiner = document.getElementsByClassName(UploadType.Passport.name);
+                var passportConteiner = $("." + UploadType.Passport.name);
                 passportConteiner.attr("data-id", documentId);
+
+                setStatuses(UploadType.Passport.name, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
+                
                 break;
             case UploadType.Photo.value:
                 var photo = document.getElementById(UploadType.Photo.name);
                 photo.setAttribute("src", fullPath);
                 photo.setAttribute("data-id", documentId);
                 photo.removeAttribute("class");
-                var photoConteiner = document.getElementsByClassName(UploadType.Photo.name);
+                var photoConteiner = $("." + UploadType.Photo.name);
                 photoConteiner.attr("data-id", documentId);
+                setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
+
                 break;
             default:
                 break;
         }
 
+    }
+
+    function setStatuses(uploadTypeNmae, documentStatus) {
+        if (documentStatus === 1) {
+            $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled approveSelected');
+        } else if (documentStatus === 2) {
+            $("." + uploadTypeNmae + " .rejectDriverDocument").addClass('disabled rejectSelected');
+            $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled');
+        }
     }
 
     function createDocumentFullPath(doctype, fileName) {

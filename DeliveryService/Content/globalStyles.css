@@ -1,0 +1,34 @@
+﻿
+a.disabled {
+    opacity: .4;
+    cursor: default !important;
+    pointer-events: none;
+}
+
+a.approveSelected {
+    background-color: greenyellow;
+}
+
+a.rejectSelected {
+    background-color: red;
+}
+.acceptDriverDocument {
+}
+
+.previewDriverDocument {
+}
+
+.rejectDriverDocument {
+}
+
+.lightBoxGallery {
+    text-align: center;
+}
+
+    .lightBoxGallery img {
+        margin: 5px;
+    }
+
+.firsDocRow {
+    margin-bottom: 30px;
+}

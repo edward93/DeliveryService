@@ -61,14 +61,18 @@ namespace DeliveryService.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ApproveDriverDocument(int documentId, int driverId)
+        public async Task<JsonResult> ApproveDriverDocument(int documentId)
         {
             var serviceResult = new ServiceResult();
             try
             {
-                var person = await _personService.Value.GetByIdAsync<Person>(driverId);
+                var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                 if (person != null)
                 {
+
+                    var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(documentId);
+                    if(document.DocumentStatus == DocumentStatus.Approved || document.DocumentStatus == DocumentStatus.Rejected)
+                        throw new Exception($"This document cannot be approved. Either this document is already approved or it has been rejected.");
                     await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
@@ -76,7 +80,7 @@ namespace DeliveryService.Controllers
                 else
                 {
                     serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error, $"Driver id was invalid : {driverId})");
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
                 }
                
             }
@@ -84,6 +88,7 @@ namespace DeliveryService.Controllers
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, $"Error while approving the document (Id: {documentId})");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
             return Json(serviceResult);
         }
@@ -102,9 +107,12 @@ namespace DeliveryService.Controllers
                 }
                 else
                 {
-                    var person = await _personService.Value.GetByIdAsync<Person>(model.DriverId);
+                    var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                     if (person != null)
                     {
+                        var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(model.DocumentId);
+                        if (document.DocumentStatus == DocumentStatus.Rejected)
+                            throw new Exception("This document is already rejected.");
                         await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id, model.RejectionComment);
                         serviceResult.Success = true;
                         serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
@@ -112,15 +120,17 @@ namespace DeliveryService.Controllers
                     else
                     {
                         serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error, $"Driver id was invalid : {model.DriverId})");
+                        serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
                     }
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, $"Error while rejecting the document (Id: {model.DocumentId})");
+                serviceResult.Messages.AddMessage(MessageType.Error,
+                    $"Error while rejecting the document (Id: {model.DocumentId})");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
             return Json(serviceResult);
         }

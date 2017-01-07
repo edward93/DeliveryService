@@ -20,7 +20,7 @@ namespace ServiceLayer.Repository
 
         public async Task<IEnumerable<DriverUpload>> GetDriverUploadByDriverIdAsync(int id)
         {
-            return await DbContext.DriverUploads.Where(c => c.DriverId == id).ToListAsync();
+            return await DbContext.DriverUploads.Where(c => c.DriverId == id && c.IsDeleted == false).ToListAsync();
         }
 
         public async Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload)
