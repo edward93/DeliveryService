@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.API.ViewModel.Models;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
@@ -19,12 +20,14 @@ namespace DeliveryService.API.Controllers
     {
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IPersonService> _personService;
+        private readonly Lazy<IDriverUploadService> _driverUploadService;
 
         public DriverController(IDriverService service, IConfig config,
-            IPersonService personService) : base(config)
+            IPersonService personService, IDriverUploadService driverUploadService) : base(config)
         {
             _driverService = new Lazy<IDriverService>(() => service);
             _personService = new Lazy<IPersonService>(() => personService);
+            _driverUploadService = new Lazy<IDriverUploadService>(() => driverUploadService);
         }
 
         [HttpPost]
@@ -52,6 +55,64 @@ namespace DeliveryService.API.Controllers
                 result.Messages.AddMessage(MessageType.Error, ex.ToString());
             }
             return Json(result);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IHttpActionResult> GetDriverDetails()
+        {
+            ServiceResult result = new ServiceResult();
+            try
+            {
+                var driver = await _driverService.Value.GetDriverByPersonAsync(User.Identity.GetUserId());
+                if (driver != null)
+                {
+                    var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
+                    var driverDocList = new List<DriverDocumentModel>();
+                    foreach (var document in driverDocuments)
+                    {
+                        driverDocList.Add(new DriverDocumentModel()
+                        {
+                            DocumentType = document.UploadType,
+                            FileName = document.FileName,
+                            Description = document.Description,
+                            DocumentStatus = document.DocumentStatus,
+                            ExpireDate = document.ExpireDate,
+                            RejectionComment = document.RejectionComment
+                        });
+                    }
+                    var driverDetails = new DriverDetails()
+                    {
+                        FirstName = driver.Person.FirstName,
+                        LastName = driver.Person.LastName,
+                        Email = driver.Person.Email,
+                        DateOfBirth = driver.Person.DateOfBirth,
+                        Phone = driver.Person.Phone,
+                        Sex = driver.Person.Sex,
+                        Addresses = driver.Addresses.ToList(),
+                        DriverDocuments = driverDocList
+                    };
+
+                    result.Success = true;
+                    result.Data = driverDetails;
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Messages.AddMessage(MessageType.Error, "Driver was not found");
+                }
+            }
+            catch (Exception exception)
+            {
+                result.Success = false;
+                result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
+                result.Messages.AddMessage(MessageType.Error, exception.ToString());
+            }
+
+            return Json(result, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
         }
 
         [HttpPost]

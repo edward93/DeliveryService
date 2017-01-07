@@ -276,6 +276,7 @@
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\Enums\DriverDocumentTypeEnum.cs" />
+    <Compile Include="ViewModel\Models\DriverDetails.cs" />
     <Compile Include="ViewModel\Models\DriverDocumentModel.cs" />
   </ItemGroup>
   <ItemGroup>
