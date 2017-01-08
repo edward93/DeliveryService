@@ -23,7 +23,7 @@ namespace ServiceLayer.Repository
             return await DbContext.Set<T>().Where(c => c.IsDeleted == false).ToListAsync();
         }
 
-        public async Task<T> RemoveEntity<T>(int entityId) where T : class, IEntity
+        public async Task<T> RemoveEntityAsync<T>(int entityId) where T : class, IEntity
         {
             var entityToRemove = await GetByIdAsync<T>(entityId);
             entityToRemove.IsDeleted = true;

@@ -69,9 +69,8 @@ namespace DeliveryService.Controllers
                 var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                 if (person != null)
                 {
-
                     var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(documentId);
-                    if(document.DocumentStatus == DocumentStatus.Approved || document.DocumentStatus == DocumentStatus.Rejected)
+                    if (document.DocumentStatus == DocumentStatus.Approved || document.DocumentStatus == DocumentStatus.Rejected)
                         throw new Exception($"This document cannot be approved. Either this document is already approved or it has been rejected.");
                     await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
                     serviceResult.Success = true;
@@ -82,7 +81,7 @@ namespace DeliveryService.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
                 }
-               
+
             }
             catch (Exception ex)
             {
