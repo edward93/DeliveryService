@@ -366,7 +366,7 @@ namespace DeliveryService.API.Controllers
                         UpdatedBy = person.Id
                     };
                     var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
-                    serviceResult.Data = createdDriver;
+                    serviceResult.Data = null;//createdDriver;
                     serviceResult.Messages.AddMessage(MessageType.Info, "The Driver was successfuly created");
                     serviceResult.Success = true;
                 }
