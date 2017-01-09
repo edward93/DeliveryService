@@ -36,34 +36,34 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> AddFileForDriver()
         {
             var serviceResult = new ServiceResult();
-            var userId = User.Identity.GetUserId();
-            if (!Request.Content.IsMimeMultipartContent())
-            {
-                //TODO: The line below should be fixed. No exceptions should be thrown outside of tyr catch block
-                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-            }
-            var documentType = UploadType.Other;
-            var expireDate = DateTime.UtcNow;
-            var desc = HttpContext.Current.Request.Form["Description"] ?? string.Empty;
-
-            if (HttpContext.Current.Request.Form["DocumentType"] != null &&
-                HttpContext.Current.Request.Form["ExpireDate"] != null)
-            {
-                documentType =
-                    (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
-                expireDate = Convert.ToDateTime(HttpContext.Current.Request.Form["ExpireDate"]);
-            }
-            else
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
-            }
-
-            string root = HttpContext.Current.Server.MapPath("~/App_Data");
-            var provider = new MultipartFormDataStreamProvider(root);
-
             try
             {
+                var userId = User.Identity.GetUserId();
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+                var documentType = UploadType.Other;
+                var expireDate = DateTime.UtcNow;
+                var desc = HttpContext.Current.Request.Form["Description"] ?? string.Empty;
+
+                if (HttpContext.Current.Request.Form["DocumentType"] != null &&
+                    HttpContext.Current.Request.Form["ExpireDate"] != null)
+                {
+                    documentType =
+                        (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
+                    expireDate = Convert.ToDateTime(HttpContext.Current.Request.Form["ExpireDate"]);
+                }
+                else
+                {
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
+                }
+
+                string root = HttpContext.Current.Server.MapPath("~/App_Data");
+                var provider = new MultipartFormDataStreamProvider(root);
+
+
                 // Read the form data.
                 await Request.Content.ReadAsMultipartAsync(provider);
 
@@ -98,12 +98,24 @@ namespace DeliveryService.API.Controllers
                         CreatedDt = DateTime.UtcNow
                     };
 
-                    await _driverUploadService.Value.CreateDriverUpload(driverUpload);
+                    // Check if this driver has previously uploaded any document for the same type
+                    // if he did the old document should be removed (marked as deleted)
+                    var existingUpload =
+                        await
+                            _driverUploadService.Value.GetDriverUploadByDriverIdAndUploadTypeAsync(driver.Id,
+                                documentType);
+
+                    if (existingUpload != null)
+                    {
+                        await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(existingUpload.Id);
+                    }
+
+                    await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
                 }
-                
+
             }
             catch (Exception e)
             {

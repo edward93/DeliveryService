@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Entities;
+using DAL.Enums;
 using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
@@ -19,7 +20,7 @@ namespace ServiceLayer.Service
             return await _driverUploadRepository.GetDriverUploadByDriverIdAsync(id);
         }
 
-        public async Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload)
+        public async Task<DriverUpload> CreateDriverUploadAsync(DriverUpload driverUpload)
         {
             return await _driverUploadRepository.CreateDriverUpload(driverUpload);
         }
@@ -32,6 +33,11 @@ namespace ServiceLayer.Service
         public async Task RejectDriverDocumentAsync(int documentId, int personId, string reason)
         {
             await _driverUploadRepository.RejectDriverDocumentAsync(documentId, personId, reason);
+        }
+
+        public async Task<DriverUpload> GetDriverUploadByDriverIdAndUploadTypeAsync(int id, UploadType documentType)
+        {
+            return await _driverUploadRepository.GetDriverUploadByDriverIdAndUploadTypeAsync(id, documentType);
         }
     }
 }

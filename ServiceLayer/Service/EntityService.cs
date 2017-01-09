@@ -22,5 +22,10 @@ namespace ServiceLayer.Service
         {
             return await _entityRepository.GetAllEntitiesAsync<T>();
         }
+
+        public async Task<T> RemoveEntityAsync<T>(int entityId) where T : class, IEntity
+        {
+            return await _entityRepository.RemoveEntityAsync<T>(entityId);
+        }
     }
 }

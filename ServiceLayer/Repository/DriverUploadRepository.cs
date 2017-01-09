@@ -50,5 +50,11 @@ namespace ServiceLayer.Repository
             DbContext.DriverUploads.AddOrUpdate(doc);
             await DbContext.SaveChangesAsync();
         }
+
+        public async Task<DriverUpload> GetDriverUploadByDriverIdAndUploadTypeAsync(int id, UploadType documentType)
+        {
+            var docs = await GetDriverUploadByDriverIdAsync(id);
+            return docs.FirstOrDefault(c => c.UploadType == documentType);
+        }
     }
 }
