@@ -141,7 +141,7 @@ namespace DeliveryService.API.Controllers
                 fileName = Path.GetFileName(fileName);
             }
 
-            string filePath = "../DeliveryService/Uploads/DriverDocuments/";
+            string filePath = $"{Config.UploadsFolderPath}/DriverDocuments/";
             switch (documentType)
             {
                 case UploadType.ProofOfAddress:
