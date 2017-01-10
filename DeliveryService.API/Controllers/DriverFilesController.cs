@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,8 +8,6 @@ using System.Web;
 using System.Web.Http;
 using DAL.Entities;
 using DAL.Enums;
-using DeliveryService.API.ApiModels;
-using DeliveryService.API.ViewModel.Enums;
 using Infrastructure.Config;
 using Infrastructure.Extensions;
 using Infrastructure.Helpers;
@@ -29,6 +25,28 @@ namespace DeliveryService.API.Controllers
         {
             _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
             _driverService = new Lazy<IDriverService>(() => driverService);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> DeleteDriverDocument(int Id)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(Id);
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Document was deleted successfully");
+            }
+            catch (Exception e)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while deleting document!");
+                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+            }
+
+            return Json(serviceResult);
         }
 
         [HttpPost]
@@ -52,7 +70,6 @@ namespace DeliveryService.API.Controllers
                 {
                     documentType =
                         (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
-                    expireDate = Convert.ToDateTime(HttpContext.Current.Request.Form["ExpireDate"]);
                 }
                 else
                 {
@@ -110,8 +127,9 @@ namespace DeliveryService.API.Controllers
                         await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(existingUpload.Id);
                     }
 
-                    await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
+                    var driverDocument =  await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
 
+                    serviceResult.Data = driverDocument.Id;
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
                 }
@@ -175,3 +193,4 @@ namespace DeliveryService.API.Controllers
         }
     }
 }
+

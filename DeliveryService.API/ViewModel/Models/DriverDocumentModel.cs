@@ -9,6 +9,7 @@ namespace DeliveryService.API.ViewModel.Models
 {
     public class DriverDocumentModel
     {
+        public int DocumentId { get; set; }
         public UploadType DocumentType { get; set; }
         public string Description { get; set; }
         public string FileName { get; set; }

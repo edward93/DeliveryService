@@ -78,7 +78,8 @@ namespace DeliveryService.API.Controllers
                             Description = document.Description,
                             DocumentStatus = document.DocumentStatus,
                             ExpireDate = document.ExpireDate,
-                            RejectionComment = document.RejectionComment
+                            RejectionComment = document.RejectionComment,
+                            DocumentId = document.Id
                         });
                     }
                     var driverDetails = new DriverDetails()
