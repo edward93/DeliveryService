@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -8,6 +9,7 @@ using System.Web;
 using System.Web.Http;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.API.ViewModel.Models;
 using Infrastructure.Config;
 using Infrastructure.Extensions;
 using Infrastructure.Helpers;
@@ -44,6 +46,46 @@ namespace DeliveryService.API.Controllers
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, "Error while deleting document!");
                 serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+            }
+
+            return Json(serviceResult);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> GetDriverDocuments()
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                var userId = User.Identity.GetUserId();
+                var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+                var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
+
+                var driverDocList = new List<DriverDocumentModel>();
+                foreach (var document in driverDocuments)
+                {
+                    driverDocList.Add(new DriverDocumentModel()
+                    {
+                        DocumentType = document.UploadType,
+                        FileName = document.FileName,
+                        Description = document.Description,
+                        DocumentStatus = document.DocumentStatus,
+                        ExpireDate = document.ExpireDate,
+                        RejectionComment = document.RejectionComment,
+                        DocumentId = document.Id
+                    });
+                }
+                serviceResult.Success = true;
+                serviceResult.Data = driverDocList;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Driver Documents was created created successfully");
+
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while deleting document!");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
             }
 
             return Json(serviceResult);
