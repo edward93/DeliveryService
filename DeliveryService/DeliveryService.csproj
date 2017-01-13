@@ -401,6 +401,9 @@
     <Content Include="Images\main_logo.png" />
     <Content Include="Images\passport.png" />
     <Content Include="Images\proofOfAddres.png" />
+    <Content Include="Scripts\app\DashBoard\dashboard.main.js" />
+    <Content Include="Scripts\app\Drivers\drivers.main.js" />
+    <Content Include="Scripts\app\Drivers\Partials\driverModal.main.js" />
     <Content Include="Scripts\app\main.js" />
     <Content Include="Scripts\app\skin.config.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -887,6 +890,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Style\DashBoard\dashboard.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

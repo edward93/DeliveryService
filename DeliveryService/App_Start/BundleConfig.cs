@@ -14,6 +14,22 @@ namespace DeliveryService
                       "~/Content/globalStyles.css",
                       "~/Content/style.css"));
 
+            //Drivers jQuery
+            bundles.Add(new ScriptBundle("~/Scripts/app/Drivers").Include(
+                        "~/Scripts/app/Drivers/drivers.main.js"));
+
+            //Drivers-Partials jQuery
+            bundles.Add(new ScriptBundle("~/Scripts/app/Drivers/Partials").Include(
+                        "~/Scripts/app/Drivers/Partials/driverModal.main.js"));
+
+            //DashBoard jQuery
+            bundles.Add(new ScriptBundle("~/Scripts/app/DashBoard").Include(
+                        "~/Scripts/app/DashBoard/dashboard.main.js"));
+
+            //DashBoard Style
+            bundles.Add(new StyleBundle("~/Style/DashBoard").Include(
+                "~/Style/DashBoard/dashboard.css"));
+
             // Font Awesome icons
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
                       "~/fonts/font-awesome/css/font-awesome.min.css", new CssRewriteUrlTransform()));

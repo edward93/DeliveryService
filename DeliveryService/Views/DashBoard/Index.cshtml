@@ -119,29 +119,9 @@
             </div>
         </div>
     </div>
-    @section Styles{ 
-        <style>
-            .item-text {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                padding-top: 10px;
-                font-weight: 500;
-            }
-
-            .row.income-orders {
-                margin-top: 15px;
-            }
-        </style>
+    @section Styles{
+        @Styles.Render("~/Style/DashBoard")
     }
     @section Scripts {
-        <script>
-            $(function () {
-                $("#amountToday").html("$ " + parseFloat($("#amountToday").html().replace(",", ".")).toFixed(2));
-                $("#amountAll").html("$ " + parseFloat($("#amountAll").html().replace(",", ".")).toFixed(2));
-                $("#earningsToday").html("$ " + parseFloat($("#earningsToday").html().replace(",", ".")).toFixed(2));
-                $("#earningsAll").html("$ " + parseFloat($("#earningsAll").html().replace(",", ".")).toFixed(2));
-                $("#addRiderfeeToday").html("$ " + parseFloat($("#addRiderfeeToday").html().replace(",", ".")).toFixed(2));
-                $("#addRiderfeeAll").html("$ " + parseFloat($("#addRiderfeeAll").html().replace(",", ".")).toFixed(2));
-            })
-        </script>
+        @Scripts.Render("~/Scripts/app/DashBoard")
     }

@@ -40,8 +40,8 @@
 
                                                             <div class="col-lg-6 img">
                                                                 <h5>Passport</h5>
-                                                                <img id="Passport" src="~/Images/passport.png" class="no-img" />
-                                                                <div class="row overlay Passport">
+                                                                <img id="Passport" src="" class="no-img" />
+                                                                <div class="row Passport" id="passportOverlay">
                                                                     <div class="col-lg-4"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
                                                                     <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
                                                                     <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
@@ -50,8 +50,8 @@
 
                                                             <div class="col-lg-6 img">
                                                                 <h5>Insuracne</h5>
-                                                                <img id="Insurance" src="~/Images/insurance.png" class="no-img" />
-                                                                <div class="row overlay Insurance">
+                                                                <img id="Insurance" src="" class="no-img" />
+                                                                <div class="row Insurance" id="insuranceOverlay">
                                                                     <div class="col-lg-4"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
                                                                     <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
                                                                     <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
@@ -63,8 +63,8 @@
                                                         <div class="effect-1 effects clearfix">
                                                             <div class="col-lg-6 img">
                                                                 <h5>Proof Of Address</h5>
-                                                                <img id="ProofOfAddress" src="~/Images/proofOfAddres.png" class="no-img" />
-                                                                <div class="row overlay ProofOfAddress">
+                                                                <img id="ProofOfAddress" src="" class="no-img" />
+                                                                <div class="row ProofOfAddress" id="proofOfAddressOverlay">
                                                                     <div class="col-lg-4"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
                                                                     <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
                                                                     <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
@@ -73,8 +73,8 @@
 
                                                             <div class="col-lg-6 img">
                                                                 <h5>License</h5>
-                                                                <img id="License" src="~/Images/license.png" class="no-img" />
-                                                                <div class="row overlay License">
+                                                                <img id="License" src="" class="no-img" />
+                                                                <div class="row License" id="licenseOverlay">
                                                                     <div class="col-lg-4">
                                                                         <a href="#"
                                                                            data-toggle="tab" data-placement="top" title="Hooray!" class="expand previewDriverDocument"><span class="fa fa-search"></span></a>
@@ -111,282 +111,3 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-
-<script>
-    var driverId;
-    var UploadType = {
-        Passport: { value: 0, name: "Passport", code: "S" },
-        Insurance: { value: 1, name: "Insurance", code: "M" },
-        ProofOfAddress: { value: 2, name: "ProofOfAddress", code: "L" },
-        Photo: { value: 3, name: "Photo", code: "S" },
-        License: { value: 4, name: "License", code: "M" },
-        Other: { value: 5, name: "Other", code: "L" }
-    };
-
-    $(document).ready(function () {
-
-        if (Modernizr.touch) {
-            // show the close overlay button
-            $(".close-overlay").removeClass("hidden");
-            // handle the adding of hover class when clicked
-            $(".img").click(function (e) {
-                if (!$(this).hasClass("hover")) {
-                    $(this).addClass("hover");
-                }
-            });
-            // handle the closing of the overlay
-            $(".close-overlay").click(function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if ($(this).closest(".img").hasClass("hover")) {
-                    $(this).closest(".img").removeClass("hover");
-                }
-            });
-        } else {
-            // handle the mouseenter functionality
-            $(".img").mouseenter(function () {
-                $(this).addClass("hover");
-            })
-                // handle the mouseleave functionality
-                .mouseleave(function () {
-                    $(this).removeClass("hover");
-                });
-        }
-
-        //Initialize tooltips
-        $('.nav-tabs > li a[title]').tooltip();
-        //Wizard
-        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-
-            var $target = $(e.target);
-
-            if ($target.parent().hasClass('disabled')) {
-                return false;
-            }
-        });
-
-        $(".next-step").click(function (e) {
-
-            var $active = $('.wizard .nav-tabs li.active');
-            $active.next().removeClass('disabled');
-            nextTab($active);
-
-        });
-        $(".prev-step").click(function (e) {
-
-            var $active = $('.wizard .nav-tabs li.active');
-            prevTab($active);
-
-        });
-
-        $(document).on('click', "#btnPreviewDriver", function () {
-            var driverIdForPreview = $(this).attr('data-id');
-            driverId = driverIdForPreview;
-            getDriverDocuments(parseInt(driverIdForPreview));
-        });
-
-        $(document).on('click', ".acceptDriverDocument", function (e) {
-            e.preventDefault();
-            var documentId = $(this).parent().parent().attr('data-id');
-            ApproveDriverDocument(documentId, e);
-        });
-
-        $(document).on('click', ".previewDriverDocument", function (e) {
-            e.preventDefault();
-            var documentId = $(this).parent().parent().attr('data-id');
-        });
-
-        $(document).on('click', ".rejectDriverDocument", function (e) {
-            e.preventDefault();
-            var documentId = $(this).parent().parent().attr('data-id');
-            RejectDriverDocument(documentId, e);
-        });
-
-    });
-
-    function nextTab(elem) {
-        $(elem).next().find('a[data-toggle="tab"]').click();
-    }
-    function prevTab(elem) {
-        $(elem).prev().find('a[data-toggle="tab"]').click();
-    }
-    function getDriverDocuments(driverId) {
-        window.BlockUi();
-        $.post("/Drivers/GetDriverDocuments",
-            { driverId: driverId },
-            function (data) {
-                $("#previewDriver").modal("show");
-                window.UnBlockUi();
-                InitDocuments(data);
-            });
-    }
-
-    function ApproveDriverDocument(documentId, e) {
-        var currentButton = $(e.currentTarget);
-        if (documentId) {
-            window.BlockUi();
-            $.post("/Drivers/ApproveDriverDocument",
-                { documentId: documentId },
-                function (data) {
-                    window.UnBlockUi();
-                    if (data.Success) {
-                        currentButton.addClass('disabled approveSelected');
-                        for (let i = 0; i < data.Messages.length; i++) {
-                            toastr.success(data.Messages[i].Value);
-                        }
-                    } else {
-                        for (let i = 0; i < data.Messages.length; i++) {
-                            toastr.error(data.Messages[i].Value);
-                        }
-                    }
-                });
-        }
-    }
-
-    function RejectDriverDocument(documentId, e) {
-        var currentButton = $(e.currentTarget);
-        var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
-        if (documentId != undefined) {
-            var data = {
-                DocumentId: documentId,
-                RejectionComment: "ddd"
-            };
-
-            window.BlockUi();
-            $.post("/Drivers/RejectDriverDocument",
-                { model: data },
-                function (data) {
-                    window.UnBlockUi();
-                    if (data.Success) {
-                        currentButton.addClass('disabled rejectSelected');
-                        approveButton.addClass('disabled');
-                        for (let i = 0; i < data.Messages.length; i++) {
-                            toastr.success(data.Messages[i].Value);
-                        }
-                    } else {
-                        for (let i = 0; i < data.Messages.length; i++) {
-                            toastr.error(data.Messages[i].Value);
-                        }
-                    }
-                });
-        }
-    }
-
-    function ClearModal() {
-
-    }
-
-    function InitDocuments(data) {
-        var result = JSON.parse(data);
-        for (var i = 0; i < result.length; i++) {
-            var documentId = result[i].Id;
-            var docType = result[i].UploadType;
-            var documentState = result[i].DocumentState;
-            var filePath = result[i].FileName;
-            var fullPath = createDocumentFullPath(docType, filePath);
-            createDocumentsView(fullPath, documentId, docType, result);
-        }
-    }
-
-    function createDocumentsView(fullPath, documentId, docType, data) {
-        var elem = document.createElement("img");
-        elem.setAttribute("src", fullPath);
-        elem.setAttribute("data-id", documentId);
-        elem.setAttribute("class", "driverDocuments");
-
-        switch (docType) {
-            case UploadType.ProofOfAddress.value:
-                var proofOfAdddress = document.getElementById(UploadType.ProofOfAddress.name);
-                proofOfAdddress.setAttribute("src", fullPath);
-                proofOfAdddress.removeAttribute("class");
-                proofOfAdddress.setAttribute("data-id", documentId);
-                var proofOfAddressconteiner = $("." + UploadType.ProofOfAddress.name);
-                proofOfAddressconteiner.attr("data-id", documentId);
-
-                setStatuses(UploadType.ProofOfAddress.name, data.filter(a => a.UploadType === UploadType.ProofOfAddress.value)[0].DocumentStatus);
-
-                break;
-            case UploadType.Insurance.value:
-                var insurance = document.getElementById(UploadType.Insurance.name);
-                insurance.setAttribute("src", fullPath);
-                insurance.setAttribute("data-id", documentId);
-                insurance.removeAttribute("class");
-                var insuranceConteiner = $("." + UploadType.Insurance.name);
-                insuranceConteiner.attr("data-id", documentId);
-
-                setStatuses(UploadType.Insurance.name, data.filter(a => a.UploadType === UploadType.Insurance.value)[0].DocumentStatus);
-
-                break;
-            case UploadType.License.value:
-                var license = document.getElementById(UploadType.License.name);
-                license.setAttribute("src", fullPath);
-                license.setAttribute("data-id", documentId);
-                license.removeAttribute("class");
-                var licenseConteiner = $("." + UploadType.License.name);
-                licenseConteiner.attr("data-id", documentId);
-                setStatuses(UploadType.License.name, data.filter(a => a.UploadType === UploadType.License.value)[0].DocumentStatus);
-
-                break;
-            case UploadType.Passport.value:
-                var passport = document.getElementById(UploadType.Passport.name);
-                passport.setAttribute("src", fullPath);
-                passport.setAttribute("data-id", documentId);
-                passport.removeAttribute("class");
-                var passportConteiner = $("." + UploadType.Passport.name);
-                passportConteiner.attr("data-id", documentId);
-
-                setStatuses(UploadType.Passport.name, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
-                
-                break;
-            case UploadType.Photo.value:
-                var photo = document.getElementById(UploadType.Photo.name);
-                photo.setAttribute("src", fullPath);
-                photo.setAttribute("data-id", documentId);
-                photo.removeAttribute("class");
-                var photoConteiner = $("." + UploadType.Photo.name);
-                photoConteiner.attr("data-id", documentId);
-                setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
-
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    function setStatuses(uploadTypeNmae, documentStatus) {
-        if (documentStatus === 1) {
-            $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled approveSelected');
-        } else if (documentStatus === 2) {
-            $("." + uploadTypeNmae + " .rejectDriverDocument").addClass('disabled rejectSelected');
-            $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled');
-        }
-    }
-
-    function createDocumentFullPath(doctype, fileName) {
-        var filePath = "@Url.Content("~/Uploads/DriverDocuments/")";
-        switch (doctype) {
-            case UploadType.ProofOfAddress.value:
-                filePath += UploadType.ProofOfAddress.name;
-                break;
-            case UploadType.Insurance.value:
-                filePath += UploadType.Insurance.name;
-                break;
-            case UploadType.License.value:
-                filePath += UploadType.License.name;
-                break;
-            case UploadType.Passport.value:
-                filePath += UploadType.Passport.name;
-                break;
-            case UploadType.Photo.value:
-                filePath += UploadType.Photo.name;
-                break;
-            default:
-                filePath += "Other";
-                break;
-        }
-        filePath += "/" + fileName;
-        return filePath;
-    }
-
-</script>

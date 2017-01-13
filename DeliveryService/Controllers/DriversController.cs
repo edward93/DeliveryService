@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using DAL.Entities;
 using DAL.Enums;
@@ -40,7 +41,7 @@ namespace DeliveryService.Controllers
             return View(driversList);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public async Task<ContentResult> GetDriverDocuments(int driverId)
         {
             var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driverId);
@@ -53,14 +54,14 @@ namespace DeliveryService.Controllers
             return Content(list);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> DeleteDriver(int driverId)
         {
             var result = await _driverService.Value.DeleteDriver(driverId);
             return Json(result);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> ApproveDriverDocument(int documentId)
         {
             var serviceResult = new ServiceResult();
@@ -92,7 +93,7 @@ namespace DeliveryService.Controllers
             return Json(serviceResult);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> RejectDriverDocument(DocumentRejectionViewModel model)
         {
             var serviceResult = new ServiceResult();
