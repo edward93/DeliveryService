@@ -16,9 +16,10 @@ namespace DAL.Entities
         public int UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
 
-        [ForeignKey("Entity")]
-        [Required]
-        public int EntityId { get; set; }
+        [ForeignKey("Driver")]
+        public int? DriverId { get; set; }
+        [ForeignKey("Business")]
+        public int? BusinessId { get; set; }
         [Required]
         public string CardNumber { get; set; }
         [Required]
@@ -32,7 +33,8 @@ namespace DAL.Entities
         [Required]
         public bool IsDefault { get; set; }
 
-        public virtual IEntity Entity { get; set; }
+        public virtual Driver Driver { get; set; }
+        public virtual Business Business { get; set; }
 
     }
 }

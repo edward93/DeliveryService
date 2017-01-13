@@ -17,9 +17,10 @@ namespace DAL.Entities
         public bool IsDeleted { get; set; }
 
 
-        [Required]
-        [ForeignKey("Entity")]
-        public int EntityId { get; set; }
+        [ForeignKey("Driver")]
+        public int? DriverId { get; set; }
+        [ForeignKey("Business")]
+        public int? BusinessId { get; set; }
         [Required]
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -31,7 +32,8 @@ namespace DAL.Entities
         [Required]
         public string ZipCode { get; set; }
 
-        public virtual IEntity Entity { get; set; }
+        public virtual Driver Driver { get; set; }
+        public virtual Business Business { get; set; }
 
     }
 }

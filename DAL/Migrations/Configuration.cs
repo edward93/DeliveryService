@@ -22,6 +22,7 @@ namespace DAL.Migrations
             var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             rm.Create(new IdentityRole(Roles.Member));
             rm.Create(new IdentityRole(Roles.Admin));
+            rm.Create(new IdentityRole(Roles.Business));
 
             var um = new UserManager<User>(new UserStore<User>(context));
             var user = new User

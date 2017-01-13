@@ -64,6 +64,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', ".acceptDriverDocument", function (e) {
+        debugger;
         e.preventDefault();
         var documentId = $(this).parent().parent().attr('data-id');
         ApproveDriverDocument(documentId, e);
@@ -102,6 +103,7 @@ function getDriverDocuments(driverId) {
 
 function ApproveDriverDocument(documentId, e) {
     var currentButton = $(e.currentTarget);
+    debugger;
     if (documentId) {
         window.BlockUi();
         $.post("/Drivers/ApproveDriverDocument",
@@ -183,6 +185,7 @@ function InitDocuments(data) {
 }
 
 function createDocumentsView(fullPath, documentId, docType, data) {
+    debugger;
     var elem = document.createElement("img");
     elem.setAttribute("src", fullPath);
     elem.setAttribute("data-id", documentId);
@@ -196,6 +199,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             proofOfAdddress.setAttribute("src", fullPath);
             proofOfAdddress.removeAttribute("class");
             proofOfAdddress.setAttribute("data-id", documentId);
+            proofOfAdddressOverlay.setAttribute("data-id", documentId);
             var proofOfAddressconteiner = $("." + UploadType.ProofOfAddress.name);
             proofOfAddressconteiner.attr("data-id", documentId);
 
@@ -208,6 +212,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             insuranceOverlay.setAttribute("class", "overlay");
             insurance.setAttribute("src", fullPath);
             insurance.setAttribute("data-id", documentId);
+            insuranceOverlay.setAttribute("data-id", documentId);
             insurance.removeAttribute("class");
             var insuranceConteiner = $("." + UploadType.Insurance.name);
             insuranceConteiner.attr("data-id", documentId);
@@ -221,6 +226,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             licenseOverlay.setAttribute("class", "overlay");
             license.setAttribute("src", fullPath);
             license.setAttribute("data-id", documentId);
+            licenseOverlay.setAttribute("data-id", documentId);
             license.removeAttribute("class");
             var licenseConteiner = $("." + UploadType.License.name);
             licenseConteiner.attr("data-id", documentId);
@@ -233,6 +239,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             passportClass.setAttribute("class", "overlay");
             passport.setAttribute("src", fullPath);
             passport.setAttribute("data-id", documentId);
+            passportClass.setAttribute("data-id", documentId);
             passport.removeAttribute("class");
             var passportConteiner = $("." + UploadType.Passport.name);
             passportConteiner.attr("data-id", documentId);
@@ -240,16 +247,16 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             setStatuses(UploadType.Passport.name, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
                 
             break;
-        case UploadType.Photo.value:
-            var photo = document.getElementById(UploadType.Photo.name);
-            photo.setAttribute("src", fullPath);
-            photo.setAttribute("data-id", documentId);
-            photo.removeAttribute("class");
-            var photoConteiner = $("." + UploadType.Photo.name);
-            photoConteiner.attr("data-id", documentId);
-            setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
+        //case UploadType.Photo.value:
+        //    var photo = document.getElementById(UploadType.Photo.name);
+        //    photo.setAttribute("src", fullPath);
+        //    photo.setAttribute("data-id", documentId);
+        //    photo.removeAttribute("class");
+        //    var photoConteiner = $("." + UploadType.Photo.name);
+        //    photoConteiner.attr("data-id", documentId);
+        //    setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
 
-            break;
+        //    break;
         default:
             break;
     }

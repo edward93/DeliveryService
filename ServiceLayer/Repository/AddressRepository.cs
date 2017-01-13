@@ -14,7 +14,7 @@ namespace ServiceLayer.Repository
 
         public async Task<Address> GetAddressByDriverIdAsync(int id)
         {
-            return await DbContext.Addresses.FirstOrDefaultAsync(c => c.EntityId == id);
+            return await DbContext.Addresses.FirstOrDefaultAsync(c => c.DriverId == id);
         }
 
         public async Task<Address> CreateAddress(Address address)

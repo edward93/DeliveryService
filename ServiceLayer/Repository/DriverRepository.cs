@@ -27,6 +27,7 @@ namespace ServiceLayer.Repository
             }
             catch (Exception e)
             {
+                throw new Exception(e.ToString());
             }
             return driver;
         }
