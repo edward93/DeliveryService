@@ -20,6 +20,7 @@ namespace DAL.Context
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Business> Businesses { get; set; }
 
         public static DbContext Create()
         {

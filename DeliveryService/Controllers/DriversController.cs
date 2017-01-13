@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using DAL.Entities;
 using DAL.Enums;
-using DAL.UnitOfWork;
 using DeliveryService.Models;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
-using ServiceLayer.Repository;
 using ServiceLayer.Service;
+
 namespace DeliveryService.Controllers
 {
     public class DriversController : BaseController

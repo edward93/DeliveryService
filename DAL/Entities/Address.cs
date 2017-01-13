@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using DAL.Enums;
 
 namespace DAL.Entities
 {
     public class Address : IEntity
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
@@ -15,7 +18,8 @@ namespace DAL.Entities
 
 
         [Required]
-        public int DriverId { get; set; }
+        [ForeignKey("Entity")]
+        public int EntityId { get; set; }
         [Required]
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -27,6 +31,7 @@ namespace DAL.Entities
         [Required]
         public string ZipCode { get; set; }
 
-        
+        public virtual IEntity Entity { get; set; }
+
     }
 }

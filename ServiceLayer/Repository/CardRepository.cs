@@ -13,7 +13,7 @@ namespace ServiceLayer.Repository
 
         public async Task<Card> GetCardByDriverIdAsync(int id)
         {
-            return await DbContext.Cards.FirstOrDefaultAsync(c => c.DriverId == id);
+            return await DbContext.Cards.FirstOrDefaultAsync(c => c.EntityId == id);
         }
     }
 }
