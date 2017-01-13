@@ -64,7 +64,6 @@ $(document).ready(function () {
     });
 
     $(document).on('click', ".acceptDriverDocument", function (e) {
-        debugger;
         e.preventDefault();
         var documentId = $(this).parent().parent().attr('data-id');
         ApproveDriverDocument(documentId, e);
@@ -103,7 +102,6 @@ function getDriverDocuments(driverId) {
 
 function ApproveDriverDocument(documentId, e) {
     var currentButton = $(e.currentTarget);
-    debugger;
     if (documentId) {
         window.BlockUi();
         $.post("/Drivers/ApproveDriverDocument",
@@ -185,7 +183,6 @@ function InitDocuments(data) {
 }
 
 function createDocumentsView(fullPath, documentId, docType, data) {
-    debugger;
     var elem = document.createElement("img");
     elem.setAttribute("src", fullPath);
     elem.setAttribute("data-id", documentId);
