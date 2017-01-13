@@ -60,6 +60,8 @@
             padding: 0;
             max-width: 100%;
             height: auto;
+            min-height: 240px;
+            max-height: 280px
         }
 
 .no-img {
@@ -137,7 +139,7 @@ a.expand {
     }
 
 .effect-1 .img.hover .overlay {
-    height: 30%;
+    height: 25%;
 }
 
 /* ============================================================

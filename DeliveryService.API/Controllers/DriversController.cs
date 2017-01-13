@@ -59,6 +59,55 @@ namespace DeliveryService.API.Controllers
 
         [Authorize]
         [HttpPost]
+        public async Task<IHttpActionResult> UpdateDriver(DriverDetails driverDetails)
+        {
+            ServiceResult serviceResult = new ServiceResult();
+            try
+            {
+                var driver = await _driverService.Value.GetDriverByPersonAsync(User.Identity.GetUserId());
+                if (driver.Addresses.Count > 0 && driverDetails.Addresses.Count > 0)
+                {
+                    var driverOldAddress = driver.Addresses.ToList()[0];
+                    var currentAddress = driverDetails.Addresses[0];
+                    
+                    var addresses = new List<Address>();
+                    driverOldAddress.AddressLine1 = currentAddress.AddressLine1;
+                    driverOldAddress.AddressLine2 = currentAddress.AddressLine2;
+                    driverOldAddress.City = currentAddress.City;
+                    driverOldAddress.Country = currentAddress.Country;
+                    driverOldAddress.ZipCode = currentAddress.ZipCode;
+                    addresses.Add(driverOldAddress);
+                    driver.Addresses = addresses;
+                }
+
+                var person = driver.Person;
+                person.FirstName = driverDetails.FirstName;
+                person.LastName = driverDetails.LastName;
+                person.Phone = driverDetails.Phone;
+                person.Email = driverDetails.Email;
+                person.Sex = driverDetails.Sex;
+                person.DateOfBirth = driverDetails.DateOfBirth;
+                person.UpdatedDt = DateTime.Now;
+                driver.Person = person;
+                driver.UpdatedDt = DateTime.Now;
+                await _driverService.Value.CreateDriverAsync(driver);
+
+                serviceResult.Data = null;
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Driver Data was updated successfully");
+
+            }
+            catch (Exception e)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Something went wrong");
+                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+            }
+            return Json(serviceResult);
+        }
+
+        [Authorize]
+        [HttpPost]
         public async Task<IHttpActionResult> GetDriverDetails()
         {
             ServiceResult result = new ServiceResult();
@@ -116,7 +165,7 @@ namespace DeliveryService.API.Controllers
             });
         }
 
-        [HttpPost]
+      /*  [HttpPost]
         public async Task<IHttpActionResult> UpdateDriver(Driver driver)
         {
             ServiceResult result = new ServiceResult();
@@ -139,6 +188,6 @@ namespace DeliveryService.API.Controllers
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
-        }
+        }*/
     }
 }

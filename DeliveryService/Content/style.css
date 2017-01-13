@@ -746,6 +746,7 @@ body.canvas-menu.mini-navbar nav.navbar-static-side {
     background-color: #f9b33c;
     border-color: #f9b33c;
     color: #FFFFFF;
+    margin-right: 5px !important;
 }
 
     .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary, .btn-primary:active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .btn-primary.active:focus {
