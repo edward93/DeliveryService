@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using DAL.Constants;
+using DAL.Context;
 using DAL.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -19,7 +20,7 @@ namespace DeliveryService.Controllers
     public class AccountController : BaseController
     {
 
-        public AccountController(IConfig config) : base(config)
+        public AccountController(IConfig config, IDbContext context) : base(config, context)
         {
         }
 

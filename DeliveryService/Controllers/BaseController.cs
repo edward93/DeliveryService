@@ -2,6 +2,7 @@
 using System.Web;
 using System.Web.Mvc;
 using DAL.Constants;
+using DAL.Context;
 using DeliveryService.App_Start;
 using Infrastructure.Config;
 using Microsoft.AspNet.Identity;
@@ -14,13 +15,14 @@ namespace DeliveryService.Controllers
     public class BaseController : Controller
     {
         protected readonly IConfig Config;
-
+        protected readonly IDbContext Context;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public BaseController(IConfig config)
+        public BaseController(IConfig config, IDbContext context)
         {
             Config = config;
+            Context = context;
         }
 
         public ApplicationSignInManager SignInManager

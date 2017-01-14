@@ -11,7 +11,7 @@ namespace ServiceLayer.Service
         public AddressService(IEntityRepository entityRepository,
             IAddressRepository repository) : base(entityRepository)
         {
-            _addressRepository = new Lazy<IAddressRepository>(()=>repository);
+            _addressRepository = new Lazy<IAddressRepository>(() => repository);
         }
 
         public async Task<Address> GetAddressByDriverIdAsync(int id)

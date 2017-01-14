@@ -21,5 +21,6 @@ namespace DAL.Context
         Task<int> SaveChangesAsync();
         DbSet<T> Set<T>() where T : class;
         int SaveChanges();
+        Database Database { get; }
     }
 }

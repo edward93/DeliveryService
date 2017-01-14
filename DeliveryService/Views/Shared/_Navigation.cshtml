@@ -35,8 +35,16 @@
             <li class="@Html.IsSelected(controller: "Drivers")">
                 <a href="@Url.Action("Index", "Drivers")"><i class="fa fa-diamond"></i> 
                     <span class="nav-label" data-i18n="nav.layouts">Drivers List</span>
-                 </a>
+                </a>
             </li>
+            
+            <li class="@Html.IsSelected(controller: "Business")">
+                <a href="@Url.Action("Index", "Business")">
+                    <i class="fa fa-diamond"></i>
+                    <span class="nav-label" data-i18n="nav.layouts">Business List</span>
+                </a>
+            </li>
+
         </ul>
     </div>
 </nav>

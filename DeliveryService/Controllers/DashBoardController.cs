@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DAL.Context;
 using DAL.Entities;
 using DeliveryService.Models;
 using Infrastructure.Config;
@@ -15,7 +16,7 @@ namespace DeliveryService.Controllers
     {
         private readonly Lazy<IDriverService> _driverService;
         // GET: DashBoard
-        public DashBoardController(IConfig config, IDriverService driverService) : base(config)
+        public DashBoardController(IConfig config, IDriverService driverService, IDbContext context) : base(config, context)
         {
             _driverService = new Lazy<IDriverService>(() => driverService);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Models;
@@ -22,7 +23,8 @@ namespace DeliveryService.Controllers
         public DriversController(IConfig config,
             IDriverService driverService,
             IDriverUploadService uploadService,
-            IPersonService personService) : base(config)
+            IDbContext context,
+            IPersonService personService) : base(config, context)
         {
             _driverService = new Lazy<IDriverService>(() => driverService);
             _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
