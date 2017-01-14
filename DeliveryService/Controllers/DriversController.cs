@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web.Mvc;
 using DAL.Context;
 using DAL.Entities;
@@ -60,31 +61,47 @@ namespace DeliveryService.Controllers
         public async Task<JsonResult> ApproveDriverDocument(int documentId)
         {
             var serviceResult = new ServiceResult();
-            try
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                if (person != null)
+                try
                 {
-                    var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(documentId);
-                    if (document.DocumentStatus == DocumentStatus.Approved || document.DocumentStatus == DocumentStatus.Rejected)
-                        throw new Exception($"This document cannot be approved. Either this document is already approved or it has been rejected.");
-                    await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
-                    serviceResult.Success = true;
-                    serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
-                }
-                else
-                {
-                    serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
-                }
+                    var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                    if (person != null)
+                    {
+                        var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(documentId);
+                        if (document.DocumentStatus == DocumentStatus.Approved ||
+                            document.DocumentStatus == DocumentStatus.Rejected)
+                            throw new Exception(
+                                $"This document cannot be approved. Either this document is already approved or it has been rejected.");
+                        await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
+                        serviceResult.Success = true;
+                        serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
 
+                        scope.Complete();
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        scope.Dispose();
+                        transaction.Rollback();
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while approving the document (Id: {documentId})");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
             }
-            catch (Exception ex)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, $"Error while approving the document (Id: {documentId})");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
-            }
+
             return Json(serviceResult);
         }
 
@@ -92,42 +109,59 @@ namespace DeliveryService.Controllers
         public async Task<JsonResult> RejectDriverDocument(DocumentRejectionViewModel model)
         {
             var serviceResult = new ServiceResult();
-            try
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                if (!ModelState.IsValid)
+                try
                 {
-                    serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error, "Validation Errors");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
-                }
-                else
-                {
-                    var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                    if (person != null)
+                    if (!ModelState.IsValid)
                     {
-                        var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(model.DocumentId);
-                        if (document.DocumentStatus == DocumentStatus.Rejected)
-                            throw new Exception("This document is already rejected.");
-                        await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id, model.RejectionComment);
-                        serviceResult.Success = true;
-                        serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
+                        scope.Dispose();
+                        transaction.Rollback();
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error, "Validation Errors");
+                        serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
                     }
                     else
                     {
-                        serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
+                        var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                        if (person != null)
+                        {
+                            var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(model.DocumentId);
+                            if (document.DocumentStatus == DocumentStatus.Rejected)
+                                throw new Exception("This document is already rejected.");
+                            await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id,
+                                model.RejectionComment);
+                            serviceResult.Success = true;
+                            serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
+
+                            scope.Complete();
+                            transaction.Commit();
+                        }
+                        else
+                        {
+                            scope.Dispose();
+                            transaction.Rollback();
+                            serviceResult.Success = false;
+                            serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
+                        }
                     }
+
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while rejecting the document (Id: {model.DocumentId})");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
                 }
 
             }
-            catch (Exception ex)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error,
-                    $"Error while rejecting the document (Id: {model.DocumentId})");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
-            }
-            return Json(serviceResult);
+            return
+
+            Json(serviceResult);
         }
     }
 }

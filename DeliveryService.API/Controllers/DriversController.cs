@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web.Http;
+using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.API.ViewModel.Models;
@@ -22,8 +24,8 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IDriverUploadService> _driverUploadService;
 
-        public DriverController(IDriverService service, IConfig config,
-            IPersonService personService, IDriverUploadService driverUploadService) : base(config)
+        public DriverController(IDriverService service, IConfig config, IDbContext context,
+            IPersonService personService, IDriverUploadService driverUploadService) : base(config, context)
         {
             _driverService = new Lazy<IDriverService>(() => service);
             _personService = new Lazy<IPersonService>(() => personService);
@@ -34,25 +36,36 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> AddDriver(Driver driver)
         {
             ServiceResult result = new ServiceResult();
-            try
-            {
-                var currentPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                driver.Approved = false;
-                driver.Status = DriverStatus.Offline;
-                driver.Person = currentPerson;
-                driver.Id = currentPerson.Id;
 
-                var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
-
-                result.Success = true;
-                result.Data = createdDriver;
-                result.Messages.AddMessage(MessageType.Info, Config.Messages["DriverCreationSuccess"]);
-            }
-            catch (Exception ex)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                result.Success = false;
-                result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
-                result.Messages.AddMessage(MessageType.Error, ex.ToString());
+                try
+                {
+                    var currentPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                    driver.Approved = false;
+                    driver.Status = DriverStatus.Offline;
+                    driver.Person = currentPerson;
+                    driver.Id = currentPerson.Id;
+
+                    var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
+
+                    result.Success = true;
+                    result.Data = createdDriver;
+                    result.Messages.AddMessage(MessageType.Info, Config.Messages["DriverCreationSuccess"]);
+
+                    scope.Complete();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
+
+                    result.Success = false;
+                    result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
+                    result.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
             }
             return Json(result);
         }
@@ -62,48 +75,61 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> UpdateDriver(DriverDetails driverDetails)
         {
             ServiceResult serviceResult = new ServiceResult();
-            try
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                var driver = await _driverService.Value.GetDriverByPersonAsync(User.Identity.GetUserId());
-                if (driver.Addresses.Count > 0 && driverDetails.Addresses.Count > 0)
+                try
                 {
-                    var driverOldAddress = driver.Addresses.ToList()[0];
-                    var currentAddress = driverDetails.Addresses[0];
-                    
-                    var addresses = new List<Address>();
-                    driverOldAddress.AddressLine1 = currentAddress.AddressLine1;
-                    driverOldAddress.AddressLine2 = currentAddress.AddressLine2;
-                    driverOldAddress.City = currentAddress.City;
-                    driverOldAddress.Country = currentAddress.Country;
-                    driverOldAddress.ZipCode = currentAddress.ZipCode;
-                    addresses.Add(driverOldAddress);
-                    driver.Addresses = addresses;
+                    var driver = await _driverService.Value.GetDriverByPersonAsync(User.Identity.GetUserId());
+                    if (driver.Addresses.Count > 0 && driverDetails.Addresses.Count > 0)
+                    {
+                        var driverOldAddress = driver.Addresses.ToList()[0];
+                        var currentAddress = driverDetails.Addresses[0];
+
+                        var addresses = new List<Address>();
+                        driverOldAddress.AddressLine1 = currentAddress.AddressLine1;
+                        driverOldAddress.AddressLine2 = currentAddress.AddressLine2;
+                        driverOldAddress.City = currentAddress.City;
+                        driverOldAddress.Country = currentAddress.Country;
+                        driverOldAddress.ZipCode = currentAddress.ZipCode;
+                        addresses.Add(driverOldAddress);
+                        driver.Addresses = addresses;
+                    }
+
+                    var person = driver.Person;
+                    person.FirstName = driverDetails.FirstName;
+                    person.LastName = driverDetails.LastName;
+                    person.Phone = driverDetails.Phone;
+                    person.Email = driverDetails.Email;
+                    person.Sex = driverDetails.Sex;
+                    person.DateOfBirth = driverDetails.DateOfBirth;
+                    person.UpdatedDt = DateTime.Now;
+                    driver.Person = person;
+                    driver.UpdatedDt = DateTime.Now;
+                    await _driverService.Value.CreateDriverAsync(driver);
+
+                    serviceResult.Data = null;
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver Data was updated successfully");
+
+                    scope.Complete();
+                    transaction.Commit();
+
                 }
+                catch (Exception e)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
 
-                var person = driver.Person;
-                person.FirstName = driverDetails.FirstName;
-                person.LastName = driverDetails.LastName;
-                person.Phone = driverDetails.Phone;
-                person.Email = driverDetails.Email;
-                person.Sex = driverDetails.Sex;
-                person.DateOfBirth = driverDetails.DateOfBirth;
-                person.UpdatedDt = DateTime.Now;
-                driver.Person = person;
-                driver.UpdatedDt = DateTime.Now;
-                await _driverService.Value.CreateDriverAsync(driver);
-
-                serviceResult.Data = null;
-                serviceResult.Success = true;
-                serviceResult.Messages.AddMessage(MessageType.Info, "Driver Data was updated successfully");
-
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Something went wrong");
+                    serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+                }
             }
-            catch (Exception e)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, "Something went wrong");
-                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
-            }
-            return Json(serviceResult);
+            return
+
+            Json(serviceResult);
         }
 
         [Authorize]
@@ -164,30 +190,5 @@ namespace DeliveryService.API.Controllers
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
         }
-
-      /*  [HttpPost]
-        public async Task<IHttpActionResult> UpdateDriver(Driver driver)
-        {
-            ServiceResult result = new ServiceResult();
-            try
-            {
-                var updatedDriver = await _driverService.Value.UpdateDriverAsync(driver);
-
-                result.Success = true;
-                result.Data = updatedDriver;
-                result.Messages.AddMessage(MessageType.Info, "The Driver was successfuly created");
-
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
-                result.Messages.AddMessage(MessageType.Error, ex.ToString());
-            }
-            return Json(result, new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
-        }*/
     }
 }

@@ -5,8 +5,10 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web;
 using System.Web.Http;
+using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.API.ViewModel.Models;
@@ -23,29 +25,39 @@ namespace DeliveryService.API.Controllers
     {
         private readonly Lazy<IDriverUploadService> _driverUploadService;
         private readonly Lazy<IDriverService> _driverService;
-        public DriverFilesController(IConfig config, IDriverUploadService uploadService, IDriverService driverService) : base(config)
+        public DriverFilesController(IConfig config, IDbContext context, IDriverUploadService uploadService, IDriverService driverService) : base(config, context)
         {
             _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
             _driverService = new Lazy<IDriverService>(() => driverService);
         }
-
 
         [HttpPost]
         [Authorize]
         public async Task<IHttpActionResult> DeleteDriverDocument(int Id)
         {
             var serviceResult = new ServiceResult();
-            try
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(Id);
-                serviceResult.Success = true;
-                serviceResult.Messages.AddMessage(MessageType.Info, "Document was deleted successfully");
-            }
-            catch (Exception e)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, "Error while deleting document!");
-                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+                try
+                {
+                    await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(Id);
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Document was deleted successfully");
+
+                    scope.Complete();
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while deleting document!");
+                    serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+                }
             }
 
             return Json(serviceResult);
@@ -56,36 +68,47 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> GetDriverDocuments()
         {
             var serviceResult = new ServiceResult();
-            try
-            {
-                var userId = User.Identity.GetUserId();
-                var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
-                var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
 
-                var driverDocList = new List<DriverDocumentModel>();
-                foreach (var document in driverDocuments)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
                 {
-                    driverDocList.Add(new DriverDocumentModel()
-                    {
-                        DocumentType = document.UploadType,
-                        FileName = document.FileName,
-                        Description = document.Description,
-                        DocumentStatus = document.DocumentStatus,
-                        ExpireDate = document.ExpireDate,
-                        RejectionComment = document.RejectionComment,
-                        DocumentId = document.Id
-                    });
-                }
-                serviceResult.Success = true;
-                serviceResult.Data = driverDocList;
-                serviceResult.Messages.AddMessage(MessageType.Info, "Driver Documents was created created successfully");
+                    var userId = User.Identity.GetUserId();
+                    var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+                    var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
 
-            }
-            catch (Exception ex)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, "Error while deleting document!");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+                    var driverDocList = new List<DriverDocumentModel>();
+                    foreach (var document in driverDocuments)
+                    {
+                        driverDocList.Add(new DriverDocumentModel()
+                        {
+                            DocumentType = document.UploadType,
+                            FileName = document.FileName,
+                            Description = document.Description,
+                            DocumentStatus = document.DocumentStatus,
+                            ExpireDate = document.ExpireDate,
+                            RejectionComment = document.RejectionComment,
+                            DocumentId = document.Id
+                        });
+                    }
+                    serviceResult.Success = true;
+                    serviceResult.Data = driverDocList;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver Documents list was created successfully");
+
+                    scope.Complete();
+                    transaction.Commit();
+
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while getting driver documents!");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+                }
             }
 
             return Json(serviceResult);
@@ -96,92 +119,110 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> AddFileForDriver()
         {
             var serviceResult = new ServiceResult();
-            try
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                var userId = User.Identity.GetUserId();
-                if (!Request.Content.IsMimeMultipartContent())
+                try
                 {
-                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-                }
-                var documentType = UploadType.Other;
-                var expireDate = DateTime.UtcNow;
-                var desc = HttpContext.Current.Request.Form["Description"] ?? string.Empty;
+                    var userId = User.Identity.GetUserId();
+                    if (!Request.Content.IsMimeMultipartContent())
+                    {
+                        throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                    }
+                    var documentType = UploadType.Other;
+                    var expireDate = DateTime.UtcNow;
+                    var desc = HttpContext.Current.Request.Form["Description"] ?? string.Empty;
 
-                if (HttpContext.Current.Request.Form["DocumentType"] != null &&
-                    HttpContext.Current.Request.Form["ExpireDate"] != null)
-                {
-                    documentType =
-                        (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
-                }
-                else
-                {
-                    serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
-                }
-
-                string root = HttpContext.Current.Server.MapPath("~/App_Data");
-                var provider = new MultipartFormDataStreamProvider(root);
-
-
-                // Read the form data.
-                await Request.Content.ReadAsMultipartAsync(provider);
-
-                // This illustrates how to get the file names.
-                foreach (MultipartFileData file in provider.FileData)
-                {
-                    if (string.IsNullOrEmpty(file.Headers.ContentDisposition.FileName))
+                    if (HttpContext.Current.Request.Form["DocumentType"] != null &&
+                        HttpContext.Current.Request.Form["ExpireDate"] != null)
+                    {
+                        documentType =
+                            (UploadType) Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
+                    }
+                    else
                     {
                         serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error,
-                            "This request is not properly formatted");
+                        serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
+
+                        scope.Dispose();
+                        transaction.Rollback();
                     }
 
-                    var document = PrepareFile(file, documentType);
+                    string root = HttpContext.Current.Server.MapPath("~/App_Data");
+                    var provider = new MultipartFormDataStreamProvider(root);
 
-                    if (!document.Item3) continue;
 
-                    File.Move(file.LocalFileName, document.Item1);
-                    var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+                    // Read the form data.
+                    await Request.Content.ReadAsMultipartAsync(provider);
 
-                    var driverUpload = new DriverUpload
+                    // This illustrates how to get the file names.
+                    foreach (MultipartFileData file in provider.FileData)
                     {
-                        Driver = driver,
-                        Description = desc,
-                        DocumentStatus = DocumentStatus.WaitingForApproval,
-                        ExpireDate = expireDate,
-                        FileName = document.Item2,
-                        UploadType = documentType,
-                        CreatedBy = driver.Person.Id,
-                        UpdatedBy = driver.Person.Id,
-                        UpdatedDt = DateTime.UtcNow,
-                        CreatedDt = DateTime.UtcNow
-                    };
+                        if (string.IsNullOrEmpty(file.Headers.ContentDisposition.FileName))
+                        {
+                            serviceResult.Success = false;
+                            serviceResult.Messages.AddMessage(MessageType.Error,
+                                "This request is not properly formatted");
 
-                    // Check if this driver has previously uploaded any document for the same type
-                    // if he did the old document should be removed (marked as deleted)
-                    var existingUpload =
-                        await
-                            _driverUploadService.Value.GetDriverUploadByDriverIdAndUploadTypeAsync(driver.Id,
-                                documentType);
+                            scope.Dispose();
+                            transaction.Rollback();
+                        }
 
-                    if (existingUpload != null)
-                    {
-                        await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(existingUpload.Id);
+                        var document = PrepareFile(file, documentType);
+
+                        if (!document.Item3) continue;
+
+                        File.Move(file.LocalFileName, document.Item1);
+                        var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
+
+                        var driverUpload = new DriverUpload
+                        {
+                            Driver = driver,
+                            Description = desc,
+                            DocumentStatus = DocumentStatus.WaitingForApproval,
+                            ExpireDate = expireDate,
+                            FileName = document.Item2,
+                            UploadType = documentType,
+                            CreatedBy = driver.Person.Id,
+                            UpdatedBy = driver.Person.Id,
+                            UpdatedDt = DateTime.UtcNow,
+                            CreatedDt = DateTime.UtcNow
+                        };
+
+                        // Check if this driver has previously uploaded any document for the same type
+                        // if he did the old document should be removed (marked as deleted)
+                        var existingUpload =
+                            await
+                                _driverUploadService.Value.GetDriverUploadByDriverIdAndUploadTypeAsync(driver.Id,
+                                    documentType);
+
+                        if (existingUpload != null)
+                        {
+                            await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(existingUpload.Id);
+                        }
+
+                        var driverDocument = await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
+
+                        scope.Complete();
+                        transaction.Rollback();
+
+                        serviceResult.Data = driverDocument.Id;
+                        serviceResult.Success = true;
+                        serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
                     }
 
-                    var driverDocument =  await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
-
-                    serviceResult.Data = driverDocument.Id;
-                    serviceResult.Success = true;
-                    serviceResult.Messages.AddMessage(MessageType.Info, "The file was successfully uploaded");
                 }
+                catch (Exception e)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
 
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+                }
             }
-            catch (Exception e)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
-            }
+
 
             return Json(serviceResult, new JsonSerializerSettings
             {
