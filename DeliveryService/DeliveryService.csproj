@@ -456,7 +456,8 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\addRider.pubxml" />
+    <None Include="Properties\PublishProfiles\addRiderEdward.pubxml" />
+    <None Include="Properties\PublishProfiles\AddRiderSarkis.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

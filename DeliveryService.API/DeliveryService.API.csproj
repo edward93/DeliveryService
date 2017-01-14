@@ -310,7 +310,8 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\AddRiderApi.pubxml" />
+    <None Include="Properties\PublishProfiles\AddRiderApiEdward.pubxml" />
+    <None Include="Properties\PublishProfiles\AddRiderApiSarkis.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
