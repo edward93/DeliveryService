@@ -15,6 +15,7 @@ using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using ServiceLayer.Service;
+using Newtonsoft.Json;
 
 namespace DeliveryService.Controllers
 {
@@ -31,8 +32,19 @@ namespace DeliveryService.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var driversList = await _businessService.Value.GetAllEntitiesAsync<Business>();
-            return View(driversList);
+            var businessList = await _businessService.Value.GetAllEntitiesAsync<Business>();
+            return View(businessList);
+        }
+
+        public async Task<ContentResult> GetBusiness(int businessId)
+        {
+            var business = await _businessService.Value.GetByIdAsync<Business>(businessId);
+            return Content(JsonConvert.SerializeObject(business,
+               Formatting.None,
+               new JsonSerializerSettings()
+               {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+               }));
         }
 
         [HttpPost]

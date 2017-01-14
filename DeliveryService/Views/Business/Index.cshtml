@@ -63,9 +63,9 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                            <tr id="driver_@item.Id">
-                                <td>@item.BusinessName</td>
-                                <td>@item.PhoneNumber</td>
+                                <tr id="driver_@item.Id">
+                                    <td>@item.BusinessName</td>
+                                    <td>@item.PhoneNumber</td>
                                     <td>@item.BusinessEmail</td>
                                     <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
                                     <td class="text-center">
@@ -114,17 +114,81 @@
     @Scripts.Render("~/bundles/lightBox")
 }
 <script>
-    $("#addNewBusinessBtn").on("click",
-        function (e) {
-            e.preventDefault();
-            $("#addNewBusinessModal").modal("show");
-        });
 
-    $("#btnPreviewBusiness").on("click",
-        function(e) {
-            e.preventDefault();
-            $("#addNewBusinessModal").modal("show");
-        });
+    $(document).ready(function() {
+
+        var businessName = $("#businessName");
+        var businessPhone = $("#businessPhone");
+        var businessEmail = $("#businessEmail");
+        var contPersFName = $("#contPersFName");
+        var contPersLName = $("#contPersLName");
+        var contPersPhone = $("#contPersPhone");
+        var addressLine1 = $("#addressLine1");
+        var addressLine2 = $("#addressLine2");
+        var country = $("#country");
+        var city = $("#country");
+        var state = $("#state");
+        var zipCode = $("#zipCode");
+
+
+        $("#addNewBusinessBtn").on("click",
+            function(e) {
+                e.preventDefault();
+                clearBusinessModal();
+                $("#addNewBusinessModal").modal("show");
+            });
+
+        $("#btnPreviewBusiness").on("click",
+            function(e) {
+                var businessIdForPreview = $(this).attr('data-id');
+                e.preventDefault();
+                clearBusinessModal();
+                getBusinessById(businessIdForPreview);
+            });
+
+        function getBusinessById(businessId) {
+            window.BlockUi();
+            $.post("/Business/GetBusiness",
+                { businessId: businessId },
+                function(data) {
+                    initBusinessModal(data);
+                    $("#addNewBusinessModal").modal("show");
+                    window.UnBlockUi();
+                });
+        }
+
+        function initBusinessModal(data) {
+            data = JSON.parse(data);
+            console.log(data.BusinessName);
+            businessName.val(data.BusinessName);
+            businessPhone.val(data.BusinessPhone);
+            businessEmail.val(data.BusinessEmail);
+            contPersFName.val(data.ContactPersonFirstName);
+            contPersLName.val(data.ContactPersonLastName);
+            contPersPhone.val(data.ContactPersonPhoneNumber);
+            addressLine1.val(data.AddressLine1);
+            addressLine2.val(data.AddressLine2);
+            country.val(data.Country);
+            city.val(data.City);
+            state.val(data.State);
+            zipCode.val(data.ZipCode);
+        }
+
+        function clearBusinessModal() {
+            businessName.val("");
+            businessPhone.val("");
+            businessEmail.val("");
+            contPersFName.val("");
+            contPersLName.val("");
+            contPersPhone.val("");
+            addressLine1.val("");
+            addressLine2.val("");
+            country.val("");
+            city.val("");
+            state.val("");
+            zipCode.val("");
+        }
+    });
 </script>
 
 @Html.Partial("~/Views/Business/Partials/_AddNewBusiness.cshtml")
