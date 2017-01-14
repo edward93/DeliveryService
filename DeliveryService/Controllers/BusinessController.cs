@@ -57,6 +57,7 @@ namespace DeliveryService.Controllers
                     {
                         throw new Exception("Error while creating User!");
                     }
+
                     // Get the newly created user
                     var currentUser = await UserManager.FindByEmailAsync(user.Email);
                     var adminUser = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
