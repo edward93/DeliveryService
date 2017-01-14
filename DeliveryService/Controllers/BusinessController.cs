@@ -51,7 +51,7 @@ namespace DeliveryService.Controllers
 
                     var user = new User { UserName = registerBusiness.BusinessEmail, Email = registerBusiness.BusinessEmail };
 
-                    IdentityResult result = await UserManager.CreateAsync(user, registerBusiness.Password);
+                    var result = await UserManager.CreateAsync(user, registerBusiness.Password);
 
                     if (!result.Succeeded)
                     {
@@ -70,8 +70,9 @@ namespace DeliveryService.Controllers
 
                         var businessAddress = registerBusiness.GetAddress();
 
-                        var createBusiness = await _businessService.Value.CreateBusiness(new Business()
+                        await _businessService.Value.CreateBusiness(new Business()
                         {
+                            Id = contactPerson.Id,
                             Addresses = new List<Address> { businessAddress },
                             BusinessEmail = registerBusiness.BusinessEmail,
                             PhoneNumber = registerBusiness.PhoneNumber,
@@ -81,8 +82,7 @@ namespace DeliveryService.Controllers
                             UpdatedDt = DateTime.UtcNow,
                             Approved = false,
                             CreatedBy = adminUser.Id,
-                            UpdatedBy = adminUser.Id,
-                            Id = contactPerson.Id
+                            UpdatedBy = adminUser.Id
                         });
 
                         serviceResult.Messages.AddMessage(MessageType.Info, "The Business was successfuly created");
