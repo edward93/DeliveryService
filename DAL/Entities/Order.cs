@@ -36,7 +36,7 @@ namespace DAL.Entities
         public virtual Driver AssignedDriver { get; set; }
         public virtual Business Business { get; set; }
 
-        public GeoLocation PickUpLocation { get; set; }
-        public GeoLocation DropOffLocation { get; set; }
+        public virtual GeoLocation PickUpLocation { get; set; }
+        public virtual GeoLocation DropOffLocation { get; set; }
     }
 }
