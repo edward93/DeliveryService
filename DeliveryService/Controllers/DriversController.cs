@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Mvc;
+using DAL.Constants;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
@@ -14,6 +15,8 @@ using ServiceLayer.Service;
 
 namespace DeliveryService.Controllers
 {
+
+    [Authorize(Roles = Roles.Admin)]
     public class DriversController : BaseController
     {
 

@@ -19,6 +19,8 @@ using Newtonsoft.Json;
 
 namespace DeliveryService.Controllers
 {
+
+    [Authorize(Roles = Roles.Admin)]
     public class BusinessController : BaseController
     {
         private readonly Lazy<IBusinessService> _businessService;
@@ -32,14 +34,14 @@ namespace DeliveryService.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var businessList = await _businessService.Value.GetAllEntitiesAsync<Business>();
+            var businessList = await _businessService.Value.GetAllEntitiesAsync<DAL.Entities.Business>();
             return View(businessList);
         }
 
         [HttpGet]
         public async Task<ContentResult> GetBusiness(int businessId)
         {
-            var business = await _businessService.Value.GetByIdAsync<Business>(businessId);
+            var business = await _businessService.Value.GetByIdAsync<DAL.Entities.Business>(businessId);
             var businessAddress = business.Addresses.Count > 0 ? business.Addresses.ToList()[0] : new Address();
             var businessView = new RegisterBusinessModel()
             {
@@ -74,11 +76,11 @@ namespace DeliveryService.Controllers
             {
                 try
                 {
-                    var business = await _businessService.Value.GetByIdAsync<Business>(registerBusiness.BusinessId);
+                    var business = await _businessService.Value.GetByIdAsync<DAL.Entities.Business>(registerBusiness.BusinessId);
                     var adminUser = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                     var businessAddress = registerBusiness.GetAddress();
 
-                    await _businessService.Value.CreateBusiness(new Business()
+                    await _businessService.Value.CreateBusiness(new DAL.Entities.Business()
                     {
                         Id = business.ContactPerson.Id,
                         Addresses = new List<Address> { businessAddress },
@@ -147,7 +149,7 @@ namespace DeliveryService.Controllers
 
                         var businessAddress = registerBusiness.GetAddress();
 
-                        await _businessService.Value.CreateBusiness(new Business()
+                        await _businessService.Value.CreateBusiness(new DAL.Entities.Business()
                         {
                             Id = contactPerson.Id,
                             Addresses = new List<Address> { businessAddress },
@@ -191,7 +193,7 @@ namespace DeliveryService.Controllers
         [HttpPost]
         public async Task<JsonResult> DeleteBusiness(int businessId)
         {
-            var result = await _businessService.Value.RemoveEntityAsync<Business>(businessId);
+            var result = await _businessService.Value.RemoveEntityAsync<DAL.Entities.Business>(businessId);
             return Json(result);
         }
 

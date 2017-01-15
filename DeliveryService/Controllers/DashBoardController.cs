@@ -12,6 +12,8 @@ using ServiceLayer.Service;
 
 namespace DeliveryService.Controllers
 {
+
+    [Authorize(Roles = "Admin")]
     public class DashBoardController : BaseController
     {
         private readonly Lazy<IDriverService> _driverService;

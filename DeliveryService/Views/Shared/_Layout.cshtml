@@ -26,7 +26,14 @@
     <!-- PageClass give you ability to specify custom style for specific view based on action -->
     <div id="wrapper" class="@Html.PageClass()">
         <!-- Navigation -->
-        @Html.Partial("_Navigation")
+        @if ((User.IsInRole("Business")))
+        {
+            @Html.Partial("~/Views/Partials/LeftNavigation/_BusinessNavigation.cshtml")
+        }
+        @if ((User.IsInRole("Admin")))
+        {
+            @Html.Partial("~/Views/Partials/LeftNavigation/_SuperAdminNavigation.cshtml")
+        }
         <!-- Page wraper -->
         <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
             <!-- Top Navbar -->
