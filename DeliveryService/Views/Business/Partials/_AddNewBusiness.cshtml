@@ -100,7 +100,7 @@
             </div>
             <div class="modal-footer ">
                 <ul class="list-inline pull-right">
-                    <li><button type="button" class="btn btn-primary" id="submitBussinessBtn">Create</button></li>
+                    <li><input type="button" class="btn btn-primary" value="Create" id="submitBussinessBtn"/></li>
                 </ul>
             </div>
         </div>
@@ -110,23 +110,5 @@
 </div>
 
 <script>
-    $("#submitBussinessBtn").on("click",
-        function (e) {
-            e.preventDefault();
-            var form = $("#submitBusinessForm");
-            $.post("/Business/RegisterDriver",
-                    form.serialize(), function (data) {
-                        window.UnBlockUi();
-                        if (data.Success) {
-                            for (let i = 0; i < data.Messages.length; i++) {
-                                window.toastr.success(data.Messages[i].Value);
-                            }
-                        } else {
-                            for (let i = 0; i < data.Messages.length; i++) {
-                                window.toastr.error(data.Messages[i].Value);
-                            }
-                        }
-                    $("#addNewBusinessModal").modal("hide");
-                });
-        });
+   
 </script>

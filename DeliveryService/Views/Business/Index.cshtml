@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <table id="tblDriversList" class="table table-striped table-bordered table-hover">
+                    <table id="tblBusinessList" class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>Business Name</th>
@@ -63,18 +63,18 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr id="driver_@item.Id">
+                                <tr id="business_@item.Id">
                                     <td>@item.BusinessName</td>
                                     <td>@item.PhoneNumber</td>
                                     <td>@item.BusinessEmail</td>
                                     <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <button class="btn btn-primary btn-xs" data-title="Preview" data-id="@item.Id" id="btnPreviewBusiness">
+                                            <button class="btn btn-primary btn-xs btnPreviewBusiness" data-title="Preview" data-id="@item.Id" >
                                                 <span class="fa fa-eye">
                                                 </span>
                                             </button>
-                                            <button class="btn btn-danger btn-xs" data-title="Delete" data-id="@item.Id" id="btnDeleteBusiness">
+                                            <button class="btn btn-danger btn-xs btnDeleteBusiness" data-title="Delete" data-id="@item.Id" >
                                                 <span class="glyphicon glyphicon-trash">
                                                 </span>
                                             </button>
@@ -115,7 +115,7 @@
 }
 <script>
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         var businessName = $("#businessName");
         var businessPhone = $("#businessPhone");
@@ -126,40 +126,128 @@
         var addressLine1 = $("#addressLine1");
         var addressLine2 = $("#addressLine2");
         var country = $("#country");
-        var city = $("#country");
+        var city = $("#city");
         var state = $("#state");
         var zipCode = $("#zipCode");
+        var submitBussinessBtn = $("#submitBussinessBtn");
+        var heading = $("#Heading");
+        var submitBusinessForm = $("#submitBusinessForm");
 
 
         $("#addNewBusinessBtn").on("click",
-            function(e) {
+            function (e) {
                 e.preventDefault();
                 clearBusinessModal();
+                submitBussinessBtn.val("Create");
+                heading.text("Add New Business");
                 $("#addNewBusinessModal").modal("show");
             });
 
-        $("#btnPreviewBusiness").on("click",
-            function(e) {
+        $("#submitBussinessBtn").on("click",
+           function (e) {
+               e.preventDefault();
+               var form = $("#submitBusinessForm");
+               var businessId = form.attr("data-id");
+               if (businessId > 0)
+                   editBusiness();
+               else
+                   addBusiness(form);
+           });
+
+        $(".btnPreviewBusiness").on("click",
+            function (e) {
                 var businessIdForPreview = $(this).attr('data-id');
                 e.preventDefault();
                 clearBusinessModal();
+                submitBussinessBtn.val("Update");
+                heading.text("Update Business");
                 getBusinessById(businessIdForPreview);
             });
 
+        $(document).on('click',
+          '.btnDeleteBusiness',
+          function () {
+              var businessIdForDelete = $(this).attr('data-id');
+              swal({
+                  title: "Are you sure?",
+                  text: "You will not be able to recover your business!",
+                  type: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#DD6B55",
+                  confirmButtonText: "Yes, delete!",
+                  closeOnConfirm: true
+              },
+                  function (isConfirm) {
+                      if (isConfirm)
+                          deleteBusiness(parseInt(businessIdForDelete));
+                  });
+          });
+
         function getBusinessById(businessId) {
             window.BlockUi();
-            $.post("/Business/GetBusiness",
+            $.get("/Business/GetBusiness",
                 { businessId: businessId },
-                function(data) {
+                function (data) {
                     initBusinessModal(data);
                     $("#addNewBusinessModal").modal("show");
                     window.UnBlockUi();
                 });
         }
 
+        function editBusiness() {
+            var data = {
+                BusinessName: businessName.val(),
+                BusinessPhone: businessPhone.val(),
+                BusinessEmail: businessEmail.val(),
+                ContactPersonFirstName: contPersFName.val(),
+                ContactPersonLastName: contPersLName.val(),
+                ContactPersonPhoneNumber: contPersPhone.val(),
+                AddressLine1: addressLine1.val(),
+                AddressLine2: addressLine2.val(),
+                Country: country.val(),
+                City: city.val(),
+                State: state.val(),
+                ZipCode: zipCode.val(),
+                BusinessId: submitBusinessForm.attr("data-id")
+            };
+
+            window.BlockUi();
+            $.post("/Business/UpdateBusiness",
+                      { registerBusiness: data },
+                      function (data) {
+                          window.UnBlockUi();
+                          if (data.Success) {
+                              for (let i = 0; i < data.Messages.length; i++) {
+                                  window.toastr.success(data.Messages[i].Value);
+                              }
+                          } else {
+                              for (let i = 0; i < data.Messages.length; i++) {
+                                  window.toastr.error(data.Messages[i].Value);
+                              }
+                          }
+                          $("#addNewBusinessModal").modal('toggle');
+                      });
+        }
+
+        function addBusiness(form) {
+            $.post("/Business/RegisterBusiness",
+                                    form.serialize(), function (data) {
+                                        window.UnBlockUi();
+                                        if (data.Success) {
+                                            for (let i = 0; i < data.Messages.length; i++) {
+                                                window.toastr.success(data.Messages[i].Value);
+                                            }
+                                        } else {
+                                            for (let i = 0; i < data.Messages.length; i++) {
+                                                window.toastr.error(data.Messages[i].Value);
+                                            }
+                                        }
+                                        $("#addNewBusinessModal").modal('toggle');
+                                    });
+        }
+
         function initBusinessModal(data) {
             data = JSON.parse(data);
-            console.log(data.BusinessName);
             businessName.val(data.BusinessName);
             businessPhone.val(data.BusinessPhone);
             businessEmail.val(data.BusinessEmail);
@@ -172,6 +260,7 @@
             city.val(data.City);
             state.val(data.State);
             zipCode.val(data.ZipCode);
+            submitBusinessForm.attr("data-id", data.BusinessId);
         }
 
         function clearBusinessModal() {
@@ -187,6 +276,18 @@
             city.val("");
             state.val("");
             zipCode.val("");
+            submitBusinessForm.attr("data-id", 0);
+        }
+
+        function deleteBusiness(businessId) {
+            window.BlockUi();
+            $.post("/Business/DeleteBusiness",
+                { businessId: businessId },
+                function (data) {
+                 window.UnBlockUi();
+                    $("#business_" + businessId).remove();
+                    swal("Deleted!", "Your business has been deleted.", "success");
+                });
         }
     });
 </script>

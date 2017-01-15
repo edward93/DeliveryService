@@ -36,10 +36,28 @@ namespace DeliveryService.Controllers
             return View(businessList);
         }
 
+        [HttpGet]
         public async Task<ContentResult> GetBusiness(int businessId)
         {
             var business = await _businessService.Value.GetByIdAsync<Business>(businessId);
-            return Content(JsonConvert.SerializeObject(business,
+            var businessAddress = business.Addresses.Count > 0 ? business.Addresses.ToList()[0] : new Address();
+            var businessView = new RegisterBusinessModel()
+            {
+                BusinessId = business.Id,
+                ContactPersonFirstName = business.ContactPerson.FirstName,
+                ContactPersonLastName = business.ContactPerson.LastName,
+                ContactPersonPhoneNumber = business.ContactPersonPhoneNumber,
+                BusinessName = business.BusinessName,
+                BusinessEmail = business.BusinessEmail,
+                AddressLine1 = businessAddress.AddressLine1,
+                Addressline2 = businessAddress.AddressLine2,
+                Country = businessAddress.Country,
+                City = businessAddress.City,
+                State = businessAddress.State,
+                ZipCode = businessAddress.ZipCode
+            };
+
+            return Content(JsonConvert.SerializeObject(businessView,
                Formatting.None,
                new JsonSerializerSettings()
                {
@@ -48,7 +66,53 @@ namespace DeliveryService.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> RegisterDriver(RegisterBusinessModel registerBusiness)
+        public async Task<JsonResult> UpdateBusiness(RegisterBusinessModel registerBusiness)
+        {
+            var serviceResult = new ServiceResult();
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var business = await _businessService.Value.GetByIdAsync<Business>(registerBusiness.BusinessId);
+                    var adminUser = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                    var businessAddress = registerBusiness.GetAddress();
+
+                    await _businessService.Value.CreateBusiness(new Business()
+                    {
+                        Id = business.ContactPerson.Id,
+                        Addresses = new List<Address> { businessAddress },
+                        BusinessEmail = registerBusiness.BusinessEmail,
+                        PhoneNumber = registerBusiness.PhoneNumber,
+                        BusinessName = registerBusiness.BusinessName,
+                        ContactPersonPhoneNumber = registerBusiness.ContactPersonPhoneNumber,
+                        CreatedDt = DateTime.UtcNow,
+                        UpdatedDt = DateTime.UtcNow,
+                        Approved = false,
+                        CreatedBy = adminUser.Id,
+                        UpdatedBy = adminUser.Id
+                    });
+
+                    scope.Complete();
+                    transaction.Commit();
+
+                }
+                catch (Exception e)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while updating business");
+                    serviceResult.Messages.AddMessage(MessageType.Error, e.ToString());
+                }
+            }
+
+            return Json(serviceResult);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> RegisterBusiness(RegisterBusinessModel registerBusiness)
         {
             var serviceResult = new ServiceResult();
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -124,6 +188,12 @@ namespace DeliveryService.Controllers
             return Json(serviceResult);
         }
 
+        [HttpPost]
+        public async Task<JsonResult> DeleteBusiness(int businessId)
+        {
+            var result = await _businessService.Value.RemoveEntityAsync<Business>(businessId);
+            return Json(result);
+        }
 
     }
 }

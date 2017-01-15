@@ -79,6 +79,7 @@ namespace DeliveryService.ViewModels
             };
         }
 
+        public int BusinessId { get; set; }
         public string BusinessName { get; set; }
         public string PhoneNumber { get; set; }
 
