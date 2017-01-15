@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DAL.Entities;
+using DAL.Enums;
 using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
@@ -40,6 +41,27 @@ namespace ServiceLayer.Service
                 return true;
             }
             return false;
+        }
+
+        public async Task ChangeDriverStatusAsync(int driverId, DriverStatus newStatus)
+        {
+            var driver = await GetByIdAsync<Driver>(driverId);
+
+            if (driver == null) throw new Exception($"No driver found for given Id {driverId}");
+
+            if (!driver.Approved) throw new Exception($"This driver (Id: {driverId}) is not approved and is not allowed to proceed");
+
+            if (driver.Status == newStatus)
+            {
+                // this means that something is wrong since you cannot assign same status. 
+                //TODO: Question for Sarkis do we need to throw an exception here?
+            }
+
+            driver.Status = newStatus;
+            driver.UpdatedDt = DateTime.UtcNow;
+            driver.UpdatedBy = driver.Person.Id;
+
+            await UpdateDriverAsync(driver);
         }
     }
 }

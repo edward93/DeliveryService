@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DAL.Entities;
+using DAL.Enums;
 
 namespace ServiceLayer.Service
 {
@@ -13,5 +14,6 @@ namespace ServiceLayer.Service
         Task<Driver> UpdateDriverAsync(Driver driver);
         Task<Driver> GetDriverByPersonAsync(string personId);
         Task<bool> DeleteDriver(int driverId);
+        Task ChangeDriverStatusAsync(int driverId, DriverStatus newStatus);
     }
 }

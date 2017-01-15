@@ -57,15 +57,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Annotation\Precision.cs" />
     <Compile Include="Context\DbContext.cs" />
     <Compile Include="Context\IDbContext.cs" />
     <Compile Include="Entities\Address.cs" />
     <Compile Include="Entities\Business.cs" />
     <Compile Include="Entities\Card.cs" />
+    <Compile Include="Entities\DeviceOrientation.cs" />
     <Compile Include="Entities\Driver.cs" />
     <Compile Include="Entities\DriverUpload.cs" />
+    <Compile Include="Entities\DriverLocation.cs" />
+    <Compile Include="Entities\GeoLocation.cs" />
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Entities\Feedback.cs" />
+    <Compile Include="Entities\IGeoLocation.cs" />
+    <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\Rating.cs" />
     <Compile Include="Entities\User.cs" />
@@ -74,6 +80,7 @@
     <Compile Include="Enums\DocumentStatus.cs" />
     <Compile Include="Enums\DriverStatus.cs" />
     <Compile Include="Enums\MessageType.cs" />
+    <Compile Include="Enums\OrderStatus.cs" />
     <Compile Include="Enums\Sex.cs" />
     <Compile Include="Enums\UploadType.cs" />
     <Compile Include="Enums\VehicleType.cs" />

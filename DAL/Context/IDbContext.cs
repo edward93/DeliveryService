@@ -16,6 +16,11 @@ namespace DAL.Context
         DbSet<Rating> Ratings { get; set; }
         DbSet<Address> Addresses { get; set; }
         DbSet<Business> Businesses { get; set; }
+        DbSet<DriverLocation> DriverLocations { get; set; }
+        DbSet<GeoLocation> GeoLocations { get; set; }
+        DbSet<DeviceOrientation> DeviceOrientations { get; set; }
+        DbSet<Order> Orders { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         Task<int> SaveChangesAsync();

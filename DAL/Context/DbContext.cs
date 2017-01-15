@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using DAL.Annotation;
 using DAL.Entities;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -21,6 +22,10 @@ namespace DAL.Context
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Business> Businesses { get; set; }
+        public DbSet<DriverLocation> DriverLocations { get; set; }
+        public DbSet<GeoLocation> GeoLocations { get; set; }
+        public DbSet<DeviceOrientation> DeviceOrientations { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         public static DbContext Create()
         {
@@ -38,13 +43,13 @@ namespace DAL.Context
             modelBuilder.Entity<IdentityUserRole>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogins");
             modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaims");
+
+            Precision.ConfigureModelBuilder(modelBuilder);
         }
 
         void IDisposable.Dispose()
         {
             this.Dispose();
         }
-
-       
     }
 }

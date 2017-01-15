@@ -190,5 +190,36 @@ namespace DeliveryService.API.Controllers
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
         }
+
+        public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
+        {
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (newStatus == DriverStatus.Busy) throw new Exception("Driver cannot change it's status to Busy");
+
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, newStatus);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, $"Driver Status was changed to {newStatus}.");
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, $"Error while changing driver's status to {newStatus}");
+
+                    /* TODO: This should be changed to ex.Message to display only messages 
+                       TODO: and ex.Tostring for logging to display more detailed information about error in a log file */
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    throw;
+                }
+            }
+
+            return Json(serviceResult);
+        }
     }
 }
