@@ -11,7 +11,6 @@ using Microsoft.AspNet.Identity.Owin;
 namespace DeliveryService.Controllers
 {
     [Authorize]
-    [Authorize(Roles = "Admin")]
     public class BaseController : Controller
     {
         protected readonly IConfig Config;

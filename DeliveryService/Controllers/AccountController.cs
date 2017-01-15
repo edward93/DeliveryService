@@ -50,7 +50,17 @@ namespace DeliveryService.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    if (User.IsInRole(Roles.Admin))
+                        return RedirectToAction("Index", "DashBoard");
+                    else if (User.IsInRole(Roles.Business))
+                    {
+                        return RedirectToAction("DashBoard", "BusinessDashboard");
+                    }
+                    else
+                    {
+                        return RedirectToLocal(returnUrl);
+                    }
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:

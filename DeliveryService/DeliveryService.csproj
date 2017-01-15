@@ -244,6 +244,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
+    <Compile Include="Controllers\BusinessDashboardController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\DriversController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -943,10 +944,12 @@
     <Content Include="Views\Drivers\Partials\_DriverModal.cshtml" />
     <Content Include="Views\Business\Index.cshtml" />
     <Content Include="Views\Business\Partials\_AddNewBusiness.cshtml" />
+    <Content Include="Views\BusinessDashboard\DashBoard.cshtml" />
+    <Content Include="Views\Partials\LeftNavigation\_SuperAdminNavigation.cshtml" />
+    <Content Include="Views\Partials\LeftNavigation\_BusinessNavigation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Partials\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
