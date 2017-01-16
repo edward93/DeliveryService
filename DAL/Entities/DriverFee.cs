@@ -1,15 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Annotation;
 using DAL.Entities.Interfaces;
 using DAL.Enums;
 
 namespace DAL.Entities
 {
-    public class Person : IEntity
+    public class DriverFee : IEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
@@ -18,21 +18,22 @@ namespace DAL.Entities
         public bool IsDeleted { get; set; }
 
         [Required]
-        public string FirstName { get; set; }
+        [Precision(19, 4)]
+        public decimal Amount { get; set; }
         [Required]
-        public string LastName { get; set; }
-        [Required]
-        public Sex Sex { get; set; }
-        [Required]
-        public string Email { get; set; }
+        public DateTime Date { get; set; }
 
-        public string Phone { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        [ForeignKey("User")]
-        public string UserId { get; set; }
+        public string Description { get; set; }
+        [Required]
+        public FeeType FeeType { get; set; }
 
-        public virtual User User { get; set; }
+        [ForeignKey("Driver")]
+        public int DriverId { get; set; }
+
+        [ForeignKey("Order")]
+        public int? AssociatedOrderId { get; set; }
+
+        public virtual Order Order { get; set; }
         public virtual Driver Driver { get; set; }
-        
     }
 }

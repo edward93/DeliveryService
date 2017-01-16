@@ -23,13 +23,17 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IDriverUploadService> _driverUploadService;
+        private readonly Lazy<IDriverLocationService> _driverLocationService;
 
         public DriverController(IDriverService service, IConfig config, IDbContext context,
-            IPersonService personService, IDriverUploadService driverUploadService) : base(config, context)
+            IPersonService personService, 
+            IDriverUploadService driverUploadService,
+            IDriverLocationService driverLocationService) : base(config, context)
         {
             _driverService = new Lazy<IDriverService>(() => service);
             _personService = new Lazy<IPersonService>(() => personService);
             _driverUploadService = new Lazy<IDriverUploadService>(() => driverUploadService);
+            _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
         }
 
         [HttpPost]
@@ -191,6 +195,7 @@ namespace DeliveryService.API.Controllers
             });
         }
 
+        [HttpPost]
         public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
         {
             var serviceResult = new ServiceResult();
@@ -221,5 +226,54 @@ namespace DeliveryService.API.Controllers
 
             return Json(serviceResult);
         }
+
+        [HttpPost]
+        public async Task<IHttpActionResult> GetDriverLocation(int driverId)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                var location = await _driverLocationService.Value.GetDriverLocationByDriverIdAsync(driverId);
+
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Location successfully retrieved.");
+                serviceResult.Data = location;
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while retrieving driver's location.");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+            }
+
+            return Json(serviceResult);
+        }
+
+        [HttpPost]
+        public async Task<IHttpActionResult> UpdateDriverLocation(DriverLocation model)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
+
+                await _driverLocationService.Value.UpdateDriverLocation(model);
+
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "The driver location was updated.");
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while updating driver's location.");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+            }
+
+            return Json(serviceResult, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+        }
+
     }
 }

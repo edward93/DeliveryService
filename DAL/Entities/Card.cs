@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Entities.Interfaces;
 using DAL.Enums;
 
 namespace DAL.Entities

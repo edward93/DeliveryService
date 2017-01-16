@@ -1,4 +1,4 @@
-﻿namespace DAL.Entities
+﻿namespace DAL.Entities.Interfaces
 {
     public interface IGeoLocation
     {

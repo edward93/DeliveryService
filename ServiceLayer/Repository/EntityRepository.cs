@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DAL.Context;
 using DAL.Entities;
+using DAL.Entities.Interfaces;
 
 namespace ServiceLayer.Repository
 {
