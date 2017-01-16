@@ -406,6 +406,7 @@
     <Content Include="Images\main_logo.png" />
     <Content Include="Images\passport.png" />
     <Content Include="Images\proofOfAddres.png" />
+    <Content Include="Scripts\app\Business\business.main.js" />
     <Content Include="Scripts\app\DashBoard\dashboard.main.js" />
     <Content Include="Scripts\app\Drivers\drivers.main.js" />
     <Content Include="Scripts\app\Drivers\Partials\driverModal.main.js" />
@@ -950,6 +951,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\app\Business\Partials\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

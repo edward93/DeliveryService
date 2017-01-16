@@ -120,8 +120,8 @@ namespace DeliveryService.API.Controllers
         {
             var serviceResult = new ServiceResult();
 
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            using (var transaction = Context.Database.BeginTransaction())
+           // using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+           // using (var transaction = Context.Database.BeginTransaction())
             {
                 try
                 {
@@ -145,8 +145,8 @@ namespace DeliveryService.API.Controllers
                         serviceResult.Success = false;
                         serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
 
-                        scope.Dispose();
-                        transaction.Rollback();
+                    //    scope.Dispose();
+                   //     transaction.Rollback();
                     }
 
                     string root = HttpContext.Current.Server.MapPath("~/App_Data");
@@ -165,8 +165,8 @@ namespace DeliveryService.API.Controllers
                             serviceResult.Messages.AddMessage(MessageType.Error,
                                 "This request is not properly formatted");
 
-                            scope.Dispose();
-                            transaction.Rollback();
+                        //    scope.Dispose();
+                        //    transaction.Rollback();
                         }
 
                         var document = PrepareFile(file, documentType);
@@ -204,8 +204,8 @@ namespace DeliveryService.API.Controllers
 
                         var driverDocument = await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
 
-                        scope.Complete();
-                        transaction.Rollback();
+                   //     scope.Complete();
+                   //     transaction.Rollback();
 
                         serviceResult.Data = driverDocument.Id;
                         serviceResult.Success = true;
@@ -215,8 +215,8 @@ namespace DeliveryService.API.Controllers
                 }
                 catch (Exception e)
                 {
-                    scope.Dispose();
-                    transaction.Rollback();
+                  //  scope.Dispose();
+                  //  transaction.Rollback();
 
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, e.Message);

@@ -8,10 +8,9 @@
             { extend: 'excel', title: 'ExampleFile' },
             {
                 extend: 'pdf', title: 'ExampleFile',
-                columnDefs: [{
-                    targets: -1,
-                    visible: false
-                }]
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                }
             },
             {
                 extend: 'print',

@@ -30,6 +30,10 @@ namespace DeliveryService
             bundles.Add(new StyleBundle("~/plugin/DashBoard").Include(
                 "~/Style/DashBoard/dashboard.css"));
 
+            // Business jQuery
+            bundles.Add(new ScriptBundle("~/bundles/Business").Include(
+                        "~/Scripts/app/Business/business.main.js"));
+
             // Font Awesome icons
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
                       "~/fonts/font-awesome/css/font-awesome.min.css", new CssRewriteUrlTransform()));

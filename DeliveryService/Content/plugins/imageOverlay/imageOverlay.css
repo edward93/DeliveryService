@@ -61,12 +61,19 @@
             max-width: 100%;
             height: auto;
             min-height: 240px;
-            max-height: 280px
+            max-height: 280px;
+            margin:auto;
         }
 
 .no-img {
     opacity: 0.5;
     filter: alpha(opacity=50);
+}
+ #zoom-image {
+    height: 100%;
+    width: auto;
+    position: relative;
+    bottom: 25px;
 }
 
 .overlay {

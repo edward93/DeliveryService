@@ -79,7 +79,16 @@ $(document).ready(function () {
         var documentId = $(this).parent().parent().attr('data-id');
         RejectDriverDocument(documentId, e);
     });
-
+    
+    $('.image').on('click',function(e) {
+        var imageSrc = e.currentTarget.offsetParent.offsetParent.childNodes[3].src;
+        $('#image-modal').show();
+        $('#zoom-image').attr('src', imageSrc);
+        console.log();
+    });
+    $('#image-modal').on('click', function () {
+            $('#image-modal').hide();
+    });
 });
 
 function nextTab(elem) {
