@@ -245,10 +245,13 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessDashboardController.cs" />
+    <Compile Include="Controllers\BusinessProfileController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\DriversController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LiveMapController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\BusinesRequestsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -948,10 +951,14 @@
     <Content Include="Views\BusinessDashboard\DashBoard.cshtml" />
     <Content Include="Views\Partials\LeftNavigation\_SuperAdminNavigation.cshtml" />
     <Content Include="Views\Partials\LeftNavigation\_BusinessNavigation.cshtml" />
+    <Content Include="Views\BusinessProfile\BusinessProfile.cshtml" />
+    <Content Include="Views\BusinesRequests\BusinesRequests.cshtml" />
+    <Content Include="Views\LiveMap\Map.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\app\Business\Partials\" />
+    <Folder Include="Views\PartnerRequests\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

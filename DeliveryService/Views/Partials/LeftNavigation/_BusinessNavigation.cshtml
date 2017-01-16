@@ -27,24 +27,31 @@
                     RIDER
                 </div>
             </li>
-            <li class="@Html.IsSelected(controller: "DashBoard")">
-                <a href="@Url.Action("Index", "DashBoard")">
+            <li class="@Html.IsSelected(controller: "BusinessDashboard")">
+                <a href="@Url.Action("DashBoard", "BusinessDashboard")">
                     <i class="fa fa-th-large"></i>
                     <span class="nav-label" data-i18n="nav.layouts">Dashboard</span>
                 </a>
             </li>
 
-            <li class="@Html.IsSelected(controller: "Drivers")">
-                <a href="@Url.Action("Index", "Drivers")">
-                    <i class="fa fa-diamond"></i>
-                    <span class="nav-label" data-i18n="nav.layouts">Drivers List</span>
+            <li class="@Html.IsSelected(controller: "LiveMap")">
+                <a href="@Url.Action("Map", "LiveMap")">
+                    <i class="fa fa-map-marker"></i>
+                    <span class="nav-label" data-i18n="nav.layouts">Live Map</span>
                 </a>
             </li>
 
-            <li class="@Html.IsSelected(controller: "Business")">
-                <a href="@Url.Action("Index", "Business")">
+            <li class="@Html.IsSelected(controller: "BusinessRequests")">
+                <a href="@Url.Action("BusinesRequests", "BusinesRequests")">
                     <i class="fa fa-diamond"></i>
-                    <span class="nav-label" data-i18n="nav.layouts">Busines List</span>
+                    <span class="nav-label" data-i18n="nav.layouts">Requests</span>
+                </a>
+            </li>
+            
+            <li class="@Html.IsSelected(controller: "BusinessProfile")">
+                <a href="@Url.Action("BusinessProfile", "BusinessProfile")">
+                    <i class="fa fa-user"></i>
+                    <span class="nav-label" data-i18n="nav.layouts">Profile</span>
                 </a>
             </li>
 

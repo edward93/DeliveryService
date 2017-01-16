@@ -20,6 +20,11 @@ namespace DeliveryService.Controllers
 
         public ActionResult DashBoard()
         {
+            ViewBag.EarningsToday = 0.01;
+            ViewBag.EarningsMonth = 0.01;
+            ViewBag.OrdersToday = 1;
+            ViewBag.OrdersMonth = 1;
+
             return View();
         }
     }
