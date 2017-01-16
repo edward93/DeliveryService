@@ -20,6 +20,9 @@ namespace DAL.Context
         DbSet<GeoLocation> GeoLocations { get; set; }
         DbSet<DeviceOrientation> DeviceOrientations { get; set; }
         DbSet<Order> Orders { get; set; }
+        DbSet<BusinessPenalty> BusinessPenalties { get; set; }
+        DbSet<DriverPenalty> DriverPenalties { get; set; }
+        DbSet<DriverFee> DriverFees { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

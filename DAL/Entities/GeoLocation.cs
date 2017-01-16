@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using DAL.Annotation;
+using DAL.Entities.Interfaces;
 
 namespace DAL.Entities
 {

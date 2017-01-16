@@ -26,6 +26,9 @@ namespace DAL.Context
         public DbSet<GeoLocation> GeoLocations { get; set; }
         public DbSet<DeviceOrientation> DeviceOrientations { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<BusinessPenalty> BusinessPenalties { get; set; }
+        public DbSet<DriverPenalty> DriverPenalties { get; set; }
+        public DbSet<DriverFee> DriverFees { get; set; }
 
         public static DbContext Create()
         {

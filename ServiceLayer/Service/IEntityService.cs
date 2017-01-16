@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Entities;
+using DAL.Entities.Interfaces;
 
 namespace ServiceLayer.Service
 {
