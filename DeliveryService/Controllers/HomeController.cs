@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DAL.Context;
 using Infrastructure.Config;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
@@ -15,7 +16,8 @@ namespace DeliveryService.Controllers
         private readonly ICardService _cardService;
 
         public HomeController(IConfig config,
-            ICardService service) : base(config)
+            IDbContext context,
+            ICardService service) : base(config, context)
         {
             _cardService = service;
         }

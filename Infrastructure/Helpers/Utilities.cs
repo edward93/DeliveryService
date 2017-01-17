@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Infrastructure.Helpers
 {
-    public class Utilities
+    public static class Utilities
     {
         private static IEnumerable<SelectizeItem<TKeyValue>> ToSelectizeItemsList<T, TKeyValue>() where T : struct, IConvertible
         {
@@ -24,6 +24,12 @@ namespace Infrastructure.Helpers
         public static IEnumerable<SelectizeItem<int>> ToSelectizeItemsList<T>() where T : struct, IConvertible
         {
             return ToSelectizeItemsList<T, int>();
+        }
+
+        public static bool HasImageExtension(string source)
+        {
+            return (source.EndsWith(".png") || source.EndsWith(".jpg") ||
+                source.EndsWith(".jpeg") || source.EndsWith(".tif") || source.EndsWith(".bmp"));
         }
     }
 }

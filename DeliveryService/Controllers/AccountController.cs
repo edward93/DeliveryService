@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DAL.Constants;
+using DAL.Context;
 using DAL.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -18,7 +20,7 @@ namespace DeliveryService.Controllers
     public class AccountController : BaseController
     {
 
-        public AccountController(IConfig config) : base(config)
+        public AccountController(IConfig config, IDbContext context) : base(config, context)
         {
         }
 
@@ -35,7 +37,6 @@ namespace DeliveryService.Controllers
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
@@ -49,7 +50,17 @@ namespace DeliveryService.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    if (User.IsInRole(Roles.Admin))
+                        return RedirectToAction("Index", "DashBoard");
+                    else if (User.IsInRole(Roles.Business))
+                    {
+                        return RedirectToAction("DashBoard", "BusinessDashboard");
+                    }
+                    else
+                    {
+                        return RedirectToLocal(returnUrl);
+                    }
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -125,7 +136,15 @@ namespace DeliveryService.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    
+                    var currentUser = await UserManager.FindByEmailAsync(user.Email);
+
+                    // Assign Member role to user
+                    var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Admin);
+
+                    if (roleResult.Succeeded)
+                    {
+                        UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Admin));
+                    }
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -142,6 +161,7 @@ namespace DeliveryService.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+        
 
         //
         // GET: /Account/ConfirmEmail
@@ -359,7 +379,6 @@ namespace DeliveryService.Controllers
         //
         // POST: /Account/LogOff
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

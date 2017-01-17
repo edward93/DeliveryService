@@ -4,10 +4,12 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using DAL.Constants;
+using DAL.Context;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -21,6 +23,7 @@ using DAL.Entities;
 using DAL.Enums;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
+using Newtonsoft.Json;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
@@ -29,20 +32,24 @@ namespace DeliveryService.API.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : BaseApiController
     {
-        private readonly IPersonService _personService;
+        private readonly Lazy<IPersonService> _personService;
+        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IAddressService> _addressService;
         private const string LocalLoginProvider = "Local";
 
 
-        public AccountController(IConfig config):base(config)
+        public AccountController(IConfig config, IdentityDbContext c, IDbContext context) : base(config,context)
         {
         }
 
-        public AccountController(IPersonService personService, IConfig config) :base(config)
+        public AccountController(IPersonService personService, IConfig config, IDriverService driverService, IAddressService addressService, IDbContext context) : base(config, context)
         {
-            _personService = personService;
+            _driverService = new Lazy<IDriverService>(() => driverService);
+            _personService = new Lazy<IPersonService>(() => personService);
+            _addressService = new Lazy<IAddressService>(() => addressService);
         }
 
-        
+
 
 
         // GET api/Account/UserInfo
@@ -119,7 +126,7 @@ namespace DeliveryService.API.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -252,9 +259,9 @@ namespace DeliveryService.API.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -312,59 +319,90 @@ namespace DeliveryService.API.Controllers
             return logins;
         }
 
-        // POST api/Account/Register
+        // POST api/Account/RegisterDriver
         [AllowAnonymous]
-        [Route("Register")]
-        public async Task<IHttpActionResult> Register(RegisterBindingModel model)
+        [Route("RegisterDriver")]
+        public async Task<IHttpActionResult> RegisterDriver(RegisterBindingModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = new User() { UserName = model.Email, Email = model.Email };
-
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-
-            if (!result.Succeeded)
-            {
-                return GetErrorResult(result);
-            }
-            // Get the newly created user
-            var currentUser = await UserManager.FindByEmailAsync(user.Email);
-
             var serviceResult = new ServiceResult();
-            try
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                // Create person model
-                await _personService.CreatePersonAsync(model.GetPerson(currentUser));
-
-                // Assign Member role to user
-                var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Member);
-
-                if (roleResult.Succeeded)
+                if (!ModelState.IsValid)
                 {
-                    UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
-                    serviceResult.Success = true;
-                    serviceResult.Messages.Add(MessageType.Info, "Person was successfully created!");
+                    return BadRequest(ModelState);
                 }
-                else
+
+                var user = new User() {UserName = model.Email, Email = model.Email};
+                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+
+                if (!result.Succeeded)
                 {
+                    return GetErrorResult(result);
+                }
+                // Get the newly created user
+                var currentUser = await UserManager.FindByEmailAsync(user.Email);
+
+                try
+                {
+                    // Create person model
+                    Person person = await _personService.Value.CreatePersonAsync(model.GetPerson(currentUser));
+
+                    // Assign Member role to user
+                    var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Member);
+
+                    if (roleResult.Succeeded)
+                    {
+                        UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
+                        serviceResult.Messages.AddMessage(MessageType.Info, "Person was successfully created!");
+
+                        var driverAddress = model.GetAddress();
+
+                        var driver = new Driver
+                        {
+                            Approved = false,
+                            Status = DriverStatus.Offline,
+                            Id = person.Id,
+                            Addresses = new List<Address> {driverAddress},
+                            CreatedDt = DateTime.UtcNow,
+                            UpdatedDt = DateTime.UtcNow,
+                            CreatedBy = person.Id,
+                            UpdatedBy = person.Id
+                        };
+                        var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
+                        serviceResult.Data = null; //createdDriver;
+                        serviceResult.Messages.AddMessage(MessageType.Info, "The Driver was successfuly created");
+                        serviceResult.Success = true;
+
+                        scope.Complete();
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        scope.Dispose();
+                        transaction.Rollback();
+                        // If any errors generate the error message and return json
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating person!");
+                        serviceResult.Messages.AddMessage(MessageType.Error, roleResult.Errors.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    transaction.Rollback();
                     // If any errors generate the error message and return json
                     serviceResult.Success = false;
-                    serviceResult.Messages.Add(MessageType.Error, "Error while creating person!");
-                    serviceResult.Messages.Add(MessageType.Error, roleResult.Errors.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while registering driver");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
                 }
-            }
-            catch (Exception ex)
-            {
-                // If any errors generate the error message and return json
-                serviceResult.Success = false;
-                serviceResult.Messages.Add(MessageType.Error, "Error while creating person!");
-                serviceResult.Messages.Add(MessageType.Error, ex.ToString());
+
             }
 
-            return Json(serviceResult);
+            return Json(serviceResult, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
         }
 
         // POST api/Account/RegisterExternal
@@ -395,12 +433,12 @@ namespace DeliveryService.API.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }
 
-        
+
 
         #region Helpers
 

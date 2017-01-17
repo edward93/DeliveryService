@@ -11,15 +11,43 @@ namespace DeliveryService
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",
                       "~/Content/animate.css",
+                      "~/Content/globalStyles.css",
                       "~/Content/style.css"));
+
+            //Drivers jQuery
+            bundles.Add(new ScriptBundle("~/bundles/Drivers").Include(
+                        "~/Scripts/app/Drivers/drivers.main.js"));
+
+            //Drivers-Partials jQuery
+            bundles.Add(new ScriptBundle("~/bundles/Drivers_Partials").Include(
+                        "~/Scripts/app/Drivers/Partials/driverModal.main.js"));
+
+            //DashBoard jQuery
+            bundles.Add(new ScriptBundle("~/bundles/DashBoard").Include(
+                        "~/Scripts/app/DashBoard/dashboard.main.js"));
+
+            //DashBoard Style
+            bundles.Add(new StyleBundle("~/plugin/DashBoard").Include(
+                "~/Style/DashBoard/dashboard.css"));
+
+            // Business jQuery
+            bundles.Add(new ScriptBundle("~/bundles/Business").Include(
+                        "~/Scripts/app/Business/business.main.js"));
 
             // Font Awesome icons
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
                       "~/fonts/font-awesome/css/font-awesome.min.css", new CssRewriteUrlTransform()));
 
+
             // jQuery
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-2.1.1.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/lightBox").Include(
+                "~/Scripts/plugins/lightBox/lightbox.min.js"));
+
+            bundles.Add(new StyleBundle("~/plugins/lightBox").Include(
+                "~/Content/plugins/lightBox/lightbox.min.css"));
 
             // jQueryUI CSS
             bundles.Add(new ScriptBundle("~/Scripts/plugins/jquery-ui/jqueryuiStyles").Include(
@@ -130,6 +158,9 @@ namespace DeliveryService
             bundles.Add(new ScriptBundle("~/plugins/codeEditor").Include(
                       "~/Scripts/plugins/codemirror/codemirror.js",
                       "~/Scripts/plugins/codemirror/mode/javascript/javascript.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
+                    "~/Scripts/modernizr-*"));
 
             // codeEditor 
             bundles.Add(new ScriptBundle("~/plugins/nestable").Include(
@@ -406,7 +437,9 @@ namespace DeliveryService
                       "~/Scripts/plugins/bootstrap-markdown/bootstrap-markdown.js",
                       "~/Scripts/plugins/bootstrap-markdown/markdown.js"));
 
-
+            bundles.Add(new StyleBundle("~/plugins/imageOverlay").Include(
+                "~/Content/plugins/imageOverlay/imageOverlay.css",
+                "~/Content/plugins/imageOverlay/imageOverlayBase.css"));
         }
     }
 }

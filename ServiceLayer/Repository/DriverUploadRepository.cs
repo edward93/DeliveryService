@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Context;
 using DAL.Entities;
+using DAL.Enums;
 
 namespace ServiceLayer.Repository
 {
@@ -17,9 +18,9 @@ namespace ServiceLayer.Repository
 
         }
 
-        public async Task<DriverUpload> GetDriverUploadByDriverIdAsync(int id)
+        public async Task<IEnumerable<DriverUpload>> GetDriverUploadByDriverIdAsync(int id)
         {
-            return await DbContext.DriverUploads.FirstOrDefaultAsync(c => c.DriverId == id);
+            return await DbContext.DriverUploads.Where(c => c.DriverId == id && c.IsDeleted == false).ToListAsync();
         }
 
         public async Task<DriverUpload> CreateDriverUpload(DriverUpload driverUpload)
@@ -27,6 +28,33 @@ namespace ServiceLayer.Repository
             DbContext.DriverUploads.AddOrUpdate(driverUpload);
             await DbContext.SaveChangesAsync();
             return driverUpload;
+        }
+
+        public async Task ApproveDriverDocumentAsync(int documentId, int personId)
+        {
+            var doc = await GetByIdAsync<DriverUpload>(documentId);
+            doc.DocumentStatus = DocumentStatus.Approved;
+            doc.UpdatedDt = DateTime.UtcNow;
+            doc.UpdatedBy = personId;
+            DbContext.DriverUploads.AddOrUpdate(doc);
+            await DbContext.SaveChangesAsync();
+        }
+
+        public async Task RejectDriverDocumentAsync(int documentId, int personId, string reason)
+        {
+            var doc = await GetByIdAsync<DriverUpload>(documentId);
+            doc.DocumentStatus = DocumentStatus.Rejected;
+            doc.UpdatedDt = DateTime.UtcNow;
+            doc.UpdatedBy = personId;
+            doc.RejectionComment = reason;
+            DbContext.DriverUploads.AddOrUpdate(doc);
+            await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<DriverUpload> GetDriverUploadByDriverIdAndUploadTypeAsync(int id, UploadType documentType)
+        {
+            var docs = await GetDriverUploadByDriverIdAsync(id);
+            return docs.FirstOrDefault(c => c.UploadType == documentType);
         }
     }
 }

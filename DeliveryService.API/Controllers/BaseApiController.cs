@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Web.Http;
+using DAL.Context;
 using Infrastructure.Config;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -9,6 +10,7 @@ namespace DeliveryService.API.Controllers
     public class BaseApiController : ApiController
     {
         protected readonly IConfig Config;
+        protected readonly IDbContext Context;
         private ApplicationUserManager _userManager;
 
         public ApplicationUserManager UserManager
@@ -36,9 +38,10 @@ namespace DeliveryService.API.Controllers
             base.Dispose(disposing);
         }
 
-        public BaseApiController(IConfig config)
+        public BaseApiController(IConfig config, IDbContext context)
         {
             Config = config;
+            Context = context;
         }
     }
 }

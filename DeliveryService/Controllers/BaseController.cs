@@ -1,5 +1,9 @@
-﻿using System.Web;
+﻿using System.Security.Claims;
+using System.Web;
 using System.Web.Mvc;
+using DAL.Constants;
+using DAL.Context;
+using DeliveryService.App_Start;
 using Infrastructure.Config;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -10,45 +14,15 @@ namespace DeliveryService.Controllers
     public class BaseController : Controller
     {
         protected readonly IConfig Config;
-
+        protected readonly IDbContext Context;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public BaseController(IConfig config)
+        public BaseController(IConfig config, IDbContext context)
         {
             Config = config;
+            Context = context;
         }
-        //[InjectionConstructor]
-        //public BaseController(IPersonService personService)
-        //{
-        //    _personService = personService;
-        //}
-
-        //protected override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    if (Request.IsAuthenticated)
-        //    {
-        //        var userId = User.Identity.GetUserId();
-        //        var person = _personService.GetByUserId(userId);
-        //        if (Session["User"] == null)
-        //            Session["User"] = person;
-        //    }
-        //    base.OnActionExecuting(filterContext);
-
-        //}
-
-        //public PersonDto CurrentUser
-        //{
-        //    get
-        //    {
-        //        if (!Request.IsAuthenticated) return null;
-        //        var userId = User.Identity.GetUserId();
-        //        var person = _personService.GetByUserId(userId);
-        //        if (Session["User"] == null)
-        //            Session["User"] = person;
-        //        return person;
-        //    }
-        //}
 
         public ApplicationSignInManager SignInManager
         {

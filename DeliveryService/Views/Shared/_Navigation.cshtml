@@ -22,19 +22,29 @@
                     </ul>
                 </div>
                 <div class="logo-element">
-                    IN+
+                    
+                    ADD
+                    RIDER
                 </div>
             </li>
             <li class="@Html.IsSelected(controller: "DashBoard")">
                 <a href="@Url.Action("Index", "DashBoard")"><i class="fa fa-th-large"></i>
                     <span class="nav-label" data-i18n="nav.layouts">Dashboard</span>
-                 <span class="label label-primary pull-right">NEW</span></a>
+                 </a>
             </li>
             <li class="@Html.IsSelected(controller: "Drivers")">
                 <a href="@Url.Action("Index", "Drivers")"><i class="fa fa-diamond"></i> 
                     <span class="nav-label" data-i18n="nav.layouts">Drivers List</span>
-                 <span class="label label-primary pull-right">NEW</span></a>
+                </a>
             </li>
+            
+            <li class="@Html.IsSelected(controller: "Business")">
+                <a href="@Url.Action("Index", "Business")">
+                    <i class="fa fa-diamond"></i>
+                    <span class="nav-label" data-i18n="nav.layouts">Business List</span>
+                </a>
+            </li>
+
         </ul>
     </div>
 </nav>

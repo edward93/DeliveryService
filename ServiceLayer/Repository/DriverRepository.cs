@@ -19,10 +19,24 @@ namespace ServiceLayer.Repository
 
         public async Task<Driver> CreateDriverAsync(Driver driver)
         {
-            DbContext.Drivers.AddOrUpdate(driver);
-            await DbContext.SaveChangesAsync();
+            try
+            {
+                DbContext.Drivers.AddOrUpdate(driver);
+                await DbContext.SaveChangesAsync();
+               
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.ToString());
+            }
             return driver;
         }
 
+        public async Task<Driver> GetDriverByPersonId(string personId)
+        {
+            return await DbContext.Drivers.FirstOrDefaultAsync(c => c.Person.UserId == personId);
+        }
+
+     
     }
 }

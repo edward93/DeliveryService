@@ -52,12 +52,18 @@ namespace DeliveryService.App_Start
             container.RegisterType<IAddressRepository, AddressRepository>(new PerRequestLifetimeManager());
             container.RegisterType<ICardRepository, CardRepository>(new PerRequestLifetimeManager());
             container.RegisterType<IDriverRepository, DriverRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverUploadRepository, DriverUploadRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IPersonRepository, PersonRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IBusinessRepository, BusinessRespository>(new PerRequestLifetimeManager());
 
             // register Services
             container.RegisterType<IEntityService, EntityService>(new PerRequestLifetimeManager());
             container.RegisterType<IAddressService, AddressService>(new PerRequestLifetimeManager());
             container.RegisterType<ICardService, CardService>(new PerRequestLifetimeManager());
             container.RegisterType<IDriverService, DriverService>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverUploadService, DriverUploadService>(new PerRequestLifetimeManager());
+            container.RegisterType<IPersonService, PersonService>(new PerRequestLifetimeManager());
+            container.RegisterType<IBusinessService, BusinessService>(new PerRequestLifetimeManager());
         }
     }
 }

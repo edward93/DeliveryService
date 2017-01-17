@@ -8,7 +8,7 @@ namespace DeliveryService.API.Infrastructure
 {
     public class Config : IConfig
     {
-        public int TestNumber => Convert.ToInt32(WebConfigurationManager.AppSettings["TestNumber"]);
         public NameValueCollection Messages => (NameValueCollection)ConfigurationManager.GetSection("Messages");
+        public string UploadsFolderPath => WebConfigurationManager.AppSettings["UploadFolderPath"];
     }
 }

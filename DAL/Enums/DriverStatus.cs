@@ -4,6 +4,7 @@
     {
         Online = 0,
         Offline,
+        Busy,
         Other
     }
 }

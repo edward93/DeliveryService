@@ -55,29 +55,52 @@ namespace DeliveryService.API.Models
         [Required]
         public string LastName { get; set; }
         [Required]
-        public int Age { get; set; }
-        [Required]
         public Sex Sex { get; set; }
-        [Required]
         public DateTime DateOfBirth { get; set; }
+        public string Phone { get; set; }
 
+#region Address
+        public string AddressLine1 { get; set; }
+        public string Addressline2 { get; set; }
+        public Country Country { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string ZipCode { get; set; }
+#endregion
 
+        //public Address Address { get; set; }
+        public Address GetAddress()
+        {
+            return new Address
+            {
+                CreatedDt = DateTime.UtcNow,
+                AddressLine1 = AddressLine1,
+                AddressLine2 = Addressline2,
+                City = City,
+                Country = Country,
+                CreatedBy = 2,
+                IsDeleted = false,
+                UpdatedBy = 2,
+                State = State,
+                ZipCode = ZipCode,
+                UpdatedDt = DateTime.UtcNow
+            };
+        }
         public Person GetPerson(User user)
         {
             return new Person
             {
                 IsDeleted = false,
-                Age = Age,
-                CreatedBy = 0,
+                CreatedBy = 2,
                 CreatedDt = DateTime.UtcNow,
                 DateOfBirth = DateOfBirth,
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
                 Sex = Sex,
-                UpdatedBy = 0,
+                Phone = Phone,
+                UpdatedBy = 2,
                 UpdatedDt = DateTime.UtcNow,
-                User = user,
                 UserId = user.Id
             };
         }

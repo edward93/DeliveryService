@@ -1,8 +1,127 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Dashboard";
 }
-
-<h2>Index</h2> 
-
- 
+@model DeliveryService.Models.AdminDashBoardModel
+<div class="row income-orders">
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Registered members</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <span class="label label-success col-lg-12 text-center">Today</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="membersToday">@Model.TodayMembersCount</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        <span class="label label-info col-lg-12 text-center">All</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="membersAll">@Model.AllMembersCount</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Registered drivers</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <span class="label label-success col-lg-12 text-center">Today</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="driversToday">@Model.TodayDriversCount</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        <span class="label label-info col-lg-12 text-center">All</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="driversAll">@Model.AllDriversCount</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Partners</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <span class="label label-success col-lg-12 text-center">Active</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="partnersActive">@Model.ActivePartnersCount</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        <span class="label label-danger col-lg-12 text-center">Inactive</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="partnersInactive">@Model.InactivePartnersCount</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Ammount</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <span class="label label-success col-lg-12 text-center">Today</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="amountToday">@Model.TodayAmount</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        <span class="label label-info col-lg-12 text-center">All</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="amountAll">@Model.AllAmount</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Earned</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <span class="label label-success col-lg-12 text-center">Today</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="earningsToday">@Model.TodayEarned</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        <span class="label label-info col-lg-12 text-center">All</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="earningsAll">@Model.AllEarned</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Add Rider Fee</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <span class="label label-success col-lg-12 text-center">Today</span>
+                        <h2 class="no-margins col-lg-12 text-center item-text" id="addRiderfeeToday">@Model.TodayAddRiderFee</h2>
+                        </div>
+                        <div class="col-lg-6">
+                            <span class="label label-info col-lg-12 text-center">All</span>
+                            <h2 class="no-margins col-lg-12 text-center item-text" id="addRiderfeeAll">@Model.AllAddRiderFee</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @section Styles{
+        @Styles.Render("~/plugin/DashBoard")
+    }
+    @section Scripts {
+        @Scripts.Render("~/bundles/DashBoard")
+    }
