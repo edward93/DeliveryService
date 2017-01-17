@@ -3,6 +3,8 @@
     var businessName = $("#businessName");
     var businessPhone = $("#businessPhone");
     var businessEmail = $("#businessEmail");
+    var password = $("#password");
+    var confirmPassword = $("#confirmPassword");
     var contPersFName = $("#contPersFName");
     var contPersLName = $("#contPersLName");
     var contPersPhone = $("#contPersPhone");
@@ -15,6 +17,22 @@
     var submitBussinessBtn = $("#submitBussinessBtn");
     var heading = $("#Heading");
     var submitBusinessForm = $("#submitBusinessForm");
+    var valModel = {
+        businessName: 4,
+        businessPhone: 4,
+        businessEmail: 5,
+        password: 6,
+        confirmPassword: 6,
+        contPersFName: 2,
+        contPersLName: 2,
+        contPersPhone: 2,
+        addressLine1:2,
+        addressLine2: 2,
+        country: 2,
+        city: 2,
+        state: 2,
+        zipCode: 2
+    };
 
 
     $("#addNewBusinessBtn").on("click",
@@ -29,6 +47,20 @@
     $("#submitBussinessBtn").on("click",
        function (e) {
            e.preventDefault();
+           validate(businessName, businessName, valModel.businessName);
+           validate(businessPhone, businessPhone, valModel.businessPhone);
+           validate(businessEmail, businessEmail, valModel.businessEmail);
+           validate(password, password, valModel.password);
+           validate(confirmPassword, confirmPassword, valModel.confirmPassword);
+           validate(contPersFName, contPersFName, valModel.contPersFName);
+           validate(contPersLName, contPersLName, valModel.contPersLName);
+           validate(contPersPhone, contPersPhone, valModel.contPersPhone);
+           validate(addressLine1, addressLine1, valModel.addressLine1);
+           validate(addressLine2, addressLine2, valModel.addressLine2);
+           validate(country, country, valModel.country);
+           validate(city, city, valModel.city);
+           validate(state, state, valModel.state);
+           validate(zipCode, zipCode, valModel.zipCode);
            var form = $("#submitBusinessForm");
            var businessId = form.attr("data-id");
            if (businessId > 0)
@@ -36,7 +68,30 @@
            else
                addBusiness(form);
        });
-
+    //validation
+    function validate(validationObj, validationObjValue, validationModel) {
+        if ($(validationObjValue).val().length >= validationModel) {
+            validationObj.removeClass('invalid');
+            validationObj.addClass('valid');
+            if ($(password).val() !== $(confirmPassword).val()) {
+                $(password).removeClass('valid');
+                $(confirmPassword).removeClass('valid');
+                $(password).addClass('invalid');
+                $(confirmPassword).addClass('invalid');
+                password.val("");
+                confirmPassword.val("");
+                $(confirmPassword).attr("title", "Password and Confirm Password must be the same");
+            }
+        } else {
+            validationObj.removeClass('valid');
+            validationObj.addClass('invalid');
+            validationObj.attr("title", "Must be greater than" + ' ' + validationModel + ' ' + "symbols");
+            if (password.val() !== confirmPassword.val()) {
+                $(password).attr("title", "Password and Confirm Password must be the same");
+            }
+        }
+    }
+    //validation end
     $(".btnPreviewBusiness").on("click",
         function (e) {
             var businessIdForPreview = $(this).attr('data-id');
@@ -113,20 +168,20 @@
     }
 
     function addBusiness(form) {
-        $.post("/Business/RegisterBusiness",
-                                form.serialize(), function (data) {
-                                    window.UnBlockUi();
-                                    if (data.Success) {
-                                        for (let i = 0; i < data.Messages.length; i++) {
-                                            window.toastr.success(data.Messages[i].Value);
-                                        }
-                                    } else {
-                                        for (let i = 0; i < data.Messages.length; i++) {
-                                            window.toastr.error(data.Messages[i].Value);
-                                        }
-                                    }
-                                    $("#addNewBusinessModal").modal('toggle');
-                                });
+       // $.post("/Business/RegisterBusiness",
+         //                       form.serialize(), function (data) {
+           //                         window.UnBlockUi();
+             //                       if (data.Success) {
+               //                         for (let i = 0; i < data.Messages.length; i++) {
+                 //                           window.toastr.success(data.Messages[i].Value);
+                   //                     }
+                     //               } else {
+                       //                 for (let i = 0; i < data.Messages.length; i++) {
+                         //                   window.toastr.error(data.Messages[i].Value);
+                           //             }
+                             //       }
+                                  //  $("#addNewBusinessModal").modal('toggle');
+                                //});
     }
 
     function initBusinessModal(data) {
@@ -150,6 +205,8 @@
         businessName.val("");
         businessPhone.val("");
         businessEmail.val("");
+        password.val("");
+        confirmPassword.val("");
         contPersFName.val("");
         contPersLName.val("");
         contPersPhone.val("");
@@ -160,6 +217,9 @@
         state.val("");
         zipCode.val("");
         submitBusinessForm.attr("data-id", 0);
+        $('.form-control').removeClass('valid');
+        $('.form-control').removeClass('invalid');
+        //$('.form-control').attr('autocomplete', 'off');
     }
 
     function deleteBusiness(businessId) {

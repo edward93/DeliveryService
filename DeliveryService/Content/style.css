@@ -1661,6 +1661,12 @@ div.dt-button-info {
     width: 100%;
     font-size: 14px;
 }
+.valid {
+    border: 2px solid green;
+}
+.invalid {
+    border: 2px solid red;
+}
 
     /*.form-control:focus, .single-line:focus {
         border-color: #1ab394 !important;
@@ -3581,8 +3587,8 @@ video {
 /* The Close Button */
 .close {
     position: absolute;
-    top: 15px;
-    right: 35px;
+    top: 5px;
+    right: 5px;
     color: #f1f1f1;
     font-size: 40px;
     font-weight: bold;
@@ -4025,12 +4031,14 @@ table.table-mail tr td {
 
 .ibox-tools {
     display: block;
-    float: left;
-    margin: 0 0 0 5%;
+    float: right;
+    margin: 0 1%;
     position: relative;
     padding: 0;
     text-align: right;
 }
+::-webkit-inner-spin-button { -webkit-appearance: none;}
+::-webkit-outer-spin-button { -webkit-appearance: none;}
 
     .ibox-tools a {
         cursor: pointer;
