@@ -68,7 +68,9 @@
     <Compile Include="Repository\IDriverRepository.cs" />
     <Compile Include="Repository\IDriverUploadRepository.cs" />
     <Compile Include="Repository\IEntityRepository.cs" />
+    <Compile Include="Repository\IOrderRepository.cs" />
     <Compile Include="Repository\IPersonRepository.cs" />
+    <Compile Include="Repository\OrderRepository.cs" />
     <Compile Include="Repository\PersonRepository.cs" />
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\BusinessService.cs" />
@@ -84,7 +86,9 @@
     <Compile Include="Service\IDriverService.cs" />
     <Compile Include="Service\IDriverUploadService.cs" />
     <Compile Include="Service\IEntityService.cs" />
+    <Compile Include="Service\IOrderService.cs" />
     <Compile Include="Service\IPersonService.cs" />
+    <Compile Include="Service\OrderService.cs" />
     <Compile Include="Service\PersonService.cs" />
   </ItemGroup>
   <ItemGroup />
