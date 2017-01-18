@@ -1,0 +1,280 @@
+﻿ .file-exp-date {
+        margin-top: 15px;
+        text-align: left;
+        /* font-style: italic; */
+        font-size: 12px;
+    }
+
+        .file-exp-date .exp-date-input, .file-exp-date .datepicker-button {
+            height: 27px;
+        }
+
+
+
+    /* The Modal (background) */
+    .ImageModal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+
+    /* Modal Content (image) */
+    .ImageModal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    /* Caption of Modal Image */
+    #caption {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+        text-align: center;
+        color: #ccc;
+        padding: 10px 0;
+        height: 150px;
+    }
+
+    /* Add Animation */
+    .ImageModal-content, #caption {
+        -webkit-animation-name: zoom;
+        -webkit-animation-duration: 0.6s;
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+
+    @-webkit-keyframes zoom {
+        from {
+            -webkit-transform: scale(0);
+        }
+
+        to {
+            -webkit-transform: scale(1);
+        }
+    }
+
+    @keyframes zoom {
+        from {
+            transform: scale(0);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+    /* The Close Button */
+    .ImageModalclose {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .ImageModalclose:hover,
+        .ImageModalclose:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    /* 100% Image Width on Smaller Screens */
+    @media only screen and (max-width: 700px) {
+        .modal-content {
+            width: 100%;
+        }
+    }
+
+    .fileupload-preview img {
+        cursor: pointer;
+    }
+
+        .fileupload-preview img:hover {
+            opacity: 0.7;
+        }
+
+
+    .wizard > .steps > ul > li {
+        width: 33% !important;
+    }
+
+
+
+    .fileupload-buttonbar > div:first-child {
+        width: 100% !important;
+    }
+
+    #uploadContent {
+        margin-top: 20px;
+    }
+
+    .fileinput-button {
+        padding: 20px 50px;
+        background: #dfdfdf !important;
+        color: gray !important;
+        border: 1px dashed gray !important;
+    }
+
+        .fileinput-button:hover {
+            background: #b1b1b1 !important;
+            border: 1px dashed gray;
+        }
+
+        .fileinput-button::selection {
+            background: #b1b1b1;
+        }
+
+    .datepicker-button {
+        padding: 3px 0px !important;
+        border-radius: initial;
+        background: none;
+        color: gray;
+        background: white !important;
+        border: 1px solid #cccccc !important;
+        border-left: 0 !important;
+    }
+
+        .datepicker-button:hover {
+            background: #dfdfdf !important;
+            color: black !important;
+        }
+
+    .fileupload-preview {
+        padding: 0;
+    }
+
+    .cablr-with-mess-place {
+        min-height: 70px;
+    }
+
+    .driver-license-label {
+        margin-left: 15px;
+    }
+
+    .vehicle-fileuploads {
+        width: 180px;
+        height: 100px;
+        background: #dfdfdf;
+        color: gray;
+        border: 1px dashed gray;
+        border-radius: 5px;
+    }
+
+        .vehicle-fileuploads > span {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+    .fileupload-preview {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+        .fileupload-preview img {
+            max-width: 180px;
+            height: 180px;
+        }
+
+    .vehicle-fileuploads {
+        margin-bottom: 20px;
+    }
+
+    .vehicle-fileuploads-active {
+        cursor: pointer;
+    }
+
+        .vehicle-fileuploads-active:hover {
+            background: #b1b1b1;
+        }
+
+    .doc-hidden-inputs {
+        visibility: hidden;
+        height: 0;
+    }
+
+    .ui-datepicker {
+        z-index: 3000 !important;
+    }
+
+    .input-group.date > .input-group-addon {
+        padding: 0 !important;
+    }
+
+        .input-group.date > .input-group-addon > label {
+            padding: 6px 12px;
+            margin: 0 !important;
+            cursor: pointer;
+        }
+
+    .all-vehicles-div {
+        margin-bottom: 40px;
+    }
+
+    .driver-image {
+        float: left;
+        height: 30px;
+    }
+
+    .all-vehicles > div:first-child {
+        margin-bottom: 0;
+    }
+
+    .all-vehicles > .float-e-margins > div:last-child {
+        margin-bottom: 10px;
+    }
+
+    .vehicle-driver-edit-block > select {
+        width: 90%;
+        float: left;
+    }
+
+    .all-vehicles .ibox-title {
+        min-height: 55px;
+    }
+
+    .drpSelectDriver.form-control {
+        height: 28px;
+        padding: 0;
+    }
+
+    select.drpSelectDriver {
+        text-align: center;
+        text-align-last: center;
+    }
+
+        select.drpSelectDriver > option {
+            text-align: left;
+        }
+
+    .blockOverlay {
+        min-height: 1000px !important;
+    }
+
+    .exp-date-input {
+        padding-left: 10px !important;
+    }
+
+    .lbl-exp-date-error {
+        color: red;
+    }
+
+    .datepicker-button {
+        color: black !important;
+    }

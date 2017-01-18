@@ -1,1 +1,45 @@
 ﻿
+<div class="col-lg-6">
+    <div class="col-sm-12 no-padding text-center">
+        <label class="col-sm-12 control-label text-center">
+            <span title="" data-toggle="tooltip" class="label-tooltip"
+                  data-original-title="Upload Inspection Form">
+                Vehicle inspection form
+            </span>
+        </label>
+        <input type="text" data-filetypeid="1" id="txtInspectionForm" name="txtInspectionForm" class="doc-hidden-inputs" />
+        <div class="col-sm-12 controls text-center files-uploaders" id="InspectionFormUploader">
+            <div id="InspectionFormUpload" data-controlid="InspectionForm" class="vehicle-fileuploads vehicle-fileuploads-active">
+                <br />
+                <span>
+                    Drag & drop <br>or click here <br> to upload
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-12 controls fileupload-preview" id="InspectionFormContent">
+            <div id="InspectionForm" class="img-wrap preview">
+                <div onclick="ConfirmDeleteDocument('InspectionForm');" class="close delete">&times;</div>
+                <img id="InspectionFormDoc">
+            </div>
+            <div class="file-exp-date">
+                <label class="lbl-exp-date">Expire date</label>
+                <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
+                <div class="col-sm-10 col-xs-10 no-padding">
+                    <input class="form-control no-padding exp-date-input"
+                           id="InspectionFormExpDate" name="InspectionFormExpDate" type="text">
+                </div>
+                <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="InspectionFormExpDate">
+                    <span class="fa fa-calendar"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form id="pagefileupload" method="POST" enctype="multipart/form-data" class="hidden">
+    @Html.Partial("~/Views/Partials/FileUpload/_Files.cshtml")
+</form>
+
+<script src="~/Scripts/app/Business/businessProfile.js"></script>
+<link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />

@@ -1436,6 +1436,7 @@ div.dt-button-info {
         line-height: 1.33;
     }
 
+
 .show-grid [class^="col-"] {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -1661,13 +1662,9 @@ div.dt-button-info {
     width: 100%;
     font-size: 14px;
 }
-.valid {
-    border: 2px solid green;
+.help-block {
+    color: red;
 }
-.invalid {
-    border: 2px solid red;
-}
-
     /*.form-control:focus, .single-line:focus {
         border-color: #1ab394 !important;
     }*/
@@ -1684,9 +1681,9 @@ div.dt-button-info {
     border-color: #ED5565;
 }
 
-.has-success .control-label {
+/*.has-success .control-label {
     color: #1ab394;
-}
+}*/
 
 .has-warning .control-label {
     color: #f8ac59;
@@ -3552,7 +3549,18 @@ video {
     cursor: pointer;
     transition: 0.3s;
 }
-
+.message-icon {
+    position: absolute;
+    right: 20px;
+    font-size: 18px;
+    top: 8px;
+}
+.glyphicon-ok-sign {
+    color: green;
+}
+.glyphicon-remove-sign {
+    color: red;
+}
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */

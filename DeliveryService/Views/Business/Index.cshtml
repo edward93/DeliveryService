@@ -70,11 +70,11 @@
                                     <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <button class="btn btn-primary btn-xs btnPreviewBusiness" data-title="Preview" data-id="@item.Id" >
+                                            <button class="btn btn-primary btn-xs btnPreviewBusiness" data-title="Preview" data-id="@item.Id">
                                                 <span class="fa fa-eye">
                                                 </span>
                                             </button>
-                                            <button class="btn btn-danger btn-xs btnDeleteBusiness" data-title="Delete" data-id="@item.Id" >
+                                            <button class="btn btn-danger btn-xs btnDeleteBusiness" data-title="Delete" data-id="@item.Id">
                                                 <span class="glyphicon glyphicon-trash">
                                                 </span>
                                             </button>
@@ -112,6 +112,7 @@
     @Scripts.Render("~/plugins/toastr")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/lightBox")
+    @Scripts.Render("~/plugins/validate")
     @Scripts.Render("~/bundles/Business")
 }
 
