@@ -67,6 +67,7 @@
     <Compile Include="Entities\DeviceOrientation.cs" />
     <Compile Include="Entities\Driver.cs" />
     <Compile Include="Entities\DriverFee.cs" />
+    <Compile Include="Entities\OrderHistory.cs" />
     <Compile Include="Entities\DriverPenalty.cs" />
     <Compile Include="Entities\DriverUpload.cs" />
     <Compile Include="Entities\DriverLocation.cs" />
@@ -76,8 +77,10 @@
     <Compile Include="Entities\Interfaces\IGeoLocation.cs" />
     <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\Person.cs" />
+    <Compile Include="Entities\Rate.cs" />
     <Compile Include="Entities\Rating.cs" />
     <Compile Include="Entities\User.cs" />
+    <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\CardType.cs" />
     <Compile Include="Enums\Country.cs" />
     <Compile Include="Enums\DocumentStatus.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="Enums\FeeType.cs" />
     <Compile Include="Enums\MessageType.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
+    <Compile Include="Enums\PaymentType.cs" />
     <Compile Include="Enums\PenaltyType.cs" />
     <Compile Include="Enums\Sex.cs" />
     <Compile Include="Enums\UploadType.cs" />
@@ -92,8 +96,6 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constants\Roles.cs" />
-    <Compile Include="UnitOfWork\GenericRepository.cs" />
-    <Compile Include="UnitOfWork\UnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

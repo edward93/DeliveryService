@@ -10,5 +10,6 @@ namespace ServiceLayer.Repository
         Task<T> GetByIdAsync<T>(int entityId) where T : class, IEntity;
         Task<IEnumerable<T>> GetAllEntitiesAsync<T>() where T : class, IEntity;
         Task<T> RemoveEntityAsync<T>(int entityId) where T : class, IEntity;
+        Task<T> CreateEntityAsync<T>(T entity) where T : class, IEntity;
     }
 }

@@ -29,6 +29,8 @@ namespace DAL.Context
         public DbSet<BusinessPenalty> BusinessPenalties { get; set; }
         public DbSet<DriverPenalty> DriverPenalties { get; set; }
         public DbSet<DriverFee> DriverFees { get; set; }
+        public DbSet<OrderHistory> OrderHistories { get; set; }
+        public DbSet<Rate> Rates { get; set; }
 
         public static DbContext Create()
         {

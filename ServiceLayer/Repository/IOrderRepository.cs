@@ -6,5 +6,6 @@ namespace ServiceLayer.Repository
     public interface IOrderRepository : IEntityRepository
     {
         Task<Order> CreateOrderAsync(Order order);
+        Task AcceptOrderAsync(Order order, Driver driver);
     }
 }

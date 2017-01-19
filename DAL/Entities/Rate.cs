@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Annotation;
 using DAL.Entities.Interfaces;
+using DAL.Enums;
 
 namespace DAL.Entities
 {
-    public class Rating : IEntity
+    public class Rate : IEntity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -15,17 +17,10 @@ namespace DAL.Entities
         public int UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
 
-        [ForeignKey("Driver")]
-        public int? DriverId { get; set; }
-
-        [ForeignKey("Business")]
-        public int? BusinessId { get; set; }
-
         [Required]
-        public decimal AverageScore { get; set; }
+        public PaymentType PaymentType { get; set; }
 
-        public virtual Driver Driver { get; set; }
-        public virtual Business Business { get; set; }
-
+        [Required, Precision(19,4)]
+        public decimal Amount { get; set; }
     }
 }

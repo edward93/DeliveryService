@@ -33,6 +33,13 @@ namespace ServiceLayer.Repository
             return entityToRemove;
         }
 
+        public async Task<T> CreateEntityAsync<T>(T entity) where T : class, IEntity
+        {
+            DbContext.Set<T>().AddOrUpdate(entity);
+            await DbContext.SaveChangesAsync();
+            return entity;
+        }
+
         public async Task<T> GetByIdAsync<T>(int entityId) where T : class, IEntity
         {
             return await DbContext.Set<T>().FirstOrDefaultAsync(c => c.Id == entityId && c.IsDeleted == false);

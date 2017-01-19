@@ -23,6 +23,9 @@ namespace DAL.Context
         DbSet<BusinessPenalty> BusinessPenalties { get; set; }
         DbSet<DriverPenalty> DriverPenalties { get; set; }
         DbSet<DriverFee> DriverFees { get; set; }
+        DbSet<OrderHistory> OrderHistories { get; set; }
+        DbSet<Rate> Rates { get; set; }
+
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

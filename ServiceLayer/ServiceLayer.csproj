@@ -55,9 +55,16 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AddressRepository.cs" />
+    <Compile Include="Repository\BusinessPenaltyRepository.cs" />
     <Compile Include="Repository\BusinessRespository.cs" />
     <Compile Include="Repository\CardRepository.cs" />
+    <Compile Include="Repository\DriverFeeRepository.cs" />
     <Compile Include="Repository\DriverLocationRepository.cs" />
+    <Compile Include="Repository\DriverPenaltyRepository.cs" />
+    <Compile Include="Repository\IBusinessPenaltyRepository.cs" />
+    <Compile Include="Repository\IDriverFeeRepository.cs" />
+    <Compile Include="Repository\IDriverPenaltyRepository.cs" />
+    <Compile Include="Repository\OrderHistoryRepository.cs" />
     <Compile Include="Repository\DriverRepository.cs" />
     <Compile Include="Repository\DriverUploadRepository.cs" />
     <Compile Include="Repository\EntityRepository.cs" />
@@ -65,17 +72,27 @@
     <Compile Include="Repository\IBusinessRepository.cs" />
     <Compile Include="Repository\ICardRepository.cs" />
     <Compile Include="Repository\IDriverLocationRepository.cs" />
+    <Compile Include="Repository\IOrderHistoryRepository.cs" />
     <Compile Include="Repository\IDriverRepository.cs" />
     <Compile Include="Repository\IDriverUploadRepository.cs" />
     <Compile Include="Repository\IEntityRepository.cs" />
     <Compile Include="Repository\IOrderRepository.cs" />
     <Compile Include="Repository\IPersonRepository.cs" />
+    <Compile Include="Repository\IRateRepository.cs" />
     <Compile Include="Repository\OrderRepository.cs" />
     <Compile Include="Repository\PersonRepository.cs" />
+    <Compile Include="Repository\RateRepository.cs" />
     <Compile Include="Service\AddressService.cs" />
+    <Compile Include="Service\BusinessPenaltyService.cs" />
     <Compile Include="Service\BusinessService.cs" />
     <Compile Include="Service\CardService.cs" />
+    <Compile Include="Service\DriverFeeService.cs" />
     <Compile Include="Service\DriverLocationService.cs" />
+    <Compile Include="Service\DriverPenaltyService.cs" />
+    <Compile Include="Service\IBusinessPenaltyService.cs" />
+    <Compile Include="Service\IDriverFeeService.cs" />
+    <Compile Include="Service\IDriverPenaltyService.cs" />
+    <Compile Include="Service\OrderHistoryService.cs" />
     <Compile Include="Service\DriverService.cs" />
     <Compile Include="Service\DriverUploadService.cs" />
     <Compile Include="Service\EntityService.cs" />
@@ -83,13 +100,16 @@
     <Compile Include="Service\IBusinessService.cs" />
     <Compile Include="Service\ICardService.cs" />
     <Compile Include="Service\IDriverLocationService.cs" />
+    <Compile Include="Service\IOrderHistoryService.cs" />
     <Compile Include="Service\IDriverService.cs" />
     <Compile Include="Service\IDriverUploadService.cs" />
     <Compile Include="Service\IEntityService.cs" />
     <Compile Include="Service\IOrderService.cs" />
     <Compile Include="Service\IPersonService.cs" />
+    <Compile Include="Service\IRateService.cs" />
     <Compile Include="Service\OrderService.cs" />
     <Compile Include="Service\PersonService.cs" />
+    <Compile Include="Service\RateService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

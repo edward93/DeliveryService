@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using DAL.Constants;
 using DAL.Entities;
@@ -40,7 +41,7 @@ namespace DAL.Migrations
             var adminPerson = new Person
             {
                 IsDeleted = false,
-                CreatedBy = 2,
+                CreatedBy = 0,
                 CreatedDt = DateTime.UtcNow,
                 DateOfBirth = DateTime.UtcNow.AddYears(-21),
                 Email = "admin@gmail.com",
@@ -48,12 +49,33 @@ namespace DAL.Migrations
                 LastName = "Admin",
                 Sex = Sex.Male,
                 Phone = "123456789",
-                UpdatedBy = 2,
+                UpdatedBy = 0,
                 UpdatedDt = DateTime.UtcNow,
                 UserId = user.Id
             };
 
             context.Persons.AddOrUpdate(adminPerson);
+
+
+            context.Rates.AddRange(new List<Rate> {new Rate
+            {
+                Amount = 2,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedBy = 0,
+                PaymentType = PaymentType.OrderBookingFee,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow
+            }, new Rate
+            {
+                Amount = 4,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedBy = 0,
+                PaymentType = PaymentType.DriverFeeFor3Miles,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow
+            } });
             context.SaveChanges();
         }
     }

@@ -21,6 +21,7 @@ namespace DAL.Entities
         [Required]
         public VehicleType VehicleType { get; set; }
         public string VehicleRegistrationNumber { get; set; }
+        public bool HasAotmBox { get; set; }
         [Required]
         public bool Approved { get; set; }
         [Required]
