@@ -1589,6 +1589,9 @@ div.dt-button-info {
             line-height: 1.5;
             padding: 1px 2px 1px 5px;
         }
+        .btn-group > .btnPreviewBusiness {
+            margin-right: 4px;
+        }
 
     .todo-list > li {
         background: #f3f3f4;
@@ -3560,6 +3563,9 @@ video {
 }
 .glyphicon-remove-sign {
     color: red;
+}
+.hide {
+    display: none;
 }
 /* The Modal (background) */
 .modal {

@@ -1,1 +1,145 @@
-﻿
+﻿@model IEnumerable<DAL.Entities.Driver>
+@{
+    ViewBag.Title = "Requests List";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Request List</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="@Url.Action("Index", "DashBoard")">Home</a>
+            </li>
+            <li class="active">
+                <strong>Requests</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="#">Config option 2</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table id="tblDriversList" class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th class="text-center">Approved</th>
+                            <th>Date of Birth</th>
+                            <th>Sex</th>
+                            <th class="text-right" data-sort-ignore="true">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="driver_@item.Id">
+                                <td>@item.Person.FirstName</td>
+                                <td>@item.Person.LastName</td>
+                                <td>@item.Person.Email</td>
+                                <td>@item.Status</td>
+                                <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
+                                <td>@item.Person.DateOfBirth</td>
+                                <td>@item.Person.Sex</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button class="btn btn-primary btn-xs" data-title="Preview" data-id="@item.Id" id="btnPreviewDriver">
+                                            <span class="fa fa-eye" title="Preview"></span>
+                                        </button>
+                                        <button class="btn btn-danger btn-xs" data-title="Delete" data-id="@item.Id" id="btnDeleteDriver">
+                                            <span class="glyphicon glyphicon-trash" title="Delete"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th class="text-center">Approved</th>
+                            <th>Date of Birth</th>
+                            <th>Sex</th>
+                            <th class="text-center" data-sort-ignore="true">Action</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    @Styles.Render("~/plugins/toastrStyles")
+}
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+    @Scripts.Render("~/plugins/toastr")
+}
+
+
+<script>
+
+    $(function() {
+
+        $('#tblDriversList').DataTable({
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                { extend: 'copy' },
+                { extend: 'csv' },
+                { extend: 'excel', title: 'ExampleFile' },
+                {
+                    extend: 'pdf',
+                    title: 'ExampleFile',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                },
+                {
+                    extend: 'print',
+                    customize: function(win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                }
+            ]
+
+        });
+    });
+</script>

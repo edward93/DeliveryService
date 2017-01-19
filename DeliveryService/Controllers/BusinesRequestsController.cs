@@ -14,11 +14,13 @@ namespace DeliveryService.Controllers
     {
         public BusinesRequestsController(IConfig config, IDbContext context) : base(config, context)
         {
+
         }
 
         public ActionResult BusinesRequests()
         {
-            return View();
+            var drivers = new List<DAL.Entities.Driver>();
+            return View(drivers);
         }
     }
 }

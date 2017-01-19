@@ -6,7 +6,7 @@ using System.Web;
 using DAL.Entities;
 using DAL.Enums;
 
-namespace DeliveryService.ViewModels
+namespace DeliveryService.ViewModels.Business
 {
     public class RegisterBusinessModel
     {

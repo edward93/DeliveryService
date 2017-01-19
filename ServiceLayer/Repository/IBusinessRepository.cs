@@ -11,6 +11,6 @@ namespace ServiceLayer.Repository
     {
         Task<Business> CreateBusiness(Business business);
         Task<IEnumerable<Business>> GetBusinessList();
-        
+        Task<Business> GetBusinessByPersonIdAsync(int personId);
     }
 }

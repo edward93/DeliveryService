@@ -266,7 +266,8 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\RegisterBusinessModel.cs" />
+    <Compile Include="ViewModels\Business\PreviewBusinessModel.cs" />
+    <Compile Include="ViewModels\Business\RegisterBusinessModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -471,6 +472,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\boldmindLogo.png" />
     <Content Include="Images\dagmara.jpg" />
     <Content Include="Images\insurance.png" />
     <Content Include="Images\license.png" />
@@ -478,6 +480,7 @@
     <Content Include="Images\main_logo.png" />
     <Content Include="Images\passport.png" />
     <Content Include="Images\proofOfAddres.png" />
+    <Content Include="Scripts\app\BusinessDashboard\businessDashboard.main.js" />
     <Content Include="Scripts\app\Business\business.main.js" />
     <Content Include="Scripts\app\Business\businessProfile.js" />
     <Content Include="Scripts\app\DashBoard\dashboard.main.js" />

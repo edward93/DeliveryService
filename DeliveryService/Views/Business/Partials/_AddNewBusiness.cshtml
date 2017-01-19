@@ -79,13 +79,42 @@
                         <label for="addressLine2" class="col-sm-3 col-md-3 control-label">Address Line 2</label>
                         <div class="col-sm-9 col-md-9">
                             <input type="text" class="form-control" id="addressLine2" name="AddressLine2" placeholder="Address Line 2">
+                            <span class="message-icon glyphicon hide"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="country" class="col-sm-3 col-md-3 control-label">Country</label>
                         <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="country" name="Country" placeholder="Select Country" required>
-                            <span class="message-icon glyphicon"></span>
+                            <select class="form-control" id="country" name="Country" required>
+                                <option value="">Country</option>
+                                <option value="0">Canada</option>
+                                <option value="1">United Kingdom</option>
+                                <option value="2">United States</option>
+                                <option value="3">Armenia (Հայաստան)</option>
+                                <option value="4">Albania </option>
+                                <option value="5">Australia</option>
+                                <option value="6">Belarus</option>
+                                <option value="7">Belgium</option>
+                                <option value="8">China</option>
+                                <option value="9">Ukraine</option>
+                                <option value="10">Egypt</option>
+                                <option value="11">France</option>
+                                <option value="12">Georgia</option>
+                                <option value="13">Germany</option>
+                                <option value="14">Greece</option>
+                                <option value="15">India</option>
+                                <option value="16">Iraq</option>
+                                <option value="17">Italy</option>
+                                <option value="18">Mexico</option>
+                                <option value="19">Netherlands</option>
+                                <option value="20">Portugal</option>
+                                <option value="21">Russian Federation</option>
+                                <option value="22">Serbia</option>
+                                <option value="23">Spain</option>
+                                <option value="24">Sweden</option>
+                                <option value="25">Turkey</option>
+                            </select>
+                            <span class="message-icon glyphicon hide"></span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -106,6 +135,7 @@
                         <label for="zipCode" class="col-sm-3 col-md-3 control-label">Zip Code</label>
                         <div class="col-sm-9 col-md-9">
                             <input type="text" class="form-control" id="zipCode" name="ZipCode" placeholder="Zip Code">
+                            <span class="message-icon glyphicon"></span>
                         </div>
                     </div>
                 </form>

@@ -25,5 +25,10 @@ namespace ServiceLayer.Repository
         {
             throw new System.NotImplementedException();
         }
+
+        public async Task<Business> GetBusinessByPersonIdAsync(int personId)
+        {
+            return await DbContext.Businesses.FirstOrDefaultAsync(c => c.ContactPerson.Id == personId);
+        }
     }
 }

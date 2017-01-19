@@ -18,7 +18,7 @@
     var heading = $("#Heading");
     var submitBusinessForm = $("#submitBusinessForm");
 
-    var validator =  $("#submitBusinessForm").validate({
+    var validator = $("#submitBusinessForm").validate({
             rules: {
                 email: {
                     required: true,
@@ -32,7 +32,8 @@
                 PhoneNumber: {
                     required: true,
                     minlength: 3,
-                    maxlength: 20
+                    maxlength: 20,
+                    number: true
                 },
                 Password: {
                     required: true,
@@ -40,7 +41,6 @@
                     maxlength: 20
                 },
                 ConfirmPassword: {
-                    required: true,
                     equalTo: "#password"
                 },
                 ContactPersonFirstName: {
@@ -56,7 +56,8 @@
                 ContactPersonPhoneNumber: {
                     required: true,
                     minlength: 3,
-                    maxlength: 20
+                    maxlength: 20,
+                    number: true
                 },
                 AddressLine1: {
                     required: true,
@@ -68,11 +69,6 @@
                     minlength: 3,
                     maxlength: 20
                 },
-                State: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 20
-                },
                 ZipCode: {
                     required: true,
                     minlength: 3,
@@ -80,14 +76,12 @@
                 }
             },
             highlight: function(element) {
-                var icon = $(element).closest('div')[0].childNodes[4];
-                $(icon).removeClass('glyphicon-ok-sign');
-                $(icon).addClass('glyphicon-remove-sign');
+                var icon = $(element).closest('div')[0].lastElementChild;
+                $(icon).removeClass('glyphicon-ok-sign').addClass('glyphicon-remove-sign');
             },
             unhighlight: function(element) {
-                var icon = $(element).closest('div')[0].childNodes[4];
-                $(icon).addClass('glyphicon-ok-sign');
-                $(icon).removeClass('glyphicon-remove-sign');
+                var icon = $(element).closest('div')[0].lastElementChild;
+                $(icon).removeClass('glyphicon-remove-sign').addClass('glyphicon-ok-sign');
             },
             errorElement: 'span',
             errorClass: 'help-block',
@@ -112,8 +106,10 @@ $("#addNewBusinessBtn").on("click",
 $("#submitBussinessBtn").on("click",
    function (e) {
        e.preventDefault();
-       $("input:blank").css("background-color", "#ccc");
        var form = $("#submitBusinessForm");
+       form.validate();
+       form.valid();
+       validator.form();
        var businessId = form.attr("data-id");
        if (businessId > 0)
            editBusiness();
@@ -124,6 +120,10 @@ $("#submitBussinessBtn").on("click",
 $(".btnPreviewBusiness").on("click",
     function (e) {
         var businessIdForPreview = $(this).attr('data-id');
+        var form = $("#submitBusinessForm");
+        form.validate();
+        form.valid();
+        validator.form();
         e.preventDefault();
         clearBusinessModal();
         submitBussinessBtn.val("Update");
@@ -131,8 +131,7 @@ $(".btnPreviewBusiness").on("click",
         getBusinessById(businessIdForPreview);
     });
 
-$(document).on('click',
-  '.btnDeleteBusiness',
+$(document).on('click','.btnDeleteBusiness',
   function () {
       var businessIdForDelete = $(this).attr('data-id');
       swal({
@@ -150,6 +149,10 @@ $(document).on('click',
           });
   });
 
+    $("input").keydown(function(){
+        validator.element( this );
+    });
+    
 function getBusinessById(businessId) {
     window.BlockUi();
     $.get("/Business/GetBusiness",
@@ -249,7 +252,6 @@ function clearBusinessModal() {
     validator.resetForm();
     $('.message-icon').removeClass('glyphicon-ok-sign');
     $('.message-icon').removeClass('glyphicon-remove-sign');
-    $("input:blank").css("background-color", "#fff");
 }
 
 function deleteBusiness(businessId) {

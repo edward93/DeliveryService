@@ -1,45 +1,156 @@
-﻿
-<div class="col-lg-6">
-    <div class="col-sm-12 no-padding text-center">
-        <label class="col-sm-12 control-label text-center">
-            <span title="" data-toggle="tooltip" class="label-tooltip"
-                  data-original-title="Upload Inspection Form">
-                Vehicle inspection form
-            </span>
-        </label>
-        <input type="text" data-filetypeid="1" id="txtInspectionForm" name="txtInspectionForm" class="doc-hidden-inputs" />
-        <div class="col-sm-12 controls text-center files-uploaders" id="InspectionFormUploader">
-            <div id="InspectionFormUpload" data-controlid="InspectionForm" class="vehicle-fileuploads vehicle-fileuploads-active">
-                <br />
-                <span>
-                    Drag & drop <br>or click here <br> to upload
-                </span>
+﻿@{
+    ViewBag.Title = "Profile";
+}
+@model DeliveryService.ViewModels.Business.PreviewBusinessModel
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools">
+                        <a class="dropdown-toggle editMember" data-id="@Model.BusinessId" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-box" style="height: 295px;">
+                    <a href="#">
+                        <div class="col-sm-12 text-center">
+                            <h1 style="margin-top: 0px;" id="fullName">
+                               @Html.DisplayFor(m => m.ContactPersonFirstName) @Html.DisplayFor(m => m.ContactPersonLastName) 
+                            </h1>
+                            <div class="text-center" style="padding-top: 20px; padding-bottom: 20px">
+                                <img  src="~/Images/boldmindLogo.png" />
+                            </div>
+                            <h3>
+                                <strong>Owner</strong>
+                            </h3>
+                        </div>
+                        <div class="clearfix"></div>
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="col-sm-12 controls fileupload-preview" id="InspectionFormContent">
-            <div id="InspectionForm" class="img-wrap preview">
-                <div onclick="ConfirmDeleteDocument('InspectionForm');" class="close delete">&times;</div>
-                <img id="InspectionFormDoc">
-            </div>
-            <div class="file-exp-date">
-                <label class="lbl-exp-date">Expire date</label>
-                <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
-                <div class="col-sm-10 col-xs-10 no-padding">
-                    <input class="form-control no-padding exp-date-input"
-                           id="InspectionFormExpDate" name="InspectionFormExpDate" type="text">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools">
+                        <a class="dropdown-toggle" id="openEditModal" data-toggle="modal" data-target="#manageCompanyName" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+
+                    </div>
                 </div>
-                <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="InspectionFormExpDate">
-                    <span class="fa fa-calendar"></span>
+                <div class="contact-box">
+                    <div class="col-sm-12">
+                        <h3>
+                            <strong id="partnerName">@Html.DisplayFor(m => m.BusinessName)</strong>
+                        </h3>
+                        <br />
+                        <address >
+                            <p><strong>Address:</strong><label id="businessAddress">@Html.DisplayFor(m => m.AddressForDisplay)</label> </p>
+                            <p><strong>Phone:</strong><label id="businessPhone">@Html.DisplayFor(m => m.PhoneNumber)</label> </p>
+                            <p><strong>Email:</strong><label id="businessEmail">@Html.DisplayFor(m => m.BusinessEmail)</label> </p>
+                            <p><strong>Birth Date:</strong><label id="businessBirthDate">@Html.DisplayFor(m => m.DateOfBirth)</label> </p>
+                            <p><strong>Sex:</strong><label id="businessSex">@Html.DisplayFor(m => m.Sex)</label> </p>
+                            <p><strong>Contact Phone Number:</strong><label id="businessContactPhoneNumber">@Html.DisplayFor(m => m.ContactPersonPhoneNumber)</label> </p>
+                        </address>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row contact-box">
+        <div class="col-lg-6">
+            <div class="col-sm-12 no-padding ">
+                <label class="col-sm-12 control-label">
+                    <span title="" data-toggle="tooltip" class="label-tooltip"
+                          data-original-title="Upload Inspection Form">
+                        Document 1
+                    </span>
                 </label>
+                <input type="text" data-filetypeid="1" id="txtInspectionForm" name="txtInspectionForm" class="doc-hidden-inputs" />
+                <div class="col-sm-12 controls text-center files-uploaders" id="InspectionFormUploader">
+                    <div id="InspectionFormUpload" data-controlid="InspectionForm" class="vehicle-fileuploads vehicle-fileuploads-active">
+                        <br />
+                        <span>
+                            Drag & drop <br>or click here <br> to upload
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-12 controls fileupload-preview" id="InspectionFormContent">
+                    <div id="InspectionForm" class="img-wrap preview">
+                        <div onclick="ConfirmDeleteDocument('InspectionForm');" class="close delete">&times;</div>
+                        <img id="InspectionFormDoc">
+                    </div>
+                    <div class="file-exp-date">
+                        <label class="lbl-exp-date">Expire date</label>
+                        <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
+                        <div class="col-sm-10 col-xs-10 no-padding">
+                            <input class="form-control no-padding exp-date-input"
+                                   id="InspectionFormExpDate" name="InspectionFormExpDate" type="text">
+                        </div>
+                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="InspectionFormExpDate">
+                            <span class="fa fa-calendar"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="col-sm-12 no-padding">
+                <label class="col-sm-12 control-label">
+                    <span title="" data-toggle="tooltip" class="label-tooltip"
+                          data-original-title="Upload CA Commercial Vehicle ">
+                        Document 2
+                    </span>
+                </label>
+                <input type="text" data-filetypeid="4" id="txtCACommercialRegistration" name="txtCACommercialRegistration" class="doc-hidden-inputs" />
+                <div class="col-sm-12 controls text-center files-uploaders" id="CACommercialRegistrationUploader">
+                    <div id="CACommercialRegistrationUpload" data-controlid="CACommercialRegistration" class="vehicle-fileuploads vehicle-fileuploads-active">
+                        <br />
+                        <span>
+                            Drag & drop <br>or click here <br> to upload
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-12 controls fileupload-preview" id="CACommercialRegistrationContent">
+                    <div id="CACommercialRegistration" class="img-wrap preview">
+                        <div onclick="ConfirmDeleteDocument('CACommercialRegistration');" class="close delete">&times;</div>
+                        <img id="CACommercialRegistrationDoc">
+                    </div>
+                    <div class="file-exp-date">
+                        <label class="lbl-exp-date">Expire date</label>
+                        <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
+                        <div class="col-sm-10 col-xs-10 no-padding">
+                            <input class="form-control no-padding exp-date-input"
+                                   id="CACommercialRegistrationExpDate" name="CACommercialRegistrationExpDate" type="text">
+                        </div>
+                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CACommercialRegistrationExpDate">
+                            <span class="fa fa-calendar"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-
 <form id="pagefileupload" method="POST" enctype="multipart/form-data" class="hidden">
     @Html.Partial("~/Views/Partials/FileUpload/_Files.cshtml")
 </form>
 
 <script src="~/Scripts/app/Business/businessProfile.js"></script>
 <link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />
+
+@section Styles {
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    @Styles.Render("~/plugins/toastrStyles")
+}
+@section Scripts {
+    @Scripts.Render("~/plugins/sweetAlert")
+    @Scripts.Render("~/plugins/toastr")
+}
