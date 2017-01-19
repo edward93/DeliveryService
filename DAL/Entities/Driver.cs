@@ -26,6 +26,10 @@ namespace DAL.Entities
         public bool Approved { get; set; }
         [Required]
         public DriverStatus Status { get; set; }
+        [ForeignKey("Rating")]
+        public int? RatingId { get; set; }
+
+
         public virtual Rating Rating { get; set; }
         public virtual ICollection<Card> Cards { get; set; }
         public virtual Person Person { get; set; }

@@ -42,7 +42,7 @@ namespace DAL.Entities
         public virtual Order Order { get; set; }
 
         public virtual DriverFee DriverFee { get; set; }
-        public virtual DriverPenalty DriverPenaltie { get; set; }
+        public virtual DriverPenalty DriverPenalty { get; set; }
         public virtual BusinessPenalty BusinessPenalty { get; set; }
     }
 }
