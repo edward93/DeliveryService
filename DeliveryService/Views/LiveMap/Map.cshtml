@@ -1,1 +1,71 @@
-﻿
+﻿    <!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript"
+            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U&sensor=false">
+    </script>
+    <script type="text/javascript">
+        var trackMarker;
+        var lat = 59.8659;
+        var movingDown = true;
+        var movingUp = false;
+        var isMoving = false;
+
+        function initialize() {
+            var mapOptions = {
+                center: new google.maps.LatLng(59.858889, 30.320849),
+                zoom: 14,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map_canvas"),
+                 mapOptions);
+
+            var image = 'track.png';
+            var myLatLng = new google.maps.LatLng(lat, 30.320807);
+            trackMarker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                icon: image
+            });
+        }
+
+        function move() {
+            if (lat > 59.866) {
+                endDrive(true, false);
+            }
+            if (lat < 59.851) {
+                endDrive(false, true);
+            }
+            if (movingDown) lat = lat - 0.0001;
+            if (movingUp) lat = lat + 0.0001;
+            trackMarker.setPosition(new google.maps.LatLng(lat, 30.321136));
+        }
+
+        function loop() {
+            setTimeout(function () {
+                if (isMoving) {
+                    move();
+                    loop();
+                }
+            }, 50)
+        }
+
+        function endDrive(down, up) {
+            movingDown = down;
+            movingUp = up;
+            isMoving = false;
+            document.getElementById("drive_btn").disabled = false;
+        }
+
+        function drive() {
+            isMoving = true;
+            document.getElementById("drive_btn").disabled = true;
+            loop();
+        }
+    </script>
+</head>
+<body onload="initialize()">
+    <div id="map_canvas" style="width:800px; height:400px"></div>
+    <button id="drive_btn" onclick="drive()">Drive</button>
+</body>
+</html>

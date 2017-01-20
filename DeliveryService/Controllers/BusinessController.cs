@@ -116,8 +116,8 @@ namespace DeliveryService.Controllers
         public async Task<JsonResult> RegisterBusiness(RegisterBusinessModel registerBusiness)
         {
             var serviceResult = new ServiceResult();
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            using (var transaction = Context.Database.BeginTransaction())
+           // using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+           // using (var transaction = Context.Database.BeginTransaction())
             {
                 try
                 {
@@ -166,8 +166,8 @@ namespace DeliveryService.Controllers
                         serviceResult.Messages.AddMessage(MessageType.Info, "The Business was successfuly created");
                         serviceResult.Success = true;
 
-                        scope.Complete();
-                        transaction.Commit();
+                      //  scope.Complete();
+                        //transaction.Commit();
                     }
                     else
                     {
@@ -177,8 +177,8 @@ namespace DeliveryService.Controllers
                 }
                 catch (Exception exception)
                 {
-                    scope.Dispose();
-                    transaction.Rollback();
+                   // scope.Dispose();
+                    //transaction.Rollback();
 
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while registering business");

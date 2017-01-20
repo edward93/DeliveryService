@@ -29,18 +29,27 @@
                             <span class="message-icon glyphicon"></span>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="password" class="col-sm-3 col-md-3 control-label">Password</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
+                    <div class="form-group edit-password">
+                        <label for="edit-password" class="col-sm-3 col-md-3 control-label">Edit  Password</label>
+                        <label class="switch">
+                            <input type="checkbox" class="btn btn-info" id="edit-password" >
+                            <div class="slider round"></div>
+                        </label>
                     </div>
-                    <div class="form-group">
-                        <label for="confirmPassword" class="col-sm-3 col-md-3 control-label">Confirm</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
-                            <span class="message-icon glyphicon"></span>
+                    <div id="collapse" class="collapse">
+                        <div class="form-group">
+                            <label for="password" class="col-sm-3 col-md-3 control-label">Password</label>
+                            <div class="col-sm-9 col-md-9">
+                                <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
+                                <span class="message-icon glyphicon validation-icon"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword" class="col-sm-3 col-md-3 control-label">Confirm</label>
+                            <div class="col-sm-9 col-md-9">
+                                <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
+                                <span class="message-icon glyphicon validation-icon"></span>
+                            </div>
                         </div>
                     </div>
                     <hr />
@@ -86,11 +95,11 @@
                         <label for="country" class="col-sm-3 col-md-3 control-label">Country</label>
                         <div class="col-sm-9 col-md-9">
                             <select class="form-control" id="country" name="Country" required>
-                                <option value="">Country</option>
+                                <option value="" disabled selected>Country</option>
                                 <option value="0">Canada</option>
                                 <option value="1">United Kingdom</option>
                                 <option value="2">United States</option>
-                                <option value="3">Armenia (Հայաստան)</option>
+                                <option value="3">Armenia</option>
                                 <option value="4">Albania </option>
                                 <option value="5">Australia</option>
                                 <option value="6">Belarus</option>
@@ -142,7 +151,7 @@
             </div>
             <div class="modal-footer ">
                 <ul class="list-inline pull-right">
-                    <li><button type="submit" class="btn btn-primary" data-dismiss="modal">Cancel</button></li>
+                    <li><button type="submit" class="btn btn-primary" data-dismiss="modal" id="cancelBussinessBtn">Cancel</button></li>
                     <li><input type="button" class="btn btn-primary" value="Create" id="submitBussinessBtn"/></li>
                 </ul>
             </div>

@@ -1,18 +1,17 @@
-﻿@model IEnumerable<DAL.Entities.Driver>
+﻿@model IEnumerable<DAL.Entities.Order>
 @{
-    ViewBag.Title = "Requests List";
+    ViewBag.Title = "Orders List";
 }
-
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Request List</h2>
+        <h2>Orders List</h2>
         <ol class="breadcrumb">
             <li>
                 <a href="@Url.Action("Index", "DashBoard")">Home</a>
             </li>
             <li class="active">
-                <strong>Requests</strong>
+                <strong>Orders</strong>
             </li>
         </ol>
     </div>
@@ -25,12 +24,9 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
+                    <div class="ibox-tools" style="margin-top: -5px">
+                        <a id="btnMakeNewOrder" class="btn btn-primary btn-sm">
+                            <i class="fa fa-plus"></i> Make Order
                         </a>
                         <ul class="dropdown-menu dropdown-user">
                             <li>
@@ -46,13 +42,13 @@
                     <table id="tblDriversList" class="table table-striped table-bordered table-hover">
                         <thead>
                         <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th class="text-center">Approved</th>
-                            <th>Date of Birth</th>
-                            <th>Sex</th>
+                            <th>Customer Name</th>
+                            <th>Customer Phone</th>
+                            <th>Order Number</th>
+                            <th>Time To Reach PickUpLocation</th>
+                            <th>Time To Reach DropOffLocation</th>
+                            <th>Order Status</th>
+                            <th>Vehicle Type</th>
                             <th class="text-right" data-sort-ignore="true">Action</th>
                         </tr>
                         </thead>
@@ -60,13 +56,13 @@
                         @foreach (var item in Model)
                         {
                             <tr id="driver_@item.Id">
-                                <td>@item.Person.FirstName</td>
-                                <td>@item.Person.LastName</td>
-                                <td>@item.Person.Email</td>
-                                <td>@item.Status</td>
-                                <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
-                                <td>@item.Person.DateOfBirth</td>
-                                <td>@item.Person.Sex</td>
+                                <td>@item.CustomerName</td>
+                                <td>@item.CustomerPhone</td>
+                                <td>@item.OrderNumber</td>
+                                <td>@item.TimeToReachPickUpLocation</td>
+                                <td>@item.TimeToReachDropOffLocation</td>
+                                <td>@item.OrderStatus</td>
+                                <td>@item.VehicleType</td>
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <button class="btn btn-primary btn-xs" data-title="Preview" data-id="@item.Id" id="btnPreviewDriver">
@@ -82,13 +78,13 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th class="text-center">Approved</th>
-                            <th>Date of Birth</th>
-                            <th>Sex</th>
+                            <th>Customer Name</th>
+                            <th>Customer Phone</th>
+                            <th>Order Number</th>
+                            <th>Time To Reach PickUpLocation</th>
+                            <th>Time To Reach DropOffLocation</th>
+                            <th>Order Status</th>
+                            <th>Vehicle Type</th>
                             <th class="text-center" data-sort-ignore="true">Action</th>
                         </tr>
                         </tfoot>
@@ -98,6 +94,8 @@
         </div>
     </div>
 </div>
+
+@Html.Partial("~/Views/BusinesOrders/Partials/_AddOrder.cshtml")
     
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -116,16 +114,19 @@
     $(function() {
 
         $('#tblDriversList').DataTable({
-            dom: '<"html5buttons"B>lTfgitp',
+            dom: '<"' +
+                'html5buttons' +
+                '' +
+                '"B>lTfgitp',
             buttons: [
                 { extend: 'copy' },
                 { extend: 'csv' },
-                { extend: 'excel', title: 'ExampleFile' },
+                { extend: 'excel', title: 'OrdersList' },
                 {
                     extend: 'pdf',
                     title: 'ExampleFile',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        columns: [0, 1, 2, 3, 4, 5, 6]
                     }
                 },
                 {
@@ -141,5 +142,10 @@
             ]
 
         });
+
+        $(document).on('click', "#btnMakeNewOrder", function () {
+            $("#addOrderModal").modal("show");
+        });
+
     });
 </script>
