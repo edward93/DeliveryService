@@ -1,71 +1,103 @@
-﻿    <!DOCTYPE html>
-<html>
-<head>
-    <script type="text/javascript"
-            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U&sensor=false">
-    </script>
-    <script type="text/javascript">
-        var trackMarker;
-        var lat = 59.8659;
-        var movingDown = true;
-        var movingUp = false;
-        var isMoving = false;
-
-        function initialize() {
-            var mapOptions = {
-                center: new google.maps.LatLng(59.858889, 30.320849),
-                zoom: 14,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            var map = new google.maps.Map(document.getElementById("map_canvas"),
-                 mapOptions);
-
-            var image = 'track.png';
-            var myLatLng = new google.maps.LatLng(lat, 30.320807);
-            trackMarker = new google.maps.Marker({
-                position: myLatLng,
-                map: map,
-                icon: image
-            });
+﻿
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="ibox-content p-xl">
+                <div class="wrapper wrapper-content animated fadeInRight">
+                    <div class="row">
+                        <!--Ride Details -->
+                        <div class="col-lg-3">
+                            <h3 class="dashboard-header-textes">SET RIDE DETAILS</h3>
+                            <div class="row">
+                                <div id="pickPart">
+                                    <div id="dropDestination" >
+                                        <div class="col-lg-12 dashboard-options">
+                                            <p>Type drop off destination</p>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="txtDestination" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="pickUpDestination" >
+                                    <div class="col-lg-12 dashboard-options">
+                                        <p>Type pick up destination</p>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" id="txtSource" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Ride Details End-->
+                        <div class="col-lg-4" style="float:right;">
+                            <div class="col-lg-12">
+                                <h3 class="dashboard-header-textes">
+                                    ESTIMATED FARE BREAKDOWN
+                                </h3>
+                                <div class="row" style="margin-top:8%">
+                                    <div class="col-lg-12 dashboard-options">
+                                        <div><strong>Distance:</strong><span style="float:right" data-value="" id="distance"></span></div>
+                                    </div>
+                                    <div class="col-lg-12 dashboard-options divider"></div>
+                                    <div class="col-lg-12 dashboard-options">
+                                        <div><strong>Duration:</strong><span style="float:right" data-value="" id="duration"></span></div>
+                                    </div>
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                        <!--Ride Map -->
+                        <div class="col-lg-5">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <h3 class="dashboard-header-textes">
+                                            MAP
+                                        </h3>
+                                        <div class="row" style="margin-top: 40px;">
+                                            <div class="col-md-12">
+                                                <div id="dvMap" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="txtLatitude" value="" />
+<input type="hidden" id="txtLongitude" value="" />
+@section Styles {
+    @Styles.Render("~/plugins/toastrStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    <style>
+        .blockUI.blockOverlay {
+            position: fixed !important;
         }
+    </style>
+}
+@section Scripts
+{
+    @Scripts.Render("~/plugins/chartjs")
+    @Scripts.Render("~/plugins/toastr")
+    @Scripts.Render("~/plugins/sweetAlert")
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQ-zmK2ZkGddWsFDy_cPz4TwLJOYvZD7o&&libraries=places"></script>
 
-        function move() {
-            if (lat > 59.866) {
-                endDrive(true, false);
-            }
-            if (lat < 59.851) {
-                endDrive(false, true);
-            }
-            if (movingDown) lat = lat - 0.0001;
-            if (movingUp) lat = lat + 0.0001;
-            trackMarker.setPosition(new google.maps.LatLng(lat, 30.321136));
-        }
+    <script src="~/Scripts/app/Business/businessLiveMap.js"></script>
+}
+<style>
+    #dvMap {
+        width: 100%;
+        height: 400px;
+    }
 
-        function loop() {
-            setTimeout(function () {
-                if (isMoving) {
-                    move();
-                    loop();
-                }
-            }, 50)
-        }
-
-        function endDrive(down, up) {
-            movingDown = down;
-            movingUp = up;
-            isMoving = false;
-            document.getElementById("drive_btn").disabled = false;
-        }
-
-        function drive() {
-            isMoving = true;
-            document.getElementById("drive_btn").disabled = true;
-            loop();
-        }
-    </script>
-</head>
-<body onload="initialize()">
-    <div id="map_canvas" style="width:800px; height:400px"></div>
-    <button id="drive_btn" onclick="drive()">Drive</button>
-</body>
-</html>
+    .divider {
+        margin-left: 15px;
+        border-bottom: 1px solid #808080;
+    }
+</style>

@@ -1,14 +1,8 @@
 ﻿
 function GetControlIDByFileTypeID(fileTypeID) {
     switch (fileTypeID) {
-        case 1: return "InspectionForm";
-        case 2: return "LAXPermit";
-        case 3: return "InspectionReceipt";
-        case 4: return "CACommercialRegistration";
-        case 5: return "Front";
-        case 6: return "BackSeat";
-        case 7: return "BackBamper";
-        case 8: return "RightSide";
+        case 1: return "CAPUCPERMIT";
+        case 2: return "COMMERCIALINSURANCECERTIFICATE";
     }
 }
 
@@ -19,9 +13,7 @@ $(function () {
 
     $(".fileupload-preview").hide();
 
-    $(".exp-date-input").datepicker({
-        format: 'MM/DD/YYYY'
-    });
+   
 
     $(document).on("click", ".fileupload-preview img", function () {
         var thumbSrc = $(this).attr("src");
@@ -52,30 +44,30 @@ $(document).on("click", ".vehicle-fileuploads-active", function () {
     $("#pagefileupload input").click();
 });
 
-function InitVehicleFileupload(controlID) {
+function InitVehicleFileupload(controlId) {
     $('#pagefileupload').fileupload({
-        url: "/BusinessProfile/Upload?controlID=" + controlID,
+        url: "/BusinessProfile/Upload?controlID=" + controlId,
         dataType: 'json',
         autoUpload: true,
         start: function () {
             $("#manageVehicleModal").attr("style", "display: block; z-index: 1000!important");
-            BlockUi();
+            window.BlockUi();
             $(".vehicle-fileuploads").removeClass("vehicle-fileuploads-active");
         },
         done: function (e, data) {
-            $("#" + controlID + "Doc").attr("src", data.result.Files[0].ThumbnailUrl.replace("~", ""));
-            $("#" + controlID + "Uploader").hide();
-            $("#" + controlID + "Content").show();
-            $("#txt" + controlID).val(data.result.Files[0].Name);
-            $("#txt" + controlID + "-error").hide();
+            $("#" + controlId + "Doc").attr("src", data.result.Files[0].ThumbnailUrl.replace("~", ""));
+            $("#" + controlId + "Uploader").hide();
+            $("#" + controlId + "Content").show();
+            $("#txt" + controlId).val(data.result.Files[0].Name);
+            $("#txt" + controlId + "-error").hide();
             $(".vehicle-fileuploads").addClass("vehicle-fileuploads-active");
             $("#manageVehicleModal").attr("style", "display: block");
-            UnBlockUi();
+            window.UnBlockUi();
         },
         stop: function () {
             $(".vehicle-fileuploads").addClass("vehicle-fileuploads-active");
             $("#manageVehicleModal").attr("style", "display: block");
-            UnBlockUi();
+            window.UnBlockUi();
         }
     });
 }
@@ -100,22 +92,22 @@ function ConfirmDeleteDocument(controlID) {
     });
 }
 
-function DeleteDocument(controlID) {
-    var fileName = $("#txt" + controlID).val();
+function DeleteDocument(controlId) {
+    var fileName = $("#txt" + controlId).val();
 
-    var fileId = $("#txt" + controlID).attr("data-fileid");
+    var fileId = $("#txt" + controlId).attr("data-fileid");
     if (fileId == undefined || fileId == null || fileId === "") {
         fileId = "0";
     }
 
     var id = $("#currVehicleId").val();
     var postData = {
-        controlID: controlID,
+        controlID: controlId,
         file: fileName,
         id: fileId
     }
     $("#manageVehicleModal").attr("style", "display: block; z-index: 1000!important");
-    BlockUi();
+    window.BlockUi();
     $.ajax({
         type: "POST",
         url: "/BusinessProfile/DeleteFile",
@@ -126,13 +118,13 @@ function DeleteDocument(controlID) {
             $("#manageVehicleModal").attr("style", "display: block");
         },
         success: function (response) {
-            $("#" + controlID + "Doc").attr("src", "");
-            $("#" + controlID + "Uploader").show();
-            $("#" + controlID + "Content").hide();
-            $("#txt" + controlID).val("");
-            $("#txt" + controlID).removeAttr("data-fileid");
+            $("#" + controlId + "Doc").attr("src", "");
+            $("#" + controlId + "Uploader").show();
+            $("#" + controlId + "Content").hide();
+            $("#txt" + controlId).val("");
+            $("#txt" + controlId).removeAttr("data-fileid");
             $("#manageVehicleModal").attr("style", "display: block");
-            UnBlockUi();
+            window.UnBlockUi();
         }
     });
 }

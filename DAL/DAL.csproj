@@ -63,6 +63,7 @@
     <Compile Include="Entities\Address.cs" />
     <Compile Include="Entities\Business.cs" />
     <Compile Include="Entities\BusinessPenalty.cs" />
+    <Compile Include="Entities\BusinessUpload.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\DeviceOrientation.cs" />
     <Compile Include="Entities\Driver.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Entities\Rating.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Enums\ActionType.cs" />
+    <Compile Include="Enums\BusinessUploadType.cs" />
     <Compile Include="Enums\CardType.cs" />
     <Compile Include="Enums\Country.cs" />
     <Compile Include="Enums\DocumentStatus.cs" />

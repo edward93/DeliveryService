@@ -25,6 +25,7 @@ namespace DAL.Context
         DbSet<DriverFee> DriverFees { get; set; }
         DbSet<OrderHistory> OrderHistories { get; set; }
         DbSet<Rate> Rates { get; set; }
+        DbSet<BusinessUpload> BusinessUploads { get; set; }
 
 
 

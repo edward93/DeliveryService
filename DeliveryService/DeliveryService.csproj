@@ -491,6 +491,7 @@
     <Content Include="Images\proofOfAddres.png" />
     <Content Include="Scripts\app\BusinessDashboard\businessDashboard.main.js" />
     <Content Include="Scripts\app\Business\business.main.js" />
+    <Content Include="Scripts\app\Business\businessLiveMap.js" />
     <Content Include="Scripts\app\Business\businessProfile.js" />
     <Content Include="Scripts\app\Business\Partials\businessMakeOrder.js" />
     <Content Include="Scripts\app\DashBoard\dashboard.main.js" />
