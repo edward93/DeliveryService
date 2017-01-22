@@ -5,9 +5,9 @@
         buttons: [
             { extend: 'copy' },
             { extend: 'csv' },
-            { extend: 'excel', title: 'ExampleFile' },
+            { extend: 'excel', title: 'Drivers' },
             {
-                extend: 'pdf', title: 'ExampleFile',
+                extend: 'pdf', title: 'Drivers',
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7]
                 }
