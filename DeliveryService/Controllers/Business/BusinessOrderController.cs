@@ -26,6 +26,7 @@ namespace DeliveryService.Controllers.Business
             return View(orders);
         }
 
+        [HttpPost]
         public async Task<ActionResult> AddNewOrder(MakeOrderViewModel model)
         {
             var serviceResult = new ServiceResult();

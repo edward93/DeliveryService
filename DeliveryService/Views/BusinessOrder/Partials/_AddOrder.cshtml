@@ -12,7 +12,7 @@
             </div>
 
             <div class="modal-body">
-                <form class="form-horizontal" id="submitOrder">
+                <form class="form-horizontal" id="submitOrderForm">
                     <div class="form-group">
                         <label for="customerName" class="col-sm-3 col-md-3 control-label">Customer Name</label>
                         <div class="col-sm-9 col-md-9">
@@ -76,6 +76,14 @@
                             <div id="map_canvas" style="width: 100%; height: 300px"></div>
                         </div>
                     </div>
+
+                    <input type="hidden" id="txtPickUpName" name="PickUpName" value="PickUpName" />
+                    <input type="hidden" id="txtLatitudePickUp" name="PickUpLatitude" />
+                    <input type="hidden" id="txtLongitudePickUp" name="PickUpLongitude" />
+
+                    <input type="hidden" id="txtDropOffName" name="DropOffName" value="DropOffName" />
+                    <input type="hidden" id="txtLatitudeDropOff" name="DropOffLatitude" />
+                    <input type="hidden" id="txtLongitudeDropOff" name="DropOffLongitude" />
                 </form>
 
                 <div class="modal-footer ">
@@ -90,6 +98,14 @@
         <!-- /.modal-dialog -->
     </div>
 </div>
+
+<input type="hidden" id="txtLatitude" value="51.5076514" />
+<input type="hidden" id="txtLongitude" value="-0.1256326" />
+
+
+
+
+
 <style>
     .pac-container {
         background-color: #FFF;
@@ -100,6 +116,34 @@
     }
 </style>
 <script>
+
+
+    $("#addOrderBtn").on("click",
+     function (e) {
+         var form = $("#submitOrderForm");
+         e.preventDefault();
+         addOrder(form);
+     });
+
+    function addOrder(form) {
+        GetLongLatPickUp();
+        GetLongLatDropOff();
+        $.post("/BusinessOrder/AddNewOrder",
+                              form.serialize(), function (data) {
+                                  window.UnBlockUi();
+                                  if (data.Success) {
+                                      for (let i = 0; i < data.Messages.length; i++) {
+                                          window.toastr.success(data.Messages[i].Value);
+                                      }
+                                  } else {
+                                      for (let i = 0; i < data.Messages.length; i++) {
+                                          window.toastr.error(data.Messages[i].Value);
+                                      }
+                                  }
+                              });
+
+    }
+
     $("#vehicleType").selectize({
         searchField: ['text'],
         maxItems: 1,
@@ -124,9 +168,11 @@
     var directionsService = new google.maps.DirectionsService();
     var mapElement = document.getElementById('map_canvas');
     function getMapStart() {
+        var txtLatitude = $("#txtLatitude");
+        var txtLongitude = $("#txtLongitude");
         return {
             zoom: 12,
-            center: new window.google.maps.LatLng(51.5076514, -0.1256326),
+            center: new window.google.maps.LatLng(txtLatitude.val(), txtLongitude.val()),
             styles: [
                         {
                             "featureType": "water",
@@ -234,6 +280,13 @@
 
         source = $("#pickUpLocation").val();
         destination = $("#dropOffLocation").val();
+        if (destination === "" && source != "") {
+            destination = source;
+        }
+        else if (source === "" && destination != "") {
+            source = destination;
+        }
+
 
         var request = {
             origin: source,
@@ -256,7 +309,7 @@
             avoidTolls: false
         }, function (response, status) {
             if (status === window.google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status === "OK") {
-                // console.log(response.rows[0].elements[0]);
+
 
                 var distanceToShow = response.rows[0].elements[0].distance.text;
                 var durationToShow = response.rows[0].elements[0].duration.text;
@@ -307,6 +360,7 @@
         } else {
             GetRoute();
         }
+        GetLongLatPickUp();
     });
 
     $('#pickUpLocation').keyup(function (e) {
@@ -326,6 +380,7 @@
         } else {
             GetRoute();
         }
+        GetLongLatDropOff();
     });
 
     $('#dropOffLocation').keyup(function (e) {
@@ -339,9 +394,39 @@
         }
     });
 
+    function GetLongLatPickUp() {
+        var geocoder = new google.maps.Geocoder();
+        var address = $("#pickUpLocation").val();
+
+        geocoder.geocode({ 'address': address }, function (results, status) {
+
+            if (status == google.maps.GeocoderStatus.OK) {
+                var latitude = results[0].geometry.location.lat();
+                var longitude = results[0].geometry.location.lng();
+                $("#txtLatitudePickUp").val(latitude);
+                $("#txtLongitudePickUp").val(longitude);
+            }
+        });
+    }
+
+    function GetLongLatDropOff() {
+        var geocoder = new google.maps.Geocoder();
+        var address = "new york";
+
+        geocoder.geocode({ 'address': address }, function (results, status) {
+
+            if (status == google.maps.GeocoderStatus.OK) {
+                var latitude = results[0].geometry.location.lat();
+                var longitude = results[0].geometry.location.lng();
+                $("#txtLatitudeDropOff").val(latitude);
+                $("#txtLongitudeDropOff").val(longitude);
+            }
+        });
+    }
+
 
     $("#addOrderModal").on("shown.bs.modal",
-        function() {
+        function () {
             var mapOptions = getMapStart();
             var sourceSearchBox = new window.google.maps.places.SearchBox($('#pickUpLocation')[0]);
             sourceSearchBox.addListener('places_changed', function () {
