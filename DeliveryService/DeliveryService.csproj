@@ -251,15 +251,15 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\BusinessController.cs" />
-    <Compile Include="Controllers\BusinessDashboardController.cs" />
-    <Compile Include="Controllers\BusinessProfileController.cs" />
+    <Compile Include="Controllers\Business\BusinessController.cs" />
+    <Compile Include="Controllers\Business\BusinessDashboardController.cs" />
+    <Compile Include="Controllers\Business\BusinessProfileController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\DriversController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LiveMapController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\BusinesOrdersController.cs" />
+    <Compile Include="Controllers\Business\BusinessOrderController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -277,6 +277,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\Business\PreviewBusinessModel.cs" />
     <Compile Include="ViewModels\Business\RegisterBusinessModel.cs" />
+    <Compile Include="ViewModels\Orders\MakeOrderViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -1067,11 +1068,11 @@
     <Content Include="Views\Partials\LeftNavigation\_SuperAdminNavigation.cshtml" />
     <Content Include="Views\Partials\LeftNavigation\_BusinessNavigation.cshtml" />
     <Content Include="Views\BusinessProfile\BusinessProfile.cshtml" />
-    <Content Include="Views\BusinesOrders\BusinesOrders.cshtml" />
+    <Content Include="Views\BusinessOrder\BusinessOrders.cshtml" />
     <Content Include="Views\LiveMap\Map.cshtml" />
     <Content Include="Views\Business\Partials\_AddNewBusiness.cshtml" />
     <Content Include="Views\Partials\FileUpload\_Files.cshtml" />
-    <Content Include="Views\BusinesOrders\Partials\_AddOrder.cshtml" />
+    <Content Include="Views\BusinessOrder\Partials\_AddOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

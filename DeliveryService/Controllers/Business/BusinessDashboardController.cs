@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using DAL.Constants;
 using DAL.Context;
 using Infrastructure.Config;
 
-namespace DeliveryService.Controllers
+namespace DeliveryService.Controllers.Business
 {
     [Authorize(Roles = Roles.Business)]
     public class BusinessDashboardController : BaseController

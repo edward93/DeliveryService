@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using DAL.Constants;
 using DAL.Context;
@@ -14,7 +13,7 @@ using Infrastructure.Config;
 using Microsoft.AspNet.Identity;
 using ServiceLayer.Service;
 
-namespace DeliveryService.Controllers
+namespace DeliveryService.Controllers.Business
 {
     [Authorize(Roles = Roles.Business)]
     public class BusinessProfileController : BaseController
