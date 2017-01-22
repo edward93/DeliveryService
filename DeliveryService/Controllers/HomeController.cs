@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using DAL.Context;
+using DAL.Enums;
 using Infrastructure.Config;
+using Infrastructure.Helpers;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
 
@@ -40,6 +43,17 @@ namespace DeliveryService.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        // TODO: This actions should be moved to admin or into the other controller
+        public ActionResult GetCountries()
+        {
+            return Json(Utilities.ToSelectizeItemsList<Country>());
+        }
+
+        public ActionResult GetVehicleTypes()
+        {
+            return Json(Utilities.ToSelectizeItemsList<VehicleType>());
         }
     }
 }

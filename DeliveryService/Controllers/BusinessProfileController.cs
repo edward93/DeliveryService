@@ -11,7 +11,6 @@ using DAL.Enums;
 using DeliveryService.Helpers;
 using DeliveryService.ViewModels.Business;
 using Infrastructure.Config;
-using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using ServiceLayer.Service;
 
@@ -87,7 +86,7 @@ namespace DeliveryService.Controllers
                     {
                         await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(existingUpload.Id);
                     }
-                    await _businessUploadService.Value.CreateBusinessUploadAsync(new BusinessUpload()
+                    await _businessUploadService.Value.CreateBusinessUploadAsync(new BusinessUpload
                     {
                         Business = business,
                         Description = "",

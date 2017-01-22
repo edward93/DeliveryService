@@ -1,6 +1,8 @@
-﻿
+﻿@Scripts.Render("~/bundles/selectize")
+@Styles.Render("~/plugins/selectize")
+
 <div class="modal fade" id="addNewBusinessModal" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog  modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
@@ -32,7 +34,7 @@
                     <div class="form-group edit-password">
                         <label for="edit-password" class="col-sm-3 col-md-3 control-label">Edit  Password</label>
                         <label class="switch">
-                            <input type="checkbox" class="btn btn-info" id="edit-password" >
+                            <input type="checkbox" class="btn btn-info" id="edit-password">
                             <div class="slider round"></div>
                         </label>
                     </div>
@@ -92,38 +94,10 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <!-- This should be done with selectize -->
                         <label for="country" class="col-sm-3 col-md-3 control-label">Country</label>
                         <div class="col-sm-9 col-md-9">
-                            <select class="form-control" id="country" name="Country" required>
-                                <option value="" disabled selected>Country</option>
-                                <option value="0">Canada</option>
-                                <option value="1">United Kingdom</option>
-                                <option value="2">United States</option>
-                                <option value="3">Armenia</option>
-                                <option value="4">Albania </option>
-                                <option value="5">Australia</option>
-                                <option value="6">Belarus</option>
-                                <option value="7">Belgium</option>
-                                <option value="8">China</option>
-                                <option value="9">Ukraine</option>
-                                <option value="10">Egypt</option>
-                                <option value="11">France</option>
-                                <option value="12">Georgia</option>
-                                <option value="13">Germany</option>
-                                <option value="14">Greece</option>
-                                <option value="15">India</option>
-                                <option value="16">Iraq</option>
-                                <option value="17">Italy</option>
-                                <option value="18">Mexico</option>
-                                <option value="19">Netherlands</option>
-                                <option value="20">Portugal</option>
-                                <option value="21">Russian Federation</option>
-                                <option value="22">Serbia</option>
-                                <option value="23">Spain</option>
-                                <option value="24">Sweden</option>
-                                <option value="25">Turkey</option>
-                            </select>
-                            <span class="message-icon glyphicon hide"></span>
+                            <input type="text" class="form-control" id="country" name="Country" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -152,7 +126,7 @@
             <div class="modal-footer ">
                 <ul class="list-inline pull-right">
                     <li><button type="submit" class="btn btn-primary" data-dismiss="modal" id="cancelBussinessBtn">Cancel</button></li>
-                    <li><input type="button" class="btn btn-primary" value="Create" id="submitBussinessBtn"/></li>
+                    <li><input type="button" class="btn btn-primary" value="Create" id="submitBussinessBtn" /></li>
                 </ul>
             </div>
         </div>
@@ -160,3 +134,23 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<script>
+    $("#country").selectize({
+        searchField: ['text'],
+        maxItems: 1,
+        allowEmptyOption: false,
+        plugins: ['remove_button'],
+        preload: true,
+        //options: countries,
+        load: function (query, callback) {
+            $.post("/home/GetCountries")
+              .done(function (data) {
+                  if (data !== '') {
+                      callback(data);
+                  }
+              }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+              });
+        }
+    });
+</script>

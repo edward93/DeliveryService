@@ -45,7 +45,7 @@ namespace DeliveryService
 
             // jQuery
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-2.1.1.min.js"));
+                        "~/Scripts/jquery-3.1.1.min.js"));
 
             // Jquery File Upload
             bundles.Add(new StyleBundle("~/Content/jQuery-File-Upload").Include(
@@ -473,6 +473,11 @@ namespace DeliveryService
             bundles.Add(new StyleBundle("~/plugins/imageOverlay").Include(
                 "~/Content/plugins/imageOverlay/imageOverlay.css",
                 "~/Content/plugins/imageOverlay/imageOverlayBase.css"));
+
+            bundles.Add(new StyleBundle("~/plugins/selectize").Include("~/Content/Selectize/css/selectize.css",
+                "~/Content/Selectize/css/selectize.bootstrap3.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/selectize").Include("~/Content/Selectize/js/standalone/selectize.js"));
         }
     }
 }

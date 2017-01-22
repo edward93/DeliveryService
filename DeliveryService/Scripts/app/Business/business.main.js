@@ -76,17 +76,19 @@
             }
         },
         highlight: function (element) {
-            var icon = $(element).closest('div')[0].lastElementChild;
-            $(icon).removeClass('glyphicon-ok-sign').addClass('glyphicon-remove-sign');
             if (element.id === 'country') {
                 $(element).addClass('invalid').removeClass('valid');
+            } else {
+                var icon = $(element).closest('div')[0].lastElementChild;
+                $(icon).removeClass('glyphicon-ok-sign').addClass('glyphicon-remove-sign');
             }
         },
         unhighlight: function (element) {
-            var icon = $(element).closest('div')[0].lastElementChild;
-            $(icon).removeClass('glyphicon-remove-sign').addClass('glyphicon-ok-sign');
             if (element.id === "country") {
                 $(element).addClass('valid').removeClass('invalid');
+            } else {
+                var icon = $(element).closest('div')[0].lastElementChild;
+                $(icon).removeClass('glyphicon-remove-sign').addClass('glyphicon-ok-sign');
             }
         },
         errorElement: 'span',
