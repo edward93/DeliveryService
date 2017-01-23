@@ -20,7 +20,23 @@ namespace ServiceLayer.Service
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
-            return await _orderRepository.CreateOrderAsync(order);
+            await _orderRepository.CreateOrderAsync(order);
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.OrderCreated,
+                CreatedBy = order.Business.ContactPerson.Id,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = order.Business.ContactPerson.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice
+            };
+
+            await _driverOrderSerivce.Value.CreateNewRecordAsync(orderHistory);
+            return order;
         }
 
         public async Task AcceptOrderAsync(Order order, Driver driver)
@@ -38,7 +54,8 @@ namespace ServiceLayer.Service
                 UpdatedBy = driver.Id,
                 UpdatedDt = DateTime.UtcNow,
                 TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
-                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice
             };
 
             await _driverOrderSerivce.Value.CreateNewRecordAsync(orderHistory);

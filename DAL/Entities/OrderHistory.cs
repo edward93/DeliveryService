@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Annotation;
 using DAL.Entities.Interfaces;
 using DAL.Enums;
 
@@ -18,12 +19,13 @@ namespace DAL.Entities
         public bool IsDeleted { get; set; }
 
         [ForeignKey("Driver")]
-        public int DriverId { get; set; }
+        public int? DriverId { get; set; }
         [ForeignKey("Order")]
         public int OrderId { get; set; }
         [Required]
         public ActionType Action { get; set; }
 
+        [Precision(19, 4), Required]
         public decimal OrderPrice { get; set; }
         [Required]
         public int TimeToReachPickUpLocation { get; set; }
