@@ -9,10 +9,12 @@ using System.Web.Http;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.API.Hubs;
 using DeliveryService.API.ViewModel.Models;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
 
@@ -40,7 +42,8 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> AddDriver(Driver driver)
         {
             ServiceResult result = new ServiceResult();
-
+            AddRiderHub hub = new AddRiderHub();
+            
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (var transaction = Context.Database.BeginTransaction())
             {
@@ -74,7 +77,7 @@ namespace DeliveryService.API.Controllers
             return Json(result);
         }
 
-        [Authorize]
+        [System.Web.Http.Authorize]
         [HttpPost]
         public async Task<IHttpActionResult> UpdateDriver(DriverDetails driverDetails)
         {
@@ -136,7 +139,7 @@ namespace DeliveryService.API.Controllers
             Json(serviceResult);
         }
 
-        [Authorize]
+        [System.Web.Http.Authorize]
         [HttpPost]
         public async Task<IHttpActionResult> GetDriverDetails()
         {
