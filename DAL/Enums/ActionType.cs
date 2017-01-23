@@ -3,7 +3,8 @@
     // TODO: Complete this list
     public enum ActionType
     {
-        DriverAcceptedOrder = 0,
+        OrderCreated = 0,
+        DriverAcceptedOrder,
         DriverRejectedOrder,
         DriverIsOnTheWayToPickUp,
         DriverArrived,
