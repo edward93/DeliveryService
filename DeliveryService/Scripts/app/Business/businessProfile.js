@@ -13,7 +13,6 @@ $(function () {
 
     $(".fileupload-preview").hide();
 
-   
 
     $(document).on("click", ".fileupload-preview img", function () {
         var thumbSrc = $(this).attr("src");
@@ -88,7 +87,6 @@ function ConfirmDeleteDocument(controlID) {
         if (isConfirm) {
             DeleteDocument(controlID);
         }
-
     });
 }
 

@@ -1,6 +1,5 @@
 ﻿$(document).ready(function () {
 
-
     $('#tblBusinessList').DataTable({
         dom: '<"html5buttons"B>lTfgitp',
         buttons: [
@@ -24,7 +23,6 @@
                 }
             }
         ]
-
     });
 
     var businessName = $("#businessName");

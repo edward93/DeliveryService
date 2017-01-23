@@ -84,7 +84,6 @@ $(document).ready(function () {
         var imageSrc = e.currentTarget.offsetParent.offsetParent.childNodes[3].src;
         $('#image-modal').show();
         $('#zoom-image').attr('src', imageSrc);
-        console.log();
     });
     $('#image-modal').on('click', function () {
             $('#image-modal').hide();

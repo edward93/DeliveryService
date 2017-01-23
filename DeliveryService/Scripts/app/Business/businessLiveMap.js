@@ -4,6 +4,13 @@ var directionsDisplay;
 var map;
 var directionsService = new google.maps.DirectionsService();
 var mapElement = document.getElementById('dvMap');
+
+$(document).ready(function () {
+    $(".location").keypress(function () {
+        GetRoute();
+    });
+});
+
 function getMapStart() {
     return {
         zoom: 11,
@@ -145,6 +152,12 @@ function GetRoute() {
 
     source = $("#txtSource").val();
     destination = $("#txtDestination").val();
+    if (destination === "" && source !== "") {
+        destination = source;
+    }
+    else if (source === "" && destination !== "") {
+        source = destination;
+    }
 
     var request = {
         origin: source,
@@ -156,7 +169,7 @@ function GetRoute() {
             directionsDisplay.setDirections(response);
         }
     });
-
+    
     var service = new google.maps.DistanceMatrixService();
     service.getDistanceMatrix({
         origins: [source],
@@ -167,7 +180,6 @@ function GetRoute() {
         avoidTolls: false
     }, function (response, status) {
         if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status == "OK") {
-            // console.log(response.rows[0].elements[0]);
 
             var distanceToShow = response.rows[0].elements[0].distance.text;
             var durationToShow = response.rows[0].elements[0].duration.text;
@@ -187,9 +199,7 @@ function GetRoute() {
         }
     });
 
-
 }
-
 
 function GetAddress() {
     var lat = parseFloat(document.getElementById("txtLatitude").value);
@@ -209,12 +219,9 @@ function GetAddress() {
     });
 }
 
-
-
-
 $('#txtSource').blur(function () {
-    if ($('#txtSource').val() == "") {
-        ClearMap()
+    if ($('#txtSource').val() === "") {
+        ClearMap();
     } else {
         GetRoute();
     }
@@ -222,7 +229,7 @@ $('#txtSource').blur(function () {
 
 $('#txtSource').keyup(function (e) {
     var code = e.which; // recommended to use e.which, it's normalized across browsers
-    if (code == 13) {
+    if (code === 13) {
         if ($('#txtSource').val() === "") {
             ClearMap();
         } else {
@@ -241,7 +248,7 @@ $('#txtDestination').blur(function () {
 
 $('#txtDestination').keyup(function (e) {
     var code = e.which; // recommended to use e.which, it's normalized across browsers
-    if (code == 13) {
+    if (code === 13) {
         if ($('#txtDestination').val() === "") {
             ClearMap();
         } else {
