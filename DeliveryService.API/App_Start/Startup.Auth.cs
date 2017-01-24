@@ -11,6 +11,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using DeliveryService.API.Providers;
 using DeliveryService.API.Models;
+using Microsoft.AspNet.SignalR;
 
 namespace DeliveryService.API
 {
@@ -46,6 +47,13 @@ namespace DeliveryService.API
 
             // Enable the application to use bearer tokens to authenticate users
             app.UseOAuthBearerTokens(OAuthOptions);
+
+
+            /*app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            {
+                Provider = new ApplicationOAuthBearerAuthenticationProvider(),
+            });*/
+
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(

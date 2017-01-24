@@ -325,8 +325,8 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> RegisterDriver(RegisterBindingModel model)
         {
             var serviceResult = new ServiceResult();
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            using (var transaction = Context.Database.BeginTransaction())
+            //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+           // using (var transaction = Context.Database.BeginTransaction())
             {
                 if (!ModelState.IsValid)
                 {
@@ -374,13 +374,13 @@ namespace DeliveryService.API.Controllers
                         serviceResult.Messages.AddMessage(MessageType.Info, "The Driver was successfuly created");
                         serviceResult.Success = true;
 
-                        scope.Complete();
-                        transaction.Commit();
+                   //     scope.Complete();
+                     //   transaction.Commit();
                     }
                     else
                     {
-                        scope.Dispose();
-                        transaction.Rollback();
+                      //  scope.Dispose();
+                       // transaction.Rollback();
                         // If any errors generate the error message and return json
                         serviceResult.Success = false;
                         serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating person!");
@@ -389,8 +389,8 @@ namespace DeliveryService.API.Controllers
                 }
                 catch (Exception ex)
                 {
-                    scope.Dispose();
-                    transaction.Rollback();
+                    //scope.Dispose();
+                    //transaction.Rollback();
                     // If any errors generate the error message and return json
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while registering driver");
