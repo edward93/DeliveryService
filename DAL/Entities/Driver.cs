@@ -11,13 +11,7 @@ namespace DAL.Entities
     {
         [Key, ForeignKey("Person")]
         public int Id { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedDt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsDeleted { get; set; }
-
-
+        
         [Required]
         public VehicleType VehicleType { get; set; }
         public string VehicleRegistrationNumber { get; set; }
@@ -29,12 +23,18 @@ namespace DAL.Entities
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
 
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
+
 
         public virtual Rating Rating { get; set; }
         public virtual ICollection<Card> Cards { get; set; }
         public virtual Person Person { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Discount> Discounts { get; set; }
 
-        
     }
 }

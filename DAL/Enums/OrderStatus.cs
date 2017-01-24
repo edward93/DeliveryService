@@ -3,7 +3,8 @@
     public enum OrderStatus
     {
         Pending = 0,
-        Accepted,
+        DriverAcceptedByBusiness,
+        AcceptedByDriver,
         OnTheWayToPickUp,
         ArrivedAtThePickUpLocation,
         OrderPickedUp,

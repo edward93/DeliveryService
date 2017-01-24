@@ -4,6 +4,7 @@
     public enum ActionType
     {
         OrderCreated = 0,
+        DriverAcceptedByBusiness,
         DriverAcceptedOrder,
         DriverRejectedOrder,
         DriverIsOnTheWayToPickUp,

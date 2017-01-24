@@ -23,9 +23,19 @@ namespace ServiceLayer.Repository
         public async Task AcceptOrderAsync(Order order, Driver driver)
         {
             order.AssignedDriverId = driver.Id;
-            order.OrderStatus = OrderStatus.Accepted;
+            order.OrderStatus = OrderStatus.AcceptedByDriver;
             order.UpdatedDt = DateTime.UtcNow;
             order.UpdatedBy = driver.Id;
+
+            DbContext.Orders.AddOrUpdate(order);
+            await DbContext.SaveChangesAsync();
+        }
+
+        public async Task AcceptDriverForOrderAsync(Driver driver, Order order)
+        {
+            order.OrderStatus = OrderStatus.DriverAcceptedByBusiness;
+            order.UpdatedDt = DateTime.UtcNow;
+            order.UpdatedBy = order.Business.ContactPerson.Id;
 
             DbContext.Orders.AddOrUpdate(order);
             await DbContext.SaveChangesAsync();

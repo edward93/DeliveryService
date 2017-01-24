@@ -1,32 +1,32 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Annotation;
 using DAL.Entities.Interfaces;
-using DAL.Enums;
 
 namespace DAL.Entities
 {
-    public class Card : IEntity
+    public class Discount : IEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [Required]
+        public DateTime ExpireDate { get; set; }
+        [Required]
+        public DateTime StartDate { get; set; }
+        [Precision(19,4), Required]
+        public decimal DiscountAmount { get; set; }
+        [Required, StringLength(50)]
+        public string Name { get; set; }
+        [StringLength(500)]
+        public string Description { get; set; }
+
+        [ForeignKey("Rate")]
+        public int RateId { get; set; }
         [ForeignKey("Driver")]
         public int? DriverId { get; set; }
         [ForeignKey("Business")]
         public int? BusinessId { get; set; }
-        [Required]
-        public string CardNumber { get; set; }
-        [Required]
-        public CardType CardType { get; set; }
-        [Required]
-        public string CardHolderName { get; set; }
-        [Required]
-        public DateTime ExpireDate { get; set; }
-        [Required]
-        public string SecurityCode { get; set; }
-        [Required]
-        public bool IsDefault { get; set; }
 
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
@@ -34,8 +34,8 @@ namespace DAL.Entities
         public int UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
 
+        public virtual Rate Rate { get; set; }
         public virtual Driver Driver { get; set; }
         public virtual Business Business { get; set; }
-
     }
 }

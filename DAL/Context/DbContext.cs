@@ -32,6 +32,7 @@ namespace DAL.Context
         public DbSet<OrderHistory> OrderHistories { get; set; }
         public DbSet<Rate> Rates { get; set; }
         public DbSet<BusinessUpload> BusinessUploads { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
 
         public static DbContext Create()
         {

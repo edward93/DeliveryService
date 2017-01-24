@@ -1,4 +1,6 @@
-﻿using ServiceLayer.Repository;
+﻿using System.Threading.Tasks;
+using DAL.Enums;
+using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
 {
@@ -9,6 +11,11 @@ namespace ServiceLayer.Service
             IRateRepository repository) : base(entityRepository)
         {
             _rateRepository = repository;
+        }
+
+        public async Task<decimal> GetPaymentByPaymentTypeAsync(PaymentType paymentType)
+        {
+            return await _rateRepository.GetPaymentByPaymentTypeAsync(paymentType);
         }
     }
 }

@@ -59,11 +59,13 @@
     <Compile Include="Repository\BusinessRespository.cs" />
     <Compile Include="Repository\BusinessUploadRepository.cs" />
     <Compile Include="Repository\CardRepository.cs" />
+    <Compile Include="Repository\DiscountRepository.cs" />
     <Compile Include="Repository\DriverFeeRepository.cs" />
     <Compile Include="Repository\DriverLocationRepository.cs" />
     <Compile Include="Repository\DriverPenaltyRepository.cs" />
     <Compile Include="Repository\IBusinessPenaltyRepository.cs" />
     <Compile Include="Repository\IBusinessUploadRepository.cs" />
+    <Compile Include="Repository\IDiscountRepository.cs" />
     <Compile Include="Repository\IDriverFeeRepository.cs" />
     <Compile Include="Repository\IDriverPenaltyRepository.cs" />
     <Compile Include="Repository\OrderHistoryRepository.cs" />
@@ -89,11 +91,13 @@
     <Compile Include="Service\BusinessService.cs" />
     <Compile Include="Service\BusinessUploadService.cs" />
     <Compile Include="Service\CardService.cs" />
+    <Compile Include="Service\DiscountService.cs" />
     <Compile Include="Service\DriverFeeService.cs" />
     <Compile Include="Service\DriverLocationService.cs" />
     <Compile Include="Service\DriverPenaltyService.cs" />
     <Compile Include="Service\IBusinessPenaltyService.cs" />
     <Compile Include="Service\IBusinessUploadService.cs" />
+    <Compile Include="Service\IDiscountService.cs" />
     <Compile Include="Service\IDriverFeeService.cs" />
     <Compile Include="Service\IDriverPenaltyService.cs" />
     <Compile Include="Service\OrderHistoryService.cs" />
