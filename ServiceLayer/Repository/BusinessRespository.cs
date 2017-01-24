@@ -21,9 +21,9 @@ namespace ServiceLayer.Repository
             return business;
         }
 
-        public Task<IEnumerable<Business>> GetBusinessList()
+        public async Task<IEnumerable<Business>> GetBusinessList()
         {
-            throw new System.NotImplementedException();
+            return await GetAllEntitiesAsync<Business>();
         }
 
         public async Task<Business> GetBusinessByPersonIdAsync(int personId)

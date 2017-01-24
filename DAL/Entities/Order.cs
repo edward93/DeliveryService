@@ -15,12 +15,6 @@ namespace DAL.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedDt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsDeleted { get; set; }
-
         public string CustomerName { get; set; }
         public string CustomerPhone { get; set; }
         public string OrderNumber { get; set; }
@@ -37,14 +31,17 @@ namespace DAL.Entities
         [Required]
         [ForeignKey("Business")]
         public int BusinessId { get; set; }
-
         [ForeignKey("PickUpLocation")]
         public int PickUpLocationId { get; set; }
         [ForeignKey("DropOffLocation")]
         public int DropOffLocationId { get; set; }
-
         [Precision(19, 4), Required]
         public decimal OrderPrice { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
 
 
         public virtual Driver AssignedDriver { get; set; }

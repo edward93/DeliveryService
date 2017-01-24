@@ -28,5 +28,6 @@ namespace DAL.Entities
         public virtual ICollection<Card> Cards { get; set; }
         public virtual Person ContactPerson { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Discount> Discounts { get; set; }
     }
 }

@@ -75,6 +75,15 @@ namespace DAL.Migrations
                 PaymentType = PaymentType.DriverFeeFor3Miles,
                 UpdatedBy = 0,
                 UpdatedDt = DateTime.UtcNow
+            }, new Rate
+            {
+                Amount = new decimal(0.25),
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedBy = 0,
+                PaymentType = PaymentType.AotmBox,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow
             } });
             context.SaveChanges();
         }

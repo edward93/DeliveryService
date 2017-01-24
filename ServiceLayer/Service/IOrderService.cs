@@ -7,5 +7,8 @@ namespace ServiceLayer.Service
     {
         Task<Order> CreateOrderAsync(Order order);
         Task AcceptOrderAsync(Order order, Driver driver);
+        Task AcceptDriverForOrderAsync(int orderId, int driverId);
+        Task<decimal> CalculateOrderPriceAsync(Order order, Driver driver);
+        Task UpdateOrderAsync(Order order, Person person);
     }
 }

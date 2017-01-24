@@ -11,13 +11,6 @@ namespace DAL.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedDt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsDeleted { get; set; }
-
-
         [ForeignKey("Driver")]
         public int? DriverId { get; set; }
         [ForeignKey("Business")]
@@ -30,8 +23,13 @@ namespace DAL.Entities
         [Required]
         public string City { get; set; }
         public string State { get; set; }
-        [Required]
+        [Required, StringLength(10)]
         public string ZipCode { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual Driver Driver { get; set; }
         public virtual Business Business { get; set; }

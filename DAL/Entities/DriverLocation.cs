@@ -11,12 +11,6 @@ namespace DAL.Entities
         [Key]
         [ForeignKey("Driver")]
         public int Id { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedDt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsDeleted { get; set; }
-
         [Required]
         public string Name { get; set; }
         [Required]
@@ -27,7 +21,12 @@ namespace DAL.Entities
         [Required]
         [Precision(10, 6)]
         public decimal Lat { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
 
-        public Driver Driver { get; set; }
+        public virtual Driver Driver { get; set; }
     }
 }

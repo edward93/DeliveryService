@@ -19,12 +19,16 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IOrderService> _orderService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
-        public BusinessOrderController(IConfig config, 
-            IDbContext context, 
-            IOrderService orderService, 
-            IPersonService personService, 
-            IBusinessService businessService) : base(config, context)
+        private readonly Lazy<IDriverService> _driverService;
+
+        public BusinessOrderController(IConfig config,
+            IDbContext context,
+            IOrderService orderService,
+            IPersonService personService,
+            IBusinessService businessService, 
+            IDriverService driverService) : base(config, context)
         {
+            _driverService = new Lazy<IDriverService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _personService = new Lazy<IPersonService>(() => personService);
             _orderService = new Lazy<IOrderService>(() => orderService);
@@ -50,7 +54,7 @@ namespace DeliveryService.Controllers.Business
 
                     var pickUpLocation = model.GetPickUpLocation(currBusiness);
                     var dropOffLocation = model.GetDropOffLocation(currBusiness);
-                    
+
                     var order = model.GetOrder(currBusiness);
 
                     order.DropOffLocation = dropOffLocation;
@@ -58,6 +62,9 @@ namespace DeliveryService.Controllers.Business
 
                     // Create order
                     await _orderService.Value.CreateOrderAsync(order);
+
+                    // TODO: Find nearest driver
+                    // TODO: Send this information to business via SignalR
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");
@@ -68,6 +75,48 @@ namespace DeliveryService.Controllers.Business
                     transaction.Rollback();
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating new order.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AcceptDriver(int orderId, int driverId)
+        {
+            var serviceResult = new ServiceResult();
+            using (var trasnaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null) throw new Exception($"Cannot find driver by driver id: {driverId}");
+
+                    if (!driver.Approved) throw new Exception($"This driver is not approved by administration and is not allowed to proceed.");
+
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception($"Couldn't find an order with id: {orderId}.");
+
+                    // Calculate order initial price
+                    order.OrderPrice = await _orderService.Value.CalculateOrderPriceAsync(order, driver);
+
+                    // Update order
+                    await _orderService.Value.UpdateOrderAsync(order, order.Business.ContactPerson);
+
+                    await _orderService.Value.AcceptDriverForOrderAsync(orderId, driverId);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver was accepted for this order by the business.");
+                    trasnaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trasnaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting driver for the order.");
                     serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
                 }
             }

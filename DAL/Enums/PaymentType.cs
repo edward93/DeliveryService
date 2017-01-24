@@ -2,7 +2,8 @@
 {
     public enum PaymentType
     {
-        OrderBookingFee,
+        OrderBookingFee = 0,
+        AotmBox,
         DriverFeeFor3Miles,
         BikeOrScooterExtraMileage,
         CarOrVanExtraMileage,

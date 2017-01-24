@@ -15,12 +15,6 @@ namespace DAL.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedDt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsDeleted { get; set; }
-
         [ForeignKey("Business")]
         [Required]
         public int BusinessId { get; set; }
@@ -33,6 +27,12 @@ namespace DAL.Entities
         [Required]
         public DocumentStatus DocumentStatus { get; set; }
         public string RejectionComment { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
+
         public virtual Business Business { get; set; }
     }
 }
