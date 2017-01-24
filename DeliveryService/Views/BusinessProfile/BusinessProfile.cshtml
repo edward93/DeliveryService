@@ -90,12 +90,13 @@
                         <label class="lbl-exp-date">Expire date</label>
                         <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
                         <div class="col-sm-10 col-xs-10 no-padding">
-                            <input class="form-control no-padding exp-date-input"
-                                   id="CommercialinsurancecertificateExpDate" name="CommercialinsurancecertificateExpDate" type="text">
+                            <input class="form-control no-padding exp-date-input datepicker"
+                                   id="CommercialinsurancecertificateDate" name="CommercialinsurancecertificateDate" type="text">
                         </div>
-                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CommercialinsurancecertificateExpDate">
+                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CommercialinsurancecertificateDate">
                             <span class="fa fa-calendar"></span>
                         </label>
+                        <button class="btn btn-primary btn-sm save-date" id="CommercialinsurancecertificateExpDate">Save</button>
                     </div>
                 </div>
             </div>
@@ -127,12 +128,13 @@
                         <label class="lbl-exp-date">Expire date</label>
                         <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
                         <div class="col-sm-10 col-xs-10 no-padding">
-                            <input class="form-control no-padding exp-date-input"
-                                   id="CapucpermitExpDate" name="CapucpermitExpDate" type="text">
+                            <input class="form-control no-padding exp-date-input datepicker"
+                                  id="CapucpermitDate" name="CapucpermitDate" type="text">
                         </div>
-                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CapucpermitExpDate">
+                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CapucpermitDate">
                             <span class="fa fa-calendar"></span>
                         </label>
+                        <button class="btn btn-primary btn-sm save-date" id="CapucpermitExpDate">Save</button>
                     </div>
                 </div>
             </div>
@@ -145,6 +147,8 @@
 
 <script src="~/Scripts/app/Business/businessProfile.js"></script>
 <link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 @section Styles {
     @Styles.Render("~/plugins/sweetAlertStyles")

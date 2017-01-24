@@ -154,6 +154,11 @@
             color: black !important;
         }
 
+    .save-date {
+        float: left;
+        margin: 10px 0;
+    }
+
     .fileupload-preview {
         padding: 0;
     }

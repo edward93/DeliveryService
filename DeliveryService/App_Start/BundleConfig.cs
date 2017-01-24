@@ -38,6 +38,10 @@ namespace DeliveryService
             bundles.Add(new ScriptBundle("~/bundles/BusinessDashboard").Include(
                        "~/Scripts/app/BusinessDashboard/businessDashboard.main.js"));
 
+            //BusinessOrders jQuery
+            bundles.Add(new ScriptBundle("~/bundles/BusinessOrders").Include(
+                       "~/Scripts/app/BusinessOrders/businessOrder.js"));
+
             // Font Awesome icons
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
                       "~/fonts/font-awesome/css/font-awesome.min.css", new CssRewriteUrlTransform()));

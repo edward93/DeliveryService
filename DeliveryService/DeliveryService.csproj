@@ -483,6 +483,7 @@
     <Content Include="Images\passport.png" />
     <Content Include="Images\proofOfAddres.png" />
     <Content Include="Scripts\app\BusinessDashboard\businessDashboard.main.js" />
+    <Content Include="Scripts\app\BusinessOrders\businessOrder.js" />
     <Content Include="Scripts\app\Business\business.main.js" />
     <Content Include="Scripts\app\Business\businessLiveMap.js" />
     <Content Include="Scripts\app\Business\businessProfile.js" />

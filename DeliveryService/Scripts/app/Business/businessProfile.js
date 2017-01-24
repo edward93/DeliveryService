@@ -1,6 +1,6 @@
 ﻿
-function GetControlIDByFileTypeID(fileTypeID) {
-    switch (fileTypeID) {
+function GetControlIDByFileTypeID(fileTypeId) {
+    switch (fileTypeId) {
         case 1: return "CAPUCPERMIT";
         case 2: return "COMMERCIALINSURANCECERTIFICATE";
     }
@@ -33,7 +33,7 @@ $(function () {
 
     $("#uploadContent").show();
 
-
+    $(".datepicker").datepicker();
 });
 
 $(document).on("click", ".vehicle-fileuploads-active", function () {
@@ -74,7 +74,7 @@ function InitVehicleFileupload(controlId) {
 var carMake;
 var carModel;
 
-function ConfirmDeleteDocument(controlID) {
+function ConfirmDeleteDocument(controlId) {
     swal({
         title: "Are you sure?",
         text: "You will not be able to recover this!",
@@ -85,7 +85,7 @@ function ConfirmDeleteDocument(controlID) {
         closeOnConfirm: true
     }, function (isConfirm) {
         if (isConfirm) {
-            DeleteDocument(controlID);
+            DeleteDocument(controlId);
         }
     });
 }
