@@ -152,7 +152,7 @@ namespace DeliveryService.Controllers.Business
                 {
                     trasnaction.Rollback();
                     serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting driver for the order.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while canceling driver for the order.");
                     serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
                 }
             }
