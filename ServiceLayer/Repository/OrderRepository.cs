@@ -40,5 +40,15 @@ namespace ServiceLayer.Repository
             DbContext.Orders.AddOrUpdate(order);
             await DbContext.SaveChangesAsync();
         }
+
+        public async Task CancelDriverForOrderAsync(Order order)
+        {
+            order.OrderStatus = OrderStatus.Pending;
+            order.UpdatedDt = DateTime.UtcNow;
+            order.UpdatedBy = order.Business.ContactPerson.Id;
+
+            DbContext.Orders.AddOrUpdate(order);
+            await DbContext.SaveChangesAsync();
+        }
     }
 }

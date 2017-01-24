@@ -5,6 +5,7 @@
     {
         OrderCreated = 0,
         DriverAcceptedByBusiness,
+        DriverCanceledByBusiness,
         DriverAcceptedOrder,
         DriverRejectedOrder,
         DriverIsOnTheWayToPickUp,

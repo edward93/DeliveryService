@@ -123,5 +123,41 @@ namespace DeliveryService.Controllers.Business
 
             return Json(serviceResult);
         }
+
+        [HttpPost]
+        public async Task<ActionResult> CancelDriver(int orderId, int driverId)
+        {
+            var serviceResult = new ServiceResult();
+            using (var trasnaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null) throw new Exception($"Cannot find driver by driver id: {driverId}");
+
+                    if (!driver.Approved) throw new Exception($"This driver is not approved by administration and is not allowed to proceed.");
+
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception($"Couldn't find an order with id: {orderId}.");
+
+                    await _orderService.Value.CancelDriverForOrderAsync(orderId, driverId);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver was canceled for this order by the business.");
+                    trasnaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trasnaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting driver for the order.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
+        }
     }
 }

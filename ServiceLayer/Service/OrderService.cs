@@ -108,5 +108,29 @@ namespace ServiceLayer.Service
             order.UpdatedDt = DateTime.UtcNow;
             await _orderRepository.CreateOrderAsync(order);
         }
+
+        public async Task CancelDriverForOrderAsync(int orderId, int driverId)
+        {
+            var order = await _orderRepository.GetByIdAsync<Order>(orderId);
+
+            await _orderRepository.CancelDriverForOrderAsync(order);
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.DriverCanceledByBusiness,
+                CreatedBy = order.Business.ContactPerson.Id,
+                CreatedDt = DateTime.UtcNow,
+                DriverId = driverId,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = order.Business.ContactPerson.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
     }
 }

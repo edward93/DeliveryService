@@ -10,5 +10,6 @@ namespace ServiceLayer.Service
         Task AcceptDriverForOrderAsync(int orderId, int driverId);
         Task<decimal> CalculateOrderPriceAsync(Order order, Driver driver);
         Task UpdateOrderAsync(Order order, Person person);
+        Task CancelDriverForOrderAsync(int orderId, int driverId);
     }
 }

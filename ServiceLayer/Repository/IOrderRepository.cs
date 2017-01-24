@@ -8,5 +8,6 @@ namespace ServiceLayer.Repository
         Task<Order> CreateOrderAsync(Order order);
         Task AcceptOrderAsync(Order order, Driver driver);
         Task AcceptDriverForOrderAsync(Driver driver, Order order);
+        Task CancelDriverForOrderAsync(Order order);
     }
 }
