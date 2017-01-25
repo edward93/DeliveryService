@@ -17,6 +17,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
+using DAL.Constants;
 
 namespace DeliveryService.API.Controllers
 {
@@ -28,7 +29,7 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IDriverLocationService> _driverLocationService;
 
         public DriverController(IDriverService service, IConfig config, IDbContext context,
-            IPersonService personService, 
+            IPersonService personService,
             IDriverUploadService driverUploadService,
             IDriverLocationService driverLocationService) : base(config, context)
         {
@@ -43,7 +44,7 @@ namespace DeliveryService.API.Controllers
         {
             ServiceResult result = new ServiceResult();
             AddRiderHub hub = new AddRiderHub();
-            
+
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (var transaction = Context.Database.BeginTransaction())
             {
@@ -173,7 +174,8 @@ namespace DeliveryService.API.Controllers
                         Phone = driver.Person.Phone,
                         Sex = driver.Person.Sex,
                         Addresses = driver.Addresses.ToList(),
-                        DriverDocuments = driverDocList
+                        DriverDocuments = driverDocList,
+                        DriverId = driver.Id
                     };
 
                     result.Success = true;
@@ -199,6 +201,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
+        [System.Web.Http.Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
         {
             var serviceResult = new ServiceResult();
@@ -223,7 +226,7 @@ namespace DeliveryService.API.Controllers
                     /* TODO: This should be changed to ex.Message to display only messages 
                        TODO: and ex.Tostring for logging to display more detailed information about error in a log file */
                     serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
-                    throw;
+                    // throw;
                 }
             }
 
@@ -253,17 +256,42 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> UpdateDriverLocation(DriverLocation model)
+        [System.Web.Http.Authorize(Roles = Roles.Member)]
+        public async Task<IHttpActionResult> UpdateDriverLocation(DriverLocationModel model)
         {
+
             var serviceResult = new ServiceResult();
             try
             {
                 if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
 
-                await _driverLocationService.Value.UpdateDriverLocation(model);
+                var driver = await _driverService.Value.GetByIdAsync<Driver>(model.DriverId);
+                if (driver != null)
+                {
+                    var driverLocation = new DriverLocation
+                    {
+                        Name = model.Name,
+                        Address = model.Address,
+                        Id = model.DriverId,
+                        Lat = model.Lat,
+                        Long = model.Long,
+                        CreatedBy = model.DriverId,
+                        CreatedDt = DateTime.Now,
+                        UpdatedBy = model.DriverId,
+                        UpdatedDt = DateTime.Now
+                    };
 
-                serviceResult.Success = true;
-                serviceResult.Messages.AddMessage(MessageType.Info, "The driver location was updated.");
+                    await _driverLocationService.Value.UpdateDriverLocation(driverLocation);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "The driver location was updated.");
+                }
+                else
+                {
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, $"No driver found for given Id {model.DriverId}");
+                }
+
             }
             catch (Exception ex)
             {

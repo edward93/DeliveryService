@@ -291,6 +291,7 @@
     <Compile Include="ViewModel\Enums\DriverDocumentTypeEnum.cs" />
     <Compile Include="ViewModel\Models\DriverDetails.cs" />
     <Compile Include="ViewModel\Models\DriverDocumentModel.cs" />
+    <Compile Include="ViewModel\Models\DriverLocationModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
