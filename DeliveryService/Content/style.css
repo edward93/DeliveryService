@@ -1386,10 +1386,10 @@ div.dt-button-info {
 }
 
 @media (max-width: 768px) {
-    .html5buttons {
+    /*.html5buttons {
         float: none;
         margin-top: 10px;
-    }
+    }*/
 
     .dataTables_length {
         float: none;
@@ -3653,7 +3653,7 @@ video {
 .modal-content {
     margin: auto;
     display: block;
-    width: 80%;
+    width: 90%;
     max-width: 700px;
 }
 
@@ -9276,14 +9276,14 @@ body.md-skin {
 @media (min-width: 768px) {
     #page-wrapper {
         position: inherit;
-        margin: 0 0 0 220px;
+        margin: 0 0 0 190px;
         min-height: 1200px;
     }
 
     .navbar-static-side {
         z-index: 2001;
         position: absolute;
-        width: 220px;
+        width: 190px;
     }
 
     .navbar-top-links .dropdown-messages,
@@ -9351,6 +9351,14 @@ body.md-skin {
         float: none;
         text-align: right;
         display: block;
+    }
+
+    .dataTables_filter label {
+        margin-right: 0;
+    }
+
+    .ibox-content {
+        padding: 15px 20px 20px 10px;
     }
 }
 

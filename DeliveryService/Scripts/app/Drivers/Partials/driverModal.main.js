@@ -74,11 +74,7 @@ $(document).ready(function () {
         var documentId = $(this).parent().parent().attr('data-id');
     });
 
-    $(document).on('click', ".rejectDriverDocument", function (e) {
-        e.preventDefault();
-        var documentId = $(this).parent().parent().attr('data-id');
-        RejectDriverDocument(documentId, e);
-    });
+    
     
     $('.image').on('click',function(e) {
         var imageSrc = e.currentTarget.offsetParent.offsetParent.childNodes[3].src;
@@ -106,6 +102,22 @@ function getDriverDocuments(driverId) {
             window.UnBlockUi();
             InitDocuments(data);
         });
+
+    $(document).on('click', ".rejectDriverDocument", function (e) {
+        e.preventDefault();
+        var documentId = $(this).parent().parent().attr('data-id');
+        var rejectionComment = $("#rejection-comment").val();
+        $("#rejection-comment").val("");
+        $("#rejection-modal").modal('show');
+        $(document).on('click', "#reject", function (e) {
+            if ($("#rejection-comment").val().length > 0) {
+                $("#rejection-modal").modal('hide');
+                RejectDriverDocument(documentId, rejectionComment, e);
+            } else {
+                $("#rejection-comment").attr("placeholder", "Type a name (Lastname, Firstname)").placeholder();
+            }
+        });
+    });
 }
 
 function ApproveDriverDocument(documentId, e) {
@@ -130,15 +142,15 @@ function ApproveDriverDocument(documentId, e) {
     }
 }
 
-function RejectDriverDocument(documentId, e) {
+function RejectDriverDocument(documentId, rejectionComment, e) {
     var currentButton = $(e.currentTarget);
     var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
     if (documentId != undefined) {
         var data = {
             DocumentId: documentId,
-            RejectionComment: "ddd"
+            RejectionComment: rejectionComment
         };
-
+        console.log(data);
         window.BlockUi();
         $.post("/Drivers/RejectDriverDocument",
             { model: data },

@@ -58,6 +58,7 @@ namespace DeliveryService.App_Start
             container.RegisterType<IOrderRepository, OrderRepository>(new PerRequestLifetimeManager());
             container.RegisterType<IOrderHistoryRepository, OrderHistoryRepository>(new PerRequestLifetimeManager());
             container.RegisterType<IBusinessUploadRepository, BusinessUploadRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IRateRepository, RateRepository>(new PerRequestLifetimeManager());
 
             // register Services
             container.RegisterType<IEntityService, EntityService>(new PerRequestLifetimeManager());
@@ -70,6 +71,7 @@ namespace DeliveryService.App_Start
             container.RegisterType<IOrderService, OrderService>(new PerRequestLifetimeManager());
             container.RegisterType<IOrderHistoryService, OrderHistoryService>(new PerRequestLifetimeManager());
             container.RegisterType<IBusinessUploadService, BusinessUploadService>(new PerRequestLifetimeManager());
+            container.RegisterType<IRateService, RateService>(new PerRequestLifetimeManager());
         }
     }
 }
