@@ -12,8 +12,7 @@ var controlID;
 $(function () {
 
     $(".fileupload-preview").hide();
-
-
+    GetPartnerFiles();
     $(document).on("click", ".fileupload-preview img", function () {
         var thumbSrc = $(this).attr("src");
         var documentImage = "";
@@ -71,6 +70,45 @@ function InitVehicleFileupload(controlId) {
     });
 }
 
+function GetPartnerFiles() {
+   
+
+    window.BlockUi();
+    $.ajax({
+        type: "POST",
+        url: "/BusinessProfile/GetFileList",
+        contentType: "application/json; charset=utf-8",
+        error: function (xmlHttpRequest, textStatus, errorThrown) {
+            window.UnBlockUi();
+            console.log("Request: " + xmlHttpRequest.toString() + "\n\nStatus: " + textStatus + "\n\nError: " + errorThrown);
+        },
+        success: function (response) {
+            console.log(response);
+            /*  $(".partnerFiles .files-uploaders-profile").show();
+              $(".partnerFiles .fileupload-preview-profile").hide();
+              $(".btn-save-exp-date").hide();
+  
+              if (response != "") {
+                  for (var i = 0; i < response.length; i++) {
+  
+                      if (response[i].isFileExists) {
+                          $("#" + response[i].controlId + "Doc").attr("src", "/Documents/PartnerProfile/" + response[i].controlId + "/thumbs/" + response[i].fileName + ".80x80.jpg");
+                      }
+                      else {
+                          $("#" + response[i].controlId + "Doc").attr("src", "/Documents/defaultImages/document-default.png");
+                      }
+                      $("#" + response[i].controlId + "ExpDate").val(response[i].ExpDate);
+                      $("#" + response[i].controlId + "Uploader").hide();
+                      $("#" + response[i].controlId + "Content").show();
+  
+  
+                  }
+              }
+              window.UnBlockUi();*/
+        }
+    });
+}
+
 var carMake;
 var carModel;
 
@@ -94,7 +132,7 @@ function DeleteDocument(controlId) {
     var fileName = $("#txt" + controlId).val();
 
     var fileId = $("#txt" + controlId).attr("data-fileid");
-    if (fileId == undefined || fileId == null || fileId === "") {
+    if (fileId == undefined || fileId === "") {
         fileId = "0";
     }
 
@@ -111,7 +149,7 @@ function DeleteDocument(controlId) {
         url: "/BusinessProfile/DeleteFile",
         data: JSON.stringify(postData),
         contentType: "application/json; charset=utf-8",
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: function (xmlHttpRequest, textStatus, errorThrown) {
             window.UnBlockUi();
             $("#manageVehicleModal").attr("style", "display: block");
         },

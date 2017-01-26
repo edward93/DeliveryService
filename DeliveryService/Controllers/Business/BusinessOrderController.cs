@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using DAL.Constants;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.Helpers.DataTableHelper;
+using DeliveryService.ViewModels.Business;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using ServiceLayer.Service;
 
 namespace DeliveryService.Controllers.Business
@@ -20,24 +25,25 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
+        private DataTable<BusinessOrder> _ordersDataTable;
 
         public BusinessOrderController(IConfig config,
             IDbContext context,
             IOrderService orderService,
             IPersonService personService,
-            IBusinessService businessService, 
+            IBusinessService businessService,
             IDriverService driverService) : base(config, context)
         {
             _driverService = new Lazy<IDriverService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _personService = new Lazy<IPersonService>(() => personService);
             _orderService = new Lazy<IOrderService>(() => orderService);
+
         }
 
-        public async Task<ActionResult> BusinessOrders()
+        public ActionResult BusinessOrders()
         {
-            var orders = await _orderService.Value.GetAllEntitiesAsync<Order>();
-            return View(orders);
+            return View();
         }
 
         [HttpPost]
@@ -158,6 +164,37 @@ namespace DeliveryService.Controllers.Business
             }
 
             return Json(serviceResult);
+        }
+
+        public ActionResult AjaxGetJsonData(int draw, int start, int length)
+        {
+            var orders = _orderService.Value.Get<Order>().Select(o => new BusinessOrder(o)).ToList(); 
+            _ordersDataTable = new DataTable<BusinessOrder>(orders.Count, orders);
+            var search = Request.QueryString["search[value]"];
+            var sortColumn = -1;
+            var sortDirection = "asc";
+            if (length == -1)
+            {
+                length = orders.Count;
+            }
+
+            if (Request.QueryString["order[0][column]"] != null)
+            {
+                sortColumn = int.Parse(Request.QueryString["order[0][column]"]);
+            }
+            if (Request.QueryString["order[0][dir]"] != null)
+            {
+                sortDirection = Request.QueryString["order[0][dir]"];
+            }
+
+            _ordersDataTable.TableData.draw = draw;
+            _ordersDataTable.TableData.recordsTotal = orders.Count;
+            var recordsFiltered = 0;
+            _ordersDataTable.TableData.data = _ordersDataTable.FilterData(ref recordsFiltered, start, length, search, sortColumn, sortDirection);
+            _ordersDataTable.TableData.recordsFiltered = recordsFiltered;
+
+
+            return Json(_ordersDataTable.TableData, JsonRequestBehavior.AllowGet);
         }
     }
 }

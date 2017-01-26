@@ -1,5 +1,4 @@
-﻿@model IEnumerable<DAL.Entities.Order>
-@{
+﻿@{
     ViewBag.Title = "Orders List";
 }
 
@@ -53,29 +52,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr id="driver_@item.Id">
-                                    <td>@item.CustomerName</td>
-                                    <td>@item.CustomerPhone</td>
-                                    <td>@item.OrderNumber</td>
-                                    <td>@item.TimeToReachPickUpLocation</td>
-                                    <td>@item.TimeToReachDropOffLocation</td>
-                                    <td>@item.OrderStatus</td>
-                                    <td>@item.VehicleType</td>
-                                    <td class="text-center">
-                                        <div class="btn-group">
-                                            <button class="btn btn-primary btn-xs btnPreviewOrder" data-title="Preview" data-id="@item.Id">
-                                                <span class="fa fa-eye" title="Preview"></span>
-                                            </button>
-                                            <button class="btn btn-danger btn-xs btnDeleteOrder" data-title="Delete" data-id="@item.Id">
-                                                <span class="glyphicon glyphicon-trash" title="Delete"></span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
                         <tfoot>
                             <tr>
                                 <th>Customer Name</th>
@@ -85,15 +61,44 @@
                                 <th>Time To Reach DropOffLocation</th>
                                 <th>Order Status</th>
                                 <th>Vehicle Type</th>
-                                <th class="text-center" data-sort-ignore="true">Action</th>
+                                <th class="text-right" data-sort-ignore="true">Action</th>
                             </tr>
                         </tfoot>
+                      
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#tblDriversList').dataTable({
+            "processing": true, // control the processing indicator.
+            "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
+            "info": true,   // control table information display field
+            "stateSave": false,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
+            "ajax": {
+                "url": "@($"{Request.Url?.Scheme}://{Request.Url?.Authority}{Url.Content("~")}")/BusinessOrder/AjaxGetJsonData",
+                "type": "GET"
+            },
+            "columns": [
+                { "data": "Id", "orderable": true },
+                { "data": "CustomerName", "orderable": true },
+                { "data": "CustomerPhone", "orderable": false },
+                { "data": "OrderNumber", "orderable": true },
+                { "data": "TimeToReachPickUpLocation", "orderable": true },
+                { "data": "TimeToReachDropOffLocation", "orderable": true },
+                { "data": "OrderStatus", "orderable": true },
+                { "data": "VehicleType", "orderable": true }
+            ],
+            "order": [[0, "asc"]]
+        });
+    });
+</script>
+
 
 
 

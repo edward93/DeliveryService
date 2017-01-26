@@ -21,6 +21,7 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessUploadService> _businessUploadService;
+        private FileUpload _fileUpload;
         // GET: BusinessProfile
         public BusinessProfileController(IConfig config, IDbContext context, IBusinessService businessService,
             IPersonService personService, IBusinessUploadService businessUploadService) : base(config, context)
@@ -28,6 +29,7 @@ namespace DeliveryService.Controllers.Business
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _personService = new Lazy<IPersonService>(() => personService);
             _businessUploadService = new Lazy<IBusinessUploadService>(() => businessUploadService);
+            _fileUpload = new FileUpload();
         }
 
         public async Task<ActionResult> BusinessProfile()
@@ -111,6 +113,38 @@ namespace DeliveryService.Controllers.Business
             }
         }
 
+        public async Task<JsonResult> GetFileList()
+        {
+            try
+            {
+                var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
+                var businessDocs = (await _businessUploadService.Value.GetBusinessUploadsByBusinessIdAsync(business.Id)).ToList();
+
+                var result = new List<BusinessDocumentModel>();
+                foreach (var businesDoc in businessDocs)
+                {
+                    result.Add(new BusinessDocumentModel
+                    {
+                        UploadType = businesDoc.UploadType,
+                        ExpireDate = businesDoc.ExpireDate,
+                        FileName = businesDoc.FileName,
+                        DocumentId = businesDoc.Id
+                    });
+                }
+                foreach (var file in result)
+                {
+                    file.IsFileExist = System.IO.File.Exists(Request.PhysicalApplicationPath + "\\Documents\\PartnerProfile\\" + Enum.GetName(typeof(UploadType), file.UploadType) + "\\thumbs\\" + file.FileName + ".80x80.jpg");
+                }
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json("error");
+            }
+        }
+
         private FileUpload InitUploader(string controlId)
         {
             FileUploadConfig uploaderConfig = new FileUploadConfig()
@@ -135,6 +169,7 @@ namespace DeliveryService.Controllers.Business
 
                 if (id != 0)
                 {
+                    await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(id);
                     /*var resultFile = await _vehicleFileService.GetVehicleFileById(id);
                     await _businessUploadService.DeleteVehicleFile(id);*/
                 }

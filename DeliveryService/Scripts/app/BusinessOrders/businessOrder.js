@@ -1,7 +1,7 @@
 ﻿
 $(document).ready(function () {
 
-    $('#tblDriversList').DataTable({
+    /*$('#tblDriversList').DataTable({
         dom: '<"' +
             'html5buttons' +
             '' +
@@ -28,7 +28,7 @@ $(document).ready(function () {
                 }
             }
         ]
-    });
+    });*/
 
     $(".location").keypress(function () {
         getRoute();
