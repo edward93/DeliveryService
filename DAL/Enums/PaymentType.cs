@@ -5,6 +5,8 @@
         OrderBookingFee = 0,
         AotmBox,
         DriverFeeFor3Miles,
+        DriverPenaltyForDelayPerMinute,
+        DriverPenaltyForRejections,
         BikeOrScooterExtraMileage,
         CarOrVanExtraMileage,
         DriverWaitingForBusinessPerMinute,

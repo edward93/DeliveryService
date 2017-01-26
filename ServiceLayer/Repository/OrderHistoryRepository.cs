@@ -33,5 +33,16 @@ namespace ServiceLayer.Repository
 
             return orders;
         }
+
+        public async Task<OrderHistory> GetRecordByDriverIdOrderIdAndActionTypeAsync(int driverId, int orderId, ActionType actionType)
+        {
+            var record =
+                await
+                    DbContext.OrderHistories.FirstOrDefaultAsync(
+                        c =>
+                            c.IsDeleted == false && c.OrderId == orderId && c.DriverId == driverId &&
+                            c.Action == actionType);
+            return record;
+        }
     }
 }

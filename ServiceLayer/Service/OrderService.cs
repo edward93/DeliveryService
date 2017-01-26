@@ -132,5 +132,100 @@ namespace ServiceLayer.Service
 
             await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
         }
+
+        public async Task RejectOrderAsync(Order order, Driver driver)
+        {
+            await _orderRepository.RejectOrderAsync(order, driver);
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.DriverRejectedOrder,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                DriverId = driver.Id,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = driver.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
+
+        public async Task OnTheWayToPickUpAsync(Driver driver, Order order)
+        {
+            await _orderRepository.OnTheWayToPickUpAsync(order, driver);
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.DriverIsOnTheWayToPickUp,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                DriverId = driver.Id,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = driver.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
+
+        public async Task ArrivedAtPickUpLocationAsync(Driver driver, Order order)
+        {
+            await _orderRepository.ArrivedAtPickUpLocationAsync(order, driver);
+
+            var lastOrderRecord =
+                await
+                    _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driver.Id, order.Id,
+                        ActionType.DriverIsOnTheWayToPickUp);
+            var actualTimeToReachPickUpLocation = (DateTime.UtcNow - lastOrderRecord.UpdatedDt).TotalMinutes;
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.DriverArrivedAtPickUpLocation,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                DriverId = driver.Id,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = driver.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                ActuallTimeToPickUpLocation = new decimal(actualTimeToReachPickUpLocation),
+                OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
+
+        public async Task OrderPickedUpAsync(Driver driver, Order order)
+        {
+            await _orderRepository.OrderPickedUpAsync(order, driver);
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.DriverPickedUpTheOrder,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                DriverId = driver.Id,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = driver.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
     }
 }

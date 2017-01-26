@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using DAL.Constants;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
+using Microsoft.Ajax.Utilities;
 using ServiceLayer.Service;
 
 namespace DeliveryService.API.Controllers
@@ -15,16 +19,25 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IOrderService> _orderService;
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IBusinessService> _businessService;
+        private readonly Lazy<IOrderHistoryService> _orderHistoryService;
+        private readonly Lazy<IDriverPenaltyService> _driverPenaltyService;
+
         public OrderController(IConfig config, IDbContext context,
             IOrderService orderService,
             IDriverService driverService,
-            IBusinessService businessService) : base(config, context)
+            IBusinessService businessService,
+            IOrderHistoryService orderHistoryService,
+            IDriverPenaltyService driverPenaltyService) : base(config, context)
         {
+            _driverPenaltyService = new Lazy<IDriverPenaltyService>(() => driverPenaltyService);
+            _orderHistoryService = new Lazy<IOrderHistoryService>(() => orderHistoryService);
             _orderService = new Lazy<IOrderService>(() => orderService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _driverService = new Lazy<IDriverService>(() => driverService);
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> AcceptOrder(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();
@@ -34,10 +47,11 @@ namespace DeliveryService.API.Controllers
                 {
                     var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
 
-                    if (driver == null) throw new Exception($"No driver with id: {driverId} was found.");
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
 
                     if (!driver.Approved)
-                        throw new Exception("This drver is not approved by administration and is not alowed to proceed.");
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
 
                     var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
 
@@ -48,6 +62,7 @@ namespace DeliveryService.API.Controllers
 
                     await _orderService.Value.AcceptOrderAsync(order, driver);
 
+                    // TODO: Update client app with signalR!
                     await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Busy);
 
                     serviceResult.Success = true;
@@ -60,54 +75,277 @@ namespace DeliveryService.API.Controllers
                 {
                     transaction.Rollback();
                     serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting an order");
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting an order.");
                     serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
                 }
             }
-            
+
             return Json(serviceResult);
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
+
         public async Task<IHttpActionResult> RejectOrder(int driverId, int orderId)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception($"No order found with id: {orderId}");
+
+                    if (order.OrderStatus != OrderStatus.DriverAcceptedByBusiness)
+                        throw new Exception($"Driver cannot accept order which has {order.OrderStatus} status.");
+
+                    await _orderService.Value.RejectOrderAsync(order, driver);
+
+                    // TODO: Update client app with signalR!
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Busy);
+
+                    // Calculate rejection penalty if ther is one
+                    var orders = await _orderHistoryService.Value.GetRejectedOrdersByDriverForCurrentDayAsync(driverId);
+
+                    if (orders.Count() >= 3)
+                    {
+                        // Penalize driver for rejecting more then 3 times during last 24 hours.
+                        await
+                            _driverPenaltyService.Value.PenalizeDriverForRejectingMoreThenThreeTimesAsync(driver, order);
+                    }
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info,
+                        $"The order (Id: {orderId}) was rejected by driver (Id: {driverId})");
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while rejecting an order.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
         }
 
+        // TODO: Q: Why do we need this action?
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> OnTheWayToPickUp(int driverId, int orderId)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception($"No order found with id: {orderId}");
+
+                    if (order.OrderStatus != OrderStatus.AcceptedByDriver)
+                        throw new Exception($"Driver cannot change status of this order.");
+
+                    await _orderService.Value.OnTheWayToPickUpAsync(driver, order);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver is on the way to pick up.");
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while changing order status to {OrderStatus.OnTheWayToPickUp}.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> ArrivedAtThePickUpLocation(int driverId, int orderId)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
+
+                    if (order.OrderStatus != OrderStatus.AcceptedByDriver)
+                        throw new Exception(Config.Messages["CannotChangeOrderStatus"]);
+
+                    await _orderService.Value.ArrivedAtPickUpLocationAsync(driver, order);
+
+                    // Calculate driver penalties if there are any
+                    var orderRecord =
+                        await
+                            _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driverId, orderId,
+                                ActionType.DriverArrivedAtPickUpLocation);
+
+                    if (orderRecord == null)
+                        throw new Exception(
+                            $"No record found with driver id:{driverId} orderId: {orderId} and action: {ActionType.DriverArrivedAtPickUpLocation}.");
+
+                    if (orderRecord.ActuallTimeToPickUpLocation != null)
+                    {
+                        // calculate delay in minutes
+                        var driverArrivalDelay = orderRecord.ActuallTimeToPickUpLocation.Value -
+                                                 orderRecord.TimeToReachPickUpLocation;
+
+                        if (driverArrivalDelay >= 1)
+                        {
+                            await
+                                _driverPenaltyService.Value.CalculatePenaltyForDelayAsync(driver, order,
+                                    driverArrivalDelay);
+                        }
+                    }
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info,
+                        Config.Messages["ArrivedAtPickUpLocatoinSuccess"]);
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while changing order status to {OrderStatus.ArrivedAtThePickUpLocation}.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> OrderPickedUp(int driverId, int orderId)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
+
+                    if (order.OrderStatus != OrderStatus.ArrivedAtThePickUpLocation)
+                        throw new Exception(Config.Messages["CannotChangeOrderStatus"]);
+
+                    await _orderService.Value.OrderPickedUpAsync(driver, order);
+
+                    // TODO: Calculate Business penalties and driver fees if there are eny
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info,
+                        Config.Messages["OrderPickedUpSuccess"]);
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while changing order status to {OrderStatus.ArrivedAtThePickUpLocation}.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> Delivered(int driverId, int orderId)
         {
             throw new NotImplementedException();
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> NotDelivered(int driverId, int orderId)
         {
             throw new NotImplementedException();
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> BookReturn(int driverId, int orderId)
         {
             throw new NotImplementedException();
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> CancelReturn(int driverId, int orderId)
         {
             throw new NotImplementedException();
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> ReturnConfirmed(int driverId, int orderId)
         {
             throw new NotImplementedException();

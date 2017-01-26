@@ -84,7 +84,26 @@ namespace DAL.Migrations
                 PaymentType = PaymentType.AotmBox,
                 UpdatedBy = 0,
                 UpdatedDt = DateTime.UtcNow
-            } });
+            }, new Rate
+            {
+                Amount = 2,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedBy = 0,
+                PaymentType = PaymentType.DriverPenaltyForRejections,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow
+            }, new Rate
+            {
+                Amount = new decimal(0.10),
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedBy = 0,
+                PaymentType = PaymentType.DriverPenaltyForDelayPerMinute,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow
+            }
+            });
             context.SaveChanges();
         }
     }

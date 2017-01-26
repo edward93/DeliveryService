@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Entities;
+using DAL.Enums;
 using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
@@ -22,6 +23,11 @@ namespace ServiceLayer.Service
         public async Task<IEnumerable<OrderHistory>> GetRejectedOrdersByDriverForCurrentDayAsync(int driverId)
         {
             return await _repository.GetRejectedOrdersByDriverForCurrentDayAsync(driverId);
+        }
+
+        public async Task<OrderHistory> GetRecordByDriverIdOrderIdAndActionTypeAsync(int driverId, int orderId, ActionType actionType)
+        {
+            return await _repository.GetRecordByDriverIdOrderIdAndActionTypeAsync(driverId, orderId, actionType);
         }
     }
 }

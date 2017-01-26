@@ -9,6 +9,8 @@
         DriverAcceptedOrder,
         DriverRejectedOrder,
         DriverIsOnTheWayToPickUp,
+        DriverArrivedAtPickUpLocation,
+        DriverPickedUpTheOrder,
         DriverArrived,
         Other
     }

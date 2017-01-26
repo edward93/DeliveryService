@@ -11,5 +11,9 @@ namespace ServiceLayer.Service
         Task<decimal> CalculateOrderPriceAsync(Order order, Driver driver);
         Task UpdateOrderAsync(Order order, Person person);
         Task CancelDriverForOrderAsync(int orderId, int driverId);
+        Task RejectOrderAsync(Order order, Driver driver);
+        Task OnTheWayToPickUpAsync(Driver driver, Order order);
+        Task ArrivedAtPickUpLocationAsync(Driver driver, Order order);
+        Task OrderPickedUpAsync(Driver driver, Order order);
     }
 }

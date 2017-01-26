@@ -5,6 +5,7 @@
         Pending = 0,
         DriverAcceptedByBusiness,
         AcceptedByDriver,
+        RejectedByDriver,
         OnTheWayToPickUp,
         ArrivedAtThePickUpLocation,
         OrderPickedUp,
