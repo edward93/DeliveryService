@@ -215,7 +215,6 @@ namespace ServiceLayer.Service
                 Action = ActionType.DriverPickedUpTheOrder,
                 CreatedBy = driver.Id,
                 CreatedDt = DateTime.UtcNow,
-                DriverId = driver.Id,
                 IsDeleted = false,
                 OrderId = order.Id,
                 UpdatedBy = driver.Id,
@@ -223,6 +222,57 @@ namespace ServiceLayer.Service
                 TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
                 TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
                 OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
+
+        public async Task OrderDeliveredAsync(Driver driver, Order order)
+        {
+            await _orderRepository.OrderDelivieredAsync(order, driver);
+
+            var lastOrderRecord =
+                await
+                    _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driver.Id, order.Id,
+                        ActionType.DriverPickedUpTheOrder);
+
+            var actualTimeToReachDropOffLocation = (DateTime.UtcNow - lastOrderRecord.UpdatedDt).TotalMinutes;
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.OrderDelivered,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = driver.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                ActualTimeToDropOffLocation = new decimal(actualTimeToReachDropOffLocation),
+                OrderPrice = order.OrderPrice
+            };
+
+            await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
+
+        public async Task OrderNotDeliveredAsync(Driver driver, Order order, string reason)
+        {
+            await _orderRepository.OrderNotDeliveredAsync(order, driver, reason);
+
+            var orderHistory = new OrderHistory
+            {
+                Action = ActionType.DriverPickedUpTheOrder,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                OrderId = order.Id,
+                UpdatedBy = driver.Id,
+                UpdatedDt = DateTime.UtcNow,
+                TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
+                TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                OrderPrice = order.OrderPrice,
+                NotDeliveredReason = reason
             };
 
             await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);

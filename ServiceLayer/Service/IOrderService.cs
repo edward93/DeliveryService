@@ -15,5 +15,7 @@ namespace ServiceLayer.Service
         Task OnTheWayToPickUpAsync(Driver driver, Order order);
         Task ArrivedAtPickUpLocationAsync(Driver driver, Order order);
         Task OrderPickedUpAsync(Driver driver, Order order);
+        Task OrderDeliveredAsync(Driver driver, Order order);
+        Task OrderNotDeliveredAsync(Driver driver, Order order, string reason);
     }
 }

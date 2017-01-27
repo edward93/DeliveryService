@@ -80,5 +80,18 @@ namespace ServiceLayer.Repository
         {
             await ChangeOrderStatus(order, OrderStatus.OrderPickedUp, driver.Person);
         }
+
+        public async Task OrderDelivieredAsync(Order order, Driver driver)
+        {
+            await ChangeOrderStatus(order, OrderStatus.Delivered, driver.Person);
+        }
+
+        public async Task OrderNotDeliveredAsync(Order order, Driver driver, string reason)
+        {
+            order.NotDeliveredReason = reason;
+
+            await ChangeOrderStatus(order, OrderStatus.Delivered, driver.Person);
+
+        }
     }
 }

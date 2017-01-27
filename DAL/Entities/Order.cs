@@ -37,6 +37,7 @@ namespace DAL.Entities
         public int DropOffLocationId { get; set; }
         [Precision(19, 4), Required]
         public decimal OrderPrice { get; set; }
+        public string NotDeliveredReason { get; set; }
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
         public DateTime UpdatedDt { get; set; }

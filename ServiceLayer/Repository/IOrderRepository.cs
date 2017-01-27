@@ -15,5 +15,7 @@ namespace ServiceLayer.Repository
         Task ChangeOrderStatus(Order order, OrderStatus newStatus, Person person);
         Task ArrivedAtPickUpLocationAsync(Order order, Driver driver);
         Task OrderPickedUpAsync(Order order, Driver driver);
+        Task OrderDelivieredAsync(Order order, Driver driver);
+        Task OrderNotDeliveredAsync(Order order, Driver driver, string reason);
     }
 }
