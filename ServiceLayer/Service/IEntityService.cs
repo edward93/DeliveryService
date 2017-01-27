@@ -14,7 +14,7 @@ namespace ServiceLayer.Service
         Task<IEnumerable<T>> GetAllEntitiesAsync<T>() where T : class, IEntity;
         Task<T> RemoveEntityAsync<T>(int entityId) where T : class, IEntity;
 
-        IEnumerable<T> Get<T>(Expression<Func<T, bool>> filter = null,
+        Task<IEnumerable<T>> GetAllEntitiesAsync<T>(Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, params Expression<Func<T, object>>[] includes) where T : class, IEntity;
     }
 }

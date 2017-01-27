@@ -14,7 +14,6 @@ namespace ServiceLayer.Service
     public class EntityService : IEntityService
     {
         private readonly IEntityRepository _entityRepository;
-        internal DbSet<IEntity> DbSet;
 
         public EntityService(IEntityRepository entityRepository)
         {
@@ -35,31 +34,11 @@ namespace ServiceLayer.Service
             return await _entityRepository.RemoveEntityAsync<T>(entityId);
         }
 
-        public IEnumerable<T> Get<T>(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, params Expression<Func<T, object>>[] includes) where T : class, IEntity
+        public async Task<IEnumerable<T>> GetAllEntitiesAsync<T>(Expression<Func<T, bool>> filter = null, 
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+            params Expression<Func<T, object>>[] includes) where T : class, IEntity
         {
-            IDbContext context = new DAL.Context.DbContext();
-            DbSet<T> dbSet = context.Set<T>();
-            IQueryable<T> query = dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            if (includes != null)
-            {
-                query = includes.Aggregate(query,
-                          (current, include) => current.Include(include));
-            }
-
-            if (orderBy != null)
-            {
-                return orderBy(query).ToList();
-            }
-            else
-            {
-                return query.ToList();
-            }
+            return await _entityRepository.GetAllEntitiesAsync<T>(filter, orderBy, includes);
         }
     }
 }

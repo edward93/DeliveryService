@@ -166,9 +166,9 @@ namespace DeliveryService.Controllers.Business
             return Json(serviceResult);
         }
 
-        public ActionResult AjaxGetJsonData(int draw, int start, int length)
+        public async Task<ActionResult> AjaxGetJsonData(int draw, int start, int length)
         {
-            var orders = _orderService.Value.Get<Order>().Select(o => new BusinessOrder(o)).ToList(); 
+            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>()).Select(o => new BusinessOrder(o)).ToList(); 
             _ordersDataTable = new DataTable<BusinessOrder>(orders.Count, orders);
             var search = Request.QueryString["search[value]"];
             var sortColumn = -1;

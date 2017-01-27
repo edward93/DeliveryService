@@ -21,14 +21,20 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IOrderHistoryService> _orderHistoryService;
         private readonly Lazy<IDriverPenaltyService> _driverPenaltyService;
+        private readonly Lazy<IDriverFeeService> _driverFeeService;
+        private readonly Lazy<IBusinessPenaltyService> _businessPenaltyService;
 
         public OrderController(IConfig config, IDbContext context,
             IOrderService orderService,
             IDriverService driverService,
             IBusinessService businessService,
             IOrderHistoryService orderHistoryService,
-            IDriverPenaltyService driverPenaltyService) : base(config, context)
+            IDriverPenaltyService driverPenaltyService, 
+            IDriverFeeService driverFeeService, 
+            IBusinessPenaltyService businessPenaltyService) : base(config, context)
         {
+            _driverFeeService = new Lazy<IDriverFeeService>(() => driverFeeService);
+            _businessPenaltyService = new Lazy<IBusinessPenaltyService>(() => businessPenaltyService);
             _driverPenaltyService = new Lazy<IDriverPenaltyService>(() => driverPenaltyService);
             _orderHistoryService = new Lazy<IOrderHistoryService>(() => orderHistoryService);
             _orderService = new Lazy<IOrderService>(() => orderService);
@@ -294,7 +300,28 @@ namespace DeliveryService.API.Controllers
 
                     await _orderService.Value.OrderPickedUpAsync(driver, order);
 
-                    // TODO: Calculate Business penalties and driver fees if there are eny
+                    // Calculate driver fees if there are any
+                    var orderRecord =
+                        await
+                            _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driverId, orderId,
+                                ActionType.DriverArrivedAtPickUpLocation);
+
+
+                    // Calculate waiting time in minutes
+                    var driverWaitingTime = new decimal((orderRecord.UpdatedDt -
+                                             DateTime.UtcNow).TotalMinutes);
+
+                    if (driverWaitingTime >= 1)
+                    {
+                        await
+                            _driverFeeService.Value.CalculateFeeForWaitingAsync(driver, order,
+                                driverWaitingTime);
+
+                        // Penelize business for making driver to wait
+                        await _businessPenaltyService.Value.CalculatePenaltyForDriverWaitingAsync(driver, order, driverWaitingTime);
+                    }
+
+                    // TODO: Calculate Business penalties if there are eny
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info,
@@ -320,14 +347,101 @@ namespace DeliveryService.API.Controllers
         [Authorize(Roles = Roles.Member)]
         public async Task<IHttpActionResult> Delivered(int driverId, int orderId)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
+
+                    if (order.OrderStatus != OrderStatus.OrderPickedUp)
+                        throw new Exception(Config.Messages["CannotChangeOrderStatus"]);
+
+                    await _orderService.Value.OrderDeliveredAsync(driver, order);
+
+                    // TODO: calculate penalties and fees and create transactions
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info,
+                        Config.Messages["DeliveredSuccess"]);
+
+                    transaction.Commit();
+
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while changing order status to {OrderStatus.Delivered}.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
         }
 
         [HttpPost]
         [Authorize(Roles = Roles.Member)]
-        public async Task<IHttpActionResult> NotDelivered(int driverId, int orderId)
+        public async Task<IHttpActionResult> NotDelivered(int driverId, int orderId, string reason)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
+
+                    if (order.OrderStatus != OrderStatus.OrderPickedUp)
+                        throw new Exception(Config.Messages["CannotChangeOrderStatus"]);
+
+
+                    await _orderService.Value.OrderNotDeliveredAsync(driver, order, reason);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, string.Format(Config.Messages["NotDeliveredSuccess"], reason));
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while changing order status to {OrderStatus.Delivered}.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
         }
 
         [HttpPost]

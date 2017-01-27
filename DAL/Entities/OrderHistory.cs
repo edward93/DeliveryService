@@ -26,6 +26,7 @@ namespace DAL.Entities
         public int TimeToReachDropOffLocation { get; set; }
         public decimal? ActuallTimeToPickUpLocation { get; set; }
         public decimal? ActualTimeToDropOffLocation { get; set; }
+        public string NotDeliveredReason { get; set; }
         [ForeignKey("DriverFee")]
         public int? DriverFeeId { get; set; }
         [ForeignKey("DriverPenalty")]
