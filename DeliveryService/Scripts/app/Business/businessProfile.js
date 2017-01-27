@@ -31,8 +31,11 @@ $(function () {
     $(".fileinput-button i").remove();
 
     $("#uploadContent").show();
+   
 
-    $(".datepicker").datepicker();
+    $(".datepicker").datepicker("option", "minDate");
+    var minDate = $(".datepicker").datepicker("option", "minDate", new Date(2017, 1 - 1, 1));
+    
 });
 
 $(document).on("click", ".vehicle-fileuploads-active", function () {
@@ -71,9 +74,8 @@ function InitVehicleFileupload(controlId) {
 }
 
 function GetPartnerFiles() {
-   
-
-    window.BlockUi();
+  
+    //window.BlockUi();
     $.ajax({
         type: "POST",
         url: "/BusinessProfile/GetFileList",

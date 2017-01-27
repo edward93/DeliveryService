@@ -29,7 +29,7 @@ $(document).ready(function () {
     } else {
         // handle the mouseenter functionality
         $(".img").mouseenter(function () {
-                $(this).addClass("hover");
+            $(this).addClass("hover");
         })
             // handle the mouseleave functionality
             .mouseleave(function () {
@@ -74,15 +74,15 @@ $(document).ready(function () {
         var documentId = $(this).parent().parent().attr('data-id');
     });
 
-    
-    
-    $('.image').on('click',function(e) {
+
+
+    $('.image').on('click', function (e) {
         var imageSrc = e.currentTarget.offsetParent.offsetParent.childNodes[3].src;
         $('#image-modal').show();
         $('#zoom-image').attr('src', imageSrc);
     });
     $('#image-modal').on('click', function () {
-            $('#image-modal').hide();
+        $('#image-modal').hide();
     });
 });
 
@@ -92,7 +92,40 @@ function nextTab(elem) {
 function prevTab(elem) {
     $(elem).prev().find('a[data-toggle="tab"]').click();
 }
+
 function getDriverDocuments(driverId) {
+    var form = $("#rejection-form");
+    var documentId;
+    var validator = $("#rejection-form").validate({
+        rules: {
+            RejectionComment: {
+                required: true
+            }
+        },
+        highlight: function (element) {
+            $(element).addClass('invalid').removeClass('valid');
+        },
+        unhighlight: function (element) {
+            $(element).addClass('valid').removeClass('invalid');
+        },
+        errorElement: 'span',
+        errorClass: 'help-block',
+        errorPlacement: function (error, element) {
+            if (element.length) {
+                error.insertAfter(element);
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
+    function clearRejectModal() {
+        documentId = "";
+        validator.resetForm();
+        $("#rejection-comment").val("");
+        $("#rejection-comment").removeClass("valid");
+        $("#rejection-comment").removeClass("invalid");
+        $("#rejection-comment").attr("placeholder", "");
+    }
     window.BlockUi();
     ClearModal();
     $.post("/Drivers/GetDriverDocuments",
@@ -105,16 +138,22 @@ function getDriverDocuments(driverId) {
 
     $(document).on('click', ".rejectDriverDocument", function (e) {
         e.preventDefault();
-        var documentId = $(this).parent().parent().attr('data-id');
-        var rejectionComment = $("#rejection-comment").val();
-        $("#rejection-comment").val("");
+        clearRejectModal();
+        documentId = $(this).parent().parent().attr('data-id');
         $("#rejection-modal").modal('show');
-        $(document).on('click', "#reject", function (e) {
-            if ($("#rejection-comment").val().length > 0) {
+        form.validate();
+        $("textarea").keydown(function () {
+            validator.element(this);
+            form.valid();
+        });
+        $('#reject').click(function () {
+            if (validator.form()) {
+                var rejectionComment = $("#rejection-comment").val();
                 $("#rejection-modal").modal('hide');
                 RejectDriverDocument(documentId, rejectionComment, e);
             } else {
-                $("#rejection-comment").attr("placeholder", "Type a name (Lastname, Firstname)").placeholder();
+                $("#rejection-comment").attr("placeholder", "This field is required.");
+                $("#rejection-comment").removeClass("help-block");
             }
         });
     });
@@ -123,7 +162,8 @@ function getDriverDocuments(driverId) {
 function ApproveDriverDocument(documentId, e) {
     var currentButton = $(e.currentTarget);
     if (documentId) {
-        window.BlockUi();
+        currentButton.addClass('disabled approveSelected');
+        //window.BlockUi();
         $.post("/Drivers/ApproveDriverDocument",
             { documentId: documentId },
             function (data) {
@@ -143,29 +183,42 @@ function ApproveDriverDocument(documentId, e) {
 }
 
 function RejectDriverDocument(documentId, rejectionComment, e) {
-    var currentButton = $(e.currentTarget);
-    var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
+    var currentButton, approveButton;
+    if (e.target.parentElement.tagName === "A") {
+        currentButton = e.target.parentElement;
+        approveButton = e.target.parentElement.parentElement.parentElement.childNodes[3].firstChild;
+    } else {
+        if (e.target.parentElement.tagName === "DIV") {
+            currentButton = e.target;
+            approveButton = e.target.parentElement.parentElement.childNodes[3].firstChild;
+        }
+    }
+    //var currentButton = $(e.currentTarget);
+    //var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
     if (documentId != undefined) {
         var data = {
             DocumentId: documentId,
             RejectionComment: rejectionComment
         };
-        console.log(data);
-        window.BlockUi();
+        $(currentButton).addClass('disabled rejectSelected');
+        $(approveButton).addClass('disabled');
+        //window.BlockUi();
         $.post("/Drivers/RejectDriverDocument",
             { model: data },
             function (data) {
                 window.UnBlockUi();
                 if (data.Success) {
-                    currentButton.addClass('disabled rejectSelected');
-                    approveButton.addClass('disabled');
+                    //$(currentButton).addClass('disabled rejectSelected');
+                   // $(approveButton).addClass('disabled');
                     for (let i = 0; i < data.Messages.length; i++) {
                         toastr.success(data.Messages[i].Value);
                     }
+                    return;
                 } else {
                     for (let i = 0; i < data.Messages.length; i++) {
                         toastr.error(data.Messages[i].Value);
                     }
+                    return;
                 }
             });
     }
@@ -262,18 +315,18 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             passportConteiner.attr("data-id", documentId);
 
             setStatuses(UploadType.Passport.name, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
-                
-            break;
-        //case UploadType.Photo.value:
-        //    var photo = document.getElementById(UploadType.Photo.name);
-        //    photo.setAttribute("src", fullPath);
-        //    photo.setAttribute("data-id", documentId);
-        //    photo.removeAttribute("class");
-        //    var photoConteiner = $("." + UploadType.Photo.name);
-        //    photoConteiner.attr("data-id", documentId);
-        //    setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
 
-        //    break;
+            break;
+            //case UploadType.Photo.value:
+            //    var photo = document.getElementById(UploadType.Photo.name);
+            //    photo.setAttribute("src", fullPath);
+            //    photo.setAttribute("data-id", documentId);
+            //    photo.removeAttribute("class");
+            //    var photoConteiner = $("." + UploadType.Photo.name);
+            //    photoConteiner.attr("data-id", documentId);
+            //    setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
+
+            //    break;
         default:
             break;
     }
