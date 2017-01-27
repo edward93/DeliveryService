@@ -8,6 +8,7 @@ using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Helpers.DataTableHelper;
+using DeliveryService.Helpers.DataTableHelper.Models;
 using DeliveryService.ViewModels.Business;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
@@ -166,35 +167,23 @@ namespace DeliveryService.Controllers.Business
             return Json(serviceResult);
         }
 
-        public ActionResult AjaxGetJsonData(int draw, int start, int length)
+        public ActionResult GetBusinessOrdesList(int draw, int start, int length)
         {
-            var orders = _orderService.Value.Get<Order>().Select(o => new BusinessOrder(o)).ToList(); 
-            _ordersDataTable = new DataTable<BusinessOrder>(orders.Count, orders);
-            var search = Request.QueryString["search[value]"];
-            var sortColumn = -1;
-            var sortDirection = "asc";
-            if (length == -1)
+            var orders = _orderService.Value.Get<Order>().Select(o => new BusinessOrder(o)).ToList();
+
+            var param = new DataParam
             {
-                length = orders.Count;
-            }
+                Search = Request.QueryString["search[value]"],
+                SortColumn = Request.QueryString["order[0][column]"] == null ? -1 : int.Parse(Request.QueryString["order[0][column]"]),
+                SortDirection = Request.QueryString["order[0][dir]"] ?? "asc",
+                Start = start,
+                Draw = draw,
+                Length = length
+            };
 
-            if (Request.QueryString["order[0][column]"] != null)
-            {
-                sortColumn = int.Parse(Request.QueryString["order[0][column]"]);
-            }
-            if (Request.QueryString["order[0][dir]"] != null)
-            {
-                sortDirection = Request.QueryString["order[0][dir]"];
-            }
+            _ordersDataTable = new DataTable<BusinessOrder>(orders, param);
 
-            _ordersDataTable.TableData.draw = draw;
-            _ordersDataTable.TableData.recordsTotal = orders.Count;
-            var recordsFiltered = 0;
-            _ordersDataTable.TableData.data = _ordersDataTable.FilterData(ref recordsFiltered, start, length, search, sortColumn, sortDirection);
-            _ordersDataTable.TableData.recordsFiltered = recordsFiltered;
-
-
-            return Json(_ordersDataTable.TableData, JsonRequestBehavior.AllowGet);
+            return Json(_ordersDataTable.AjaxGetJsonData(), JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -64,7 +64,6 @@ namespace DeliveryService.Controllers
         public async Task<JsonResult> ApproveDriverDocument(int documentId)
         {
             var serviceResult = new ServiceResult();
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (var transaction = Context.Database.BeginTransaction())
             {
                 try
@@ -80,13 +79,11 @@ namespace DeliveryService.Controllers
                         await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
                         serviceResult.Success = true;
                         serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
-
-                        scope.Complete();
+                        
                         transaction.Commit();
                     }
                     else
                     {
-                        scope.Dispose();
                         transaction.Rollback();
                         serviceResult.Success = false;
                         serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
@@ -95,7 +92,6 @@ namespace DeliveryService.Controllers
                 }
                 catch (Exception ex)
                 {
-                    scope.Dispose();
                     transaction.Rollback();
 
                     serviceResult.Success = false;

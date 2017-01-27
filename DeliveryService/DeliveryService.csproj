@@ -264,6 +264,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DataTableHelper\DataTable.cs" />
+    <Compile Include="Helpers\DataTableHelper\Models\DataParam.cs" />
     <Compile Include="Helpers\DataTableHelper\Models\DataTableData.cs" />
     <Compile Include="Helpers\FilesHelper.cs" />
     <Compile Include="Helpers\FileUpload.cs" />

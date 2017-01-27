@@ -1,39 +1,34 @@
 ﻿
 $(document).ready(function () {
 
-    /*$('#tblDriversList').DataTable({
-        dom: '<"' +
-            'html5buttons' +
-            '' +
-            '"B>lTfgitp',
-        buttons: [
-            { extend: 'copy' },
-            { extend: 'csv' },
-            { extend: 'excel', title: 'OrdersList' },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile',
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6]
-                }
-            },
-            {
-                extend: 'print',
-                customize: function (win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-    });*/
-
     $(".location").keypress(function () {
         getRoute();
     });
 
+    var tableDriversList = $('#tblDriversList').dataTable({
+        "processing": true, // control the processing indicator.
+        "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
+        "info": true,   // control table information display field
+        "stateSave": false,  //restore table state on page reload,
+        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
+        "ajax": {
+            "url": "/BusinessOrder/GetBusinessOrdesList",
+            "type": "GET"
+        },
+        "columns": [
+            { "data": "Id", "orderable": true },
+            { "data": "CustomerName", "orderable": true },
+            { "data": "CustomerPhone", "orderable": false },
+            { "data": "OrderNumber", "orderable": true },
+            { "data": "TimeToReachPickUpLocation", "orderable": true },
+            { "data": "TimeToReachDropOffLocation", "orderable": true },
+            { "data": "OrderStatus", "orderable": true },
+            { "data": "VehicleType", "orderable": true }
+        ],
+        "order": [[0, "asc"]]
+    });
+
+   
     var customerName = $("#customerName");
     var customerPhone = $("#customerPhone");
     var timeToReachPickUpLocation = $("#timeToReachPickUpLocation");
@@ -141,6 +136,7 @@ $(document).ready(function () {
         $.post("/BusinessOrder/AddNewOrder",
             form.serialize(), function (data) {
                 window.UnBlockUi();
+                tableDriversList.fnDraw();
                 if (data.Success) {
                     for (let i = 0; i < data.Messages.length; i++) {
                         window.toastr.success(data.Messages[i].Value);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using DeliveryService.Helpers.DataTableHelper.Models;
 
 namespace DeliveryService.Helpers.DataTableHelper
@@ -11,13 +12,39 @@ namespace DeliveryService.Helpers.DataTableHelper
     {
         private readonly int _totalRows;
         private readonly List<T> _data;
-        public DataTableData<T> TableData;
+        private readonly DataTableData<T> _tableData;
+        private readonly DataParam _params;
 
-        public DataTable(int totalRows, List<T> data)
+        public DataTable(List<T> data, DataParam param)
         {
-            _totalRows = totalRows;
+            _totalRows = data.Count;
             _data = data;
-            TableData = new DataTableData<T>();
+            _tableData = new DataTableData<T>();
+            _params = param;
+        }
+
+        public DataTableData<T> AjaxGetJsonData()
+        {
+            var search = _params.Search;
+            var sortColumn = -1;
+            var sortDirection = "asc";
+            _params.Length = _data.Count;
+
+            if (_params.SortColumn != null)
+            {
+                sortColumn = (int)_params.SortColumn;
+            }
+            if (_params.SortDirection != null)
+            {
+                sortDirection = _params.SortDirection;
+            }
+
+            _tableData.draw = _params.Draw;
+            _tableData.recordsTotal = _data.Count;
+            var recordsFiltered = 0;
+            _tableData.data = FilterData(ref recordsFiltered, _params.Start, _params.Length, search, sortColumn, sortDirection);
+            _tableData.recordsFiltered = recordsFiltered;
+            return _tableData;
         }
 
         private int SortString(string s1, string s2, string sortDirection)
@@ -49,30 +76,30 @@ namespace DeliveryService.Helpers.DataTableHelper
             else
             {
                 // simulate search
-               /* foreach (T dataItem in Data)
-                {
-                    if (dataItem.Name.ToUpper().Contains(search.ToUpper()) ||
-                        dataItem.Age.ToString().Contains(search.ToUpper()) ||
-                        dataItem.DoB.ToString().Contains(search.ToUpper()))
-                    {
-                        list.Add(dataItem);
-                    }
-                }*/
+                /* foreach (T dataItem in Data)
+                 {
+                     if (dataItem.Name.ToUpper().Contains(search.ToUpper()) ||
+                         dataItem.Age.ToString().Contains(search.ToUpper()) ||
+                         dataItem.DoB.ToString().Contains(search.ToUpper()))
+                     {
+                         list.Add(dataItem);
+                     }
+                 }*/
             }
 
             // simulate sort
-          /*  if (sortColumn == 0)
-            {// sort Name
-                list.Sort((x, y) => SortString(x.Name, y.Name, sortDirection));
-            }
-            else if (sortColumn == 1)
-            {// sort Age
-                list.Sort((x, y) => SortInteger(x.Age, y.Age, sortDirection));
-            }
-            else if (sortColumn == 2)
-            {   // sort DoB
-                list.Sort((x, y) => SortDateTime(x.DoB, y.DoB, sortDirection));
-            }*/
+            /*  if (sortColumn == 0)
+              {// sort Name
+                  list.Sort((x, y) => SortString(x.Name, y.Name, sortDirection));
+              }
+              else if (sortColumn == 1)
+              {// sort Age
+                  list.Sort((x, y) => SortInteger(x.Age, y.Age, sortDirection));
+              }
+              else if (sortColumn == 2)
+              {   // sort DoB
+                  list.Sort((x, y) => SortDateTime(x.DoB, y.DoB, sortDirection));
+              }*/
 
             recordFiltered = list.Count;
 

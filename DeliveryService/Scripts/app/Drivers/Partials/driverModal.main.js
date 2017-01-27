@@ -136,33 +136,39 @@ function getDriverDocuments(driverId) {
             InitDocuments(data);
         });
 
+    var prvewDriver = $("#rejection-modal");
+    var documentType;
     $(document).on('click', ".rejectDriverDocument", function (e) {
         e.preventDefault();
         clearRejectModal();
-        documentId = $(this).parent().parent().attr('data-id');
-        $("#rejection-modal").modal('show');
-        form.validate();
-        $("textarea").keydown(function () {
-            validator.element(this);
-            form.valid();
-        });
-        $('#reject').click(function () {
-            if (validator.form()) {
-                var rejectionComment = $("#rejection-comment").val();
-                $("#rejection-modal").modal('hide');
-                RejectDriverDocument(documentId, rejectionComment, e);
-            } else {
-                $("#rejection-comment").attr("placeholder", "This field is required.");
-                $("#rejection-comment").removeClass("help-block");
-            }
-        });
+        documentId = $(this).parent().attr('data-id');
+        documentType = $(this).parent().attr("id");
+        prvewDriver.modal("show");
+        prvewDriver.attr("data-documentId", documentId);
+        prvewDriver.attr("data-documentType", documentType);
     });
+
+    $("textarea").keydown(function () {
+        validator.element(this);
+    });
+
+    $('#reject').click(function () {
+        if (validator.form()) {
+            var docId = prvewDriver.attr("data-documentId");
+            var rejectionComment = $("#rejection-comment").val();
+            $("#rejection-modal").modal('hide');
+            RejectDriverDocument(docId, rejectionComment, documentType);
+        } else {
+            $("#rejection-comment").attr("placeholder", "This field is required.");
+            $("#rejection-comment").removeClass("help-block");
+        }
+    });
+
 }
 
 function ApproveDriverDocument(documentId, e) {
     var currentButton = $(e.currentTarget);
     if (documentId) {
-        currentButton.addClass('disabled approveSelected');
         //window.BlockUi();
         $.post("/Drivers/ApproveDriverDocument",
             { documentId: documentId },
@@ -182,46 +188,34 @@ function ApproveDriverDocument(documentId, e) {
     }
 }
 
-function RejectDriverDocument(documentId, rejectionComment, e) {
+function RejectDriverDocument(documentId, rejectionComment, documentType) {
     var currentButton, approveButton;
-    if (e.target.parentElement.tagName === "A") {
-        currentButton = e.target.parentElement;
-        approveButton = e.target.parentElement.parentElement.parentElement.childNodes[3].firstChild;
-    } else {
-        if (e.target.parentElement.tagName === "DIV") {
-            currentButton = e.target;
-            approveButton = e.target.parentElement.parentElement.childNodes[3].firstChild;
-        }
-    }
-    //var currentButton = $(e.currentTarget);
-    //var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
-    if (documentId != undefined) {
-        var data = {
-            DocumentId: documentId,
-            RejectionComment: rejectionComment
-        };
-        $(currentButton).addClass('disabled rejectSelected');
-        $(approveButton).addClass('disabled');
-        //window.BlockUi();
-        $.post("/Drivers/RejectDriverDocument",
-            { model: data },
-            function (data) {
-                window.UnBlockUi();
-                if (data.Success) {
-                    //$(currentButton).addClass('disabled rejectSelected');
-                   // $(approveButton).addClass('disabled');
-                    for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.success(data.Messages[i].Value);
-                    }
-                    return;
-                } else {
-                    for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.error(data.Messages[i].Value);
-                    }
-                    return;
-                }
-            });
-    }
+   
+    var acceptDocument = $("#" + documentType + " " + ".acceptDriverDocument");
+    var rejectDriverDocument = $("#" + documentType + " " + ".rejectDriverDocument");
+    window.BlockUi();
+     if (documentId != undefined) {
+         var data = {
+             DocumentId: documentId,
+             RejectionComment: rejectionComment
+         };
+         $.post("/Drivers/RejectDriverDocument",
+             { model: data },
+             function (data) {
+                 window.UnBlockUi();
+                 if (data.Success) {
+                     rejectDriverDocument.addClass('disabled rejectSelected');
+                     acceptDocument.addClass('disabled');
+                     for (let i = 0; i < data.Messages.length; i++) {
+                         window.toastr.success(data.Messages[i].Value);
+                     }
+                 } else {
+                     for (let i = 0; i < data.Messages.length; i++) {
+                         window.toastr.error(data.Messages[i].Value);
+                     }
+                 }
+             });
+     }
 }
 
 function ClearModal() {
@@ -334,10 +328,11 @@ function createDocumentsView(fullPath, documentId, docType, data) {
 }
 
 function setStatuses(uploadTypeNmae, documentStatus) {
+    debugger;
     if (documentStatus === 1) {
         $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled approveSelected');
     } else if (documentStatus === 2) {
-        $("." + uploadTypeNmae + " .rejectDriverDocument").addClass('disabled rejectSelected');
+        $("." + uploadTypeNmae + " .rejectDriverButton").addClass('disabled rejectSelected');
         $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled');
     }
 }
