@@ -464,5 +464,50 @@ namespace DeliveryService.API.Controllers
         {
             throw new NotImplementedException();
         }
+
+        [HttpPost, Authorize(Roles = Roles.Business)]
+        public async Task<IHttpActionResult> NotifyDriverAboutOrder(int driverId, int orderId)
+        {
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Get driver
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                    if (driver == null)
+                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+
+                    if (!driver.Approved)
+                        throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                    // Get order
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                    if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
+
+                    // TODO: Sargis make signalR call to notify driver about order
+
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver successfully nofitied.");
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error,
+                        $"Error while notifying driver about order.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                }
+            }
+
+            return Json(serviceResult);
+        }
     }
 }

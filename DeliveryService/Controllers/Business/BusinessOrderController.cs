@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using DAL.Constants;
@@ -113,7 +114,25 @@ namespace DeliveryService.Controllers.Business
                     // Update order
                     await _orderService.Value.UpdateOrderAsync(order, order.Business.ContactPerson);
 
+                    // Accept Driver
                     await _orderService.Value.AcceptDriverForOrderAsync(orderId, driverId);
+
+                    // Notify driver that he/she recieved an order.
+                    HttpResponseMessage resultContent;
+                    using (var client = new HttpClient())
+                    {
+                        var formData = new Dictionary<string, string>
+                        {
+                            {"driverId", driverId.ToString()},
+                            {"orderId", orderId.ToString()}
+                        };
+                        var content = new FormUrlEncodedContent(formData);
+                        resultContent = await client.PostAsync($"{Config.WebApiUrl}/api/Order/NotifyDriverAboutOrder", content);
+                    }
+
+                    var result = new { data = resultContent, content = await resultContent.Content.ReadAsHttpResponseMessageAsync() };
+
+                    // TODO: check it the result is successful then continue if not throw an exception
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver was accepted for this order by the business.");
