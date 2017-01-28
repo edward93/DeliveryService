@@ -279,6 +279,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\AddRiderHub.cs" />
+    <Compile Include="Hubs\ConnectionMapping.cs" />
+    <Compile Include="Hubs\DriverHubModel.cs" />
     <Compile Include="Infrastructure\Config.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />

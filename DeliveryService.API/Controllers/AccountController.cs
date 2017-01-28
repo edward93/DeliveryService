@@ -367,7 +367,16 @@ namespace DeliveryService.API.Controllers
                             CreatedDt = DateTime.UtcNow,
                             UpdatedDt = DateTime.UtcNow,
                             CreatedBy = person.Id,
-                            UpdatedBy = person.Id
+                            UpdatedBy = person.Id,
+                            VehicleType = model.VehicleType,
+                            Rating = new Rating
+                            {
+                                CreatedBy = person.Id,
+                                UpdatedBy = person.Id,
+                                AverageScore = 5,
+                                CreatedDt = DateTime.Now,
+                                UpdatedDt = DateTime.Now
+                            }
                         };
                         var createdDriver = await _driverService.Value.CreateDriverAsync(driver);
                         serviceResult.Data = null; //createdDriver;

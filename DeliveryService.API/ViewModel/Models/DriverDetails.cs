@@ -18,6 +18,9 @@ namespace DeliveryService.API.ViewModel.Models
         public DateTime DateOfBirth { get; set; }
         public string Phone { get; set; }
         public int DriverId { get; set; }
+        public double RatingAverageScore { get; set; }
+        public bool Approved { get; set; }
+        public VehicleType VehicleType { get; set; }
 
     }
 }

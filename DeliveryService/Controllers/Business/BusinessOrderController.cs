@@ -167,9 +167,9 @@ namespace DeliveryService.Controllers.Business
             return Json(serviceResult);
         }
 
-        public ActionResult GetBusinessOrdesList(int draw, int start, int length)
+        public async Task<ActionResult> GetBusinessOrdesList(int draw, int start, int length)
         {
-            var orders = _orderService.Value.Get<Order>().Select(o => new BusinessOrder(o)).ToList();
+            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>()).Select(o => new BusinessOrder(o)).ToList();
 
             var param = new DataParam
             {

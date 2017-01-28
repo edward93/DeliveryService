@@ -59,6 +59,8 @@ namespace DeliveryService.API.Models
         public DateTime DateOfBirth { get; set; }
         public string Phone { get; set; }
 
+        public VehicleType VehicleType { get; set; }
+
 #region Address
         public string AddressLine1 { get; set; }
         public string Addressline2 { get; set; }

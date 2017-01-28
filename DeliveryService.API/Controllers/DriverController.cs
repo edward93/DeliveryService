@@ -115,6 +115,7 @@ namespace DeliveryService.API.Controllers
                     person.UpdatedDt = DateTime.Now;
                     driver.Person = person;
                     driver.UpdatedDt = DateTime.Now;
+                    driver.VehicleType = driverDetails.VehicleType;
                     await _driverService.Value.CreateDriverAsync(driver);
 
                     serviceResult.Data = null;
@@ -175,7 +176,10 @@ namespace DeliveryService.API.Controllers
                         Sex = driver.Person.Sex,
                         Addresses = driver.Addresses.ToList(),
                         DriverDocuments = driverDocList,
-                        DriverId = driver.Id
+                        DriverId = driver.Id,
+                        VehicleType = driver.VehicleType,
+                        Approved = driver.Approved,
+                        RatingAverageScore = (double)driver.Rating.AverageScore
                     };
 
                     result.Success = true;
