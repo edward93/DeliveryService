@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using DAL.Constants;
@@ -134,6 +135,8 @@ namespace DeliveryService.Controllers.Business
                     HttpResponseMessage resultContent;
                     using (var client = new HttpClient())
                     {
+                        // TODO: authorization?
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
                         var formData = new Dictionary<string, string>
                         {
                             {"driverId", driverId.ToString()},
