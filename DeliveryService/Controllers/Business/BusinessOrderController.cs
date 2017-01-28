@@ -10,6 +10,7 @@ using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Helpers.DataTableHelper;
 using DeliveryService.Helpers.DataTableHelper.Models;
+using DeliveryService.Hubs;
 using DeliveryService.ViewModels.Business;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
@@ -27,6 +28,7 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IDriverLocationService> _driverLocationService;
         private DataTable<BusinessOrder> _ordersDataTable;
 
         public BusinessOrderController(IConfig config,
@@ -34,8 +36,10 @@ namespace DeliveryService.Controllers.Business
             IOrderService orderService,
             IPersonService personService,
             IBusinessService businessService,
-            IDriverService driverService) : base(config, context)
+            IDriverService driverService, 
+            IDriverLocationService driverLocationService) : base(config, context)
         {
+            _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
             _driverService = new Lazy<IDriverService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _personService = new Lazy<IPersonService>(() => personService);
@@ -71,8 +75,17 @@ namespace DeliveryService.Controllers.Business
                     // Create order
                     await _orderService.Value.CreateOrderAsync(order);
 
-                    // TODO: Find nearest driver
-                    // TODO: Send this information to business via SignalR
+                    // TODO: Move this method into worker process
+                    var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
+                    if (driverLocation != null)
+                    {
+                        var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
+                        // TODO: Send this information to business via SignalR
+                        var signalrHub = new AddRiderHub();
+                        signalrHub.NotifyBusiness(order, nearDriver);
+                    }
+                    
+                    
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");

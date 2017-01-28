@@ -7,6 +7,8 @@ using DAL.Constants;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.API.Hubs;
+using DeliveryService.API.ViewModel.Models;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.Ajax.Utilities;
@@ -175,7 +177,7 @@ namespace DeliveryService.API.Controllers
                     if (order == null) throw new Exception($"No order found with id: {orderId}");
 
                     if (order.OrderStatus != OrderStatus.AcceptedByDriver)
-                        throw new Exception($"Driver cannot change status of this order.");
+                        throw new Exception(Config.Messages["CannotChangeOrderStatus"]);
 
                     await _orderService.Value.OnTheWayToPickUpAsync(driver, order);
 
@@ -488,11 +490,10 @@ namespace DeliveryService.API.Controllers
 
                     if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
 
-                    // TODO: Sargis make signalR call to notify driver about order
+                    // Notify driver about order
+                    var signalrHub = new AddRiderHub();
 
-
-                    serviceResult.Success = true;
-                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver successfully nofitied.");
+                    serviceResult = signalrHub.NotifyDriverAboutOrder(new OrderDetails(order), driverId);
 
                     transaction.Commit();
                 }

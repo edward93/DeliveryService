@@ -22,5 +22,10 @@ namespace ServiceLayer.Service
         {
             await _driverLocationRepository.UpdateDriverLocation(location);
         }
+
+        public async Task<DriverLocation> FindNearestDriverLocationAsync(Order order)
+        {
+            return await _driverLocationRepository.FindNearestDriverLocationAsync(order);
+        }
     }
 }

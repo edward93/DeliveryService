@@ -8,5 +8,6 @@ namespace Infrastructure.Config
         NameValueCollection Messages { get; }
         string UploadsFolderPath { get; }
         string WebApiUrl { get; }
+        string DistanceMatrixApiUrl { get; }
     }
 }

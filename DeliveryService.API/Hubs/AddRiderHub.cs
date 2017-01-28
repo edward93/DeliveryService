@@ -44,7 +44,7 @@ namespace DeliveryService.API.Hubs
             public string Message;
         }
 
-        public ServiceResult AppendOrderToDriver(OrderDetails orderDetails, int driverId)
+        public ServiceResult NotifyDriverAboutOrder(OrderDetails orderDetails, int driverId)
         {
             var serviceResult = new ServiceResult();
             try

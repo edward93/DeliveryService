@@ -7,5 +7,7 @@ namespace ServiceLayer.Service
     {
         Task<DriverLocation> GetDriverLocationByDriverIdAsync(int driverId);
         Task UpdateDriverLocation(DriverLocation location);
+
+        Task<DriverLocation> FindNearestDriverLocationAsync(Order order);
     }
 }
