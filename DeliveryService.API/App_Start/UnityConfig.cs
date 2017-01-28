@@ -37,6 +37,13 @@ namespace DeliveryService.API
             container.RegisterType<IPersonRepository, PersonRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverLocationRepository, DriverLocationRepository>(new HierarchicalLifetimeManager());
 
+            container.RegisterType<IOrderRepository, OrderRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IBusinessRepository, BusinessRespository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IOrderHistoryRepository, OrderHistoryRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverPenaltyRepository, DriverPenaltyRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverFeeRepository, DriverFeeRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IBusinessPenaltyRepository, BusinessPenaltyRepository>(new HierarchicalLifetimeManager());
+
             // register Services
             container.RegisterType<IEntityService, EntityService>(new HierarchicalLifetimeManager());
             container.RegisterType<IAddressService, AddressService>(new HierarchicalLifetimeManager());
@@ -45,6 +52,16 @@ namespace DeliveryService.API
             container.RegisterType<IDriverUploadService, DriverUploadService>(new HierarchicalLifetimeManager());
             container.RegisterType<IPersonService, PersonService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverLocationService, DriverLocationService>(new HierarchicalLifetimeManager());
+
+
+            container.RegisterType<IOrderService, OrderService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IBusinessService, BusinessService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IOrderHistoryService, OrderHistoryService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverPenaltyService, DriverPenaltyService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverFeeService, DriverFeeService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IBusinessPenaltyService, BusinessPenaltyService>(new HierarchicalLifetimeManager());
+
+
         }
     }
 }
