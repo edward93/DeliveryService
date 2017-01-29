@@ -4,8 +4,6 @@ using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 
-
-[assembly: OwinStartup(typeof(SignalRSelfHost.App_Start.Startup))]
 namespace SignalRSelfHost.App_Start
 {
     public class Startup
@@ -18,10 +16,11 @@ namespace SignalRSelfHost.App_Start
             {
                 EnableDetailedErrors = true
             };
-
-            UnityConfig.RegisterComponents();
+            
+            UnityConfig.Initialise();
 
             app.MapSignalR("/signalr", config);
+            
         }
     }
 }

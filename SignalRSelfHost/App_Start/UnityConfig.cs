@@ -9,17 +9,17 @@ namespace SignalRSelfHost.App_Start
 {
     public class UnityConfig
     {
-        public static void RegisterComponents()
+       /* public static void RegisterComponents()
         {
             var container = new UnityContainer();
 
-            container.RegisterType<IEntityRepository, EntityRepository>(new HierarchicalLifetimeManager());
-            container.RegisterType<IDriverRepository, DriverRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IEntityRepository, EntityRepository>();
+            container.RegisterType<IDriverRepository, DriverRepository>();
 
-            container.RegisterType<IEntityService, EntityService>(new HierarchicalLifetimeManager());
-            container.RegisterType<IDriverService, DriverService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IEntityService, EntityService>();
+            container.RegisterType<IDriverService, DriverService>();
 
-        }
+        }*/
         public static void Initialise() // this isn't my misspelling, it's in the Unity.MVC NuGet package.  
         {
             var container = BuildUnityContainer();
