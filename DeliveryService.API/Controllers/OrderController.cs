@@ -9,10 +9,12 @@ using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.API.Hubs;
 using DeliveryService.API.ViewModel.Models;
+using DeliveryService.Models.ViewModels;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.Ajax.Utilities;
 using ServiceLayer.Service;
+using SignalRSelfHost.AddRiderHub;
 
 namespace DeliveryService.API.Controllers
 {

@@ -14,7 +14,6 @@ using DeliveryService.API.ViewModel.Models;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
 using DAL.Constants;

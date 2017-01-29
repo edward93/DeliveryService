@@ -11,7 +11,6 @@ using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Helpers.DataTableHelper;
 using DeliveryService.Helpers.DataTableHelper.Models;
-using DeliveryService.Hubs;
 using DeliveryService.ViewModels.Business;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
@@ -19,6 +18,8 @@ using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
+using SignalRSelfHost;
+using SignalRSelfHost.AddRiderHub;
 
 namespace DeliveryService.Controllers.Business
 {
@@ -82,11 +83,11 @@ namespace DeliveryService.Controllers.Business
                     {
                         var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
                         // TODO: Send this information to business via SignalR
-                        var signalrHub = new AddRiderHub();
-                        signalrHub.NotifyBusiness(order, nearDriver);
+                        
                     }
-                    
-                    
+
+                    var signalrHub = new AddRiderHub(_orderService.Value);
+                    signalrHub.NotifyBusiness(order, new Driver());
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");

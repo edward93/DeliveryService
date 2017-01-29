@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "ServiceLaye
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.API", "DeliveryService.API\DeliveryService.API.csproj", "{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRSelfHost", "SignalRSelfHost\SignalRSelfHost.csproj", "{1795B9E2-AC32-40BF-A01E-24493456A6E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Models", "DeliveryService.Models\DeliveryService.Models.csproj", "{B0ED943F-9333-4C81-9293-33AAF7761678}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C26E589-3CEA-4D33-8220-7B9E2E8C037C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1795B9E2-AC32-40BF-A01E-24493456A6E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1795B9E2-AC32-40BF-A01E-24493456A6E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1795B9E2-AC32-40BF-A01E-24493456A6E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1795B9E2-AC32-40BF-A01E-24493456A6E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0ED943F-9333-4C81-9293-33AAF7761678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0ED943F-9333-4C81-9293-33AAF7761678}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0ED943F-9333-4C81-9293-33AAF7761678}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0ED943F-9333-4C81-9293-33AAF7761678}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
