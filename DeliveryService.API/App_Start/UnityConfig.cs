@@ -9,6 +9,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using DAL.Entities;
 using DAL.Context;
+using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
+using DeliveryService.API.Resolver;
+using DeliveryService.API.Hubs;
 
 namespace DeliveryService.API
 {
@@ -65,6 +69,45 @@ namespace DeliveryService.API
             container.RegisterType<IDiscountService, DiscountService>(new HierarchicalLifetimeManager());
 
 
+        }
+
+        private static IUnityContainer BuildUnityContainer()
+        {
+            var container = new UnityContainer();
+            container.RegisterType<IDbContext, DbContext>();
+            container.RegisterType<IEntityRepository, EntityRepository>();
+            container.RegisterType<IEntityService, EntityService>();
+            // register all your dependencies here.
+            container.RegisterType<IOrderHistoryRepository, OrderHistoryRepository>();
+            container.RegisterType<IRateService, RateService>();
+            container.RegisterType<IRateRepository, RateRepository>();
+            container.RegisterType<IOrderHistoryService, OrderHistoryService>();
+            container.RegisterType<IOrderRepository, OrderRepository>();
+            container.RegisterType<IOrderService, OrderService>();
+            container.RegisterType<AddRiderHub>(new InjectionFactory(CreateMyHub));
+
+            return container;
+        }
+
+        private static object CreateMyHub(IUnityContainer p)
+        {
+            var myHub = new AddRiderHub(p.Resolve<IOrderService>());
+
+            return myHub;
+        }
+
+        public static void Initialise() // this isn't my misspelling, it's in the Unity.MVC NuGet package.  
+        {
+            var container = BuildUnityContainer();
+
+           // var unityDependencyResolver = new UnityDependencyResolver(container);
+
+            // used for MVC
+         //   DependencyResolver.SetResolver(unityDependencyResolver);
+            // used for WebAPI
+          //  GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
+            // used for SignalR
+            GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(container);
         }
     }
 }

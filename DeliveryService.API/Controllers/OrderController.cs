@@ -491,7 +491,7 @@ namespace DeliveryService.API.Controllers
                     if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
 
                     // Notify driver about order
-                    var signalrHub = new AddRiderHub();
+                    var signalrHub = new AddRiderHub(_orderService.Value);
 
                     serviceResult = signalrHub.NotifyDriverAboutOrder(new OrderDetails(order), driverId);
 

@@ -43,7 +43,6 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> AddDriver(Driver driver)
         {
             ServiceResult result = new ServiceResult();
-            AddRiderHub hub = new AddRiderHub();
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (var transaction = Context.Database.BeginTransaction())

@@ -15,6 +15,7 @@ namespace DeliveryService.API
         {
             AreaRegistration.RegisterAllAreas();
             UnityConfig.RegisterComponents();
+            UnityConfig.Initialise();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

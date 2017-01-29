@@ -22,11 +22,11 @@ namespace DeliveryService.API.ViewModel.Models
             TimeToReachPickUpLocation = order.TimeToReachPickUpLocation;
             OrderStatus = order.OrderStatus;
             PickUpLocationAddress = order.PickUpLocation.Address;
-            PickUpLocationLat = order.PickUpLocation.Lat;
-            PickUpLocationLong = order.PickUpLocation.Long;
+            PickUpLocationLat = (double)order.PickUpLocation.Lat;
+            PickUpLocationLong = (double)order.PickUpLocation.Long;
             DropOffLocationAddress = order.DropOffLocation.Address;
-            DropOffLocationLat = order.DropOffLocation.Lat;
-            DropOffLocationLong = order.DropOffLocation.Long;
+            DropOffLocationLat = (double)order.DropOffLocation.Lat;
+            DropOffLocationLong = (double)order.DropOffLocation.Long;
             OrderPrice = order.OrderPrice;
             NotDeliveredReason = order.NotDeliveredReason;
             BusinessId = order.BusinessId;
@@ -44,12 +44,12 @@ namespace DeliveryService.API.ViewModel.Models
         public string BusinessName { get; set; }
 
         public string PickUpLocationAddress { get; set; }
-        public decimal PickUpLocationLong { get; set; }
-        public decimal PickUpLocationLat { get; set; }
+        public double PickUpLocationLong { get; set; }
+        public double PickUpLocationLat { get; set; }
 
         public string DropOffLocationAddress { get; set; }
-        public decimal DropOffLocationLong { get; set; }
-        public decimal DropOffLocationLat { get; set; }
+        public double DropOffLocationLong { get; set; }
+        public double DropOffLocationLat { get; set; }
 
         public decimal OrderPrice { get; set; }
         public string NotDeliveredReason { get; set; }
