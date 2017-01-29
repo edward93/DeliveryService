@@ -11,7 +11,6 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using DeliveryService.API.Providers;
 using DeliveryService.API.Models;
-using Microsoft.AspNet.SignalR;
 
 namespace DeliveryService.API
 {
