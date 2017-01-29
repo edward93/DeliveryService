@@ -14,7 +14,6 @@ using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.Ajax.Utilities;
 using ServiceLayer.Service;
-using SignalRSelfHost.AddRiderHub;
 
 namespace DeliveryService.API.Controllers
 {
@@ -493,9 +492,9 @@ namespace DeliveryService.API.Controllers
                     if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
 
                     // Notify driver about order
-                    var signalrHub = new AddRiderHub(_orderService.Value);
+                    //var signalrHub = new AddRiderHub(_orderService.Value);
 
-                    serviceResult = signalrHub.NotifyDriverAboutOrder(new OrderDetails(order), driverId);
+                    //serviceResult = signalrHub.NotifyDriverAboutOrder(new OrderDetails(order), driverId);
 
                     transaction.Commit();
                 }

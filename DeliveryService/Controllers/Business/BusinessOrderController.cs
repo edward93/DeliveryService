@@ -11,15 +11,15 @@ using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Helpers.DataTableHelper;
 using DeliveryService.Helpers.DataTableHelper.Models;
+using DeliveryService.Models.ViewModels;
 using DeliveryService.ViewModels.Business;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.SignalR.Client;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
-using SignalRSelfHost;
-using SignalRSelfHost.AddRiderHub;
 
 namespace DeliveryService.Controllers.Business
 {
@@ -85,9 +85,17 @@ namespace DeliveryService.Controllers.Business
                         // TODO: Send this information to business via SignalR
                         
                     }
+                    // Testing signalr
+                    var hubConnection = new HubConnection("http://localhost:8000/");
+                    //hubConnection.TraceLevel = TraceLevels.All;
+                    //hubConnection.TraceWriter = Console.Out;
+                    IHubProxy hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
 
-                    var signalrHub = new AddRiderHub(_orderService.Value);
-                    signalrHub.NotifyBusiness(order, new Driver());
+                    var r = hubProxy.Invoke("Send", "Hello", "World");
+                    await hubConnection.Start();
+
+                    //var signalrHub = new AddRiderHub(_orderService.Value);
+                    //signalrHub.NotifyBusiness(order, new Driver());
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");
@@ -133,21 +141,14 @@ namespace DeliveryService.Controllers.Business
                     await _orderService.Value.AcceptDriverForOrderAsync(orderId, driverId);
 
                     // Notify driver that he/she recieved an order.
-                    HttpResponseMessage resultContent;
-                    using (var client = new HttpClient())
-                    {
-                        // TODO: authorization?
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
-                        var formData = new Dictionary<string, string>
-                        {
-                            {"driverId", driverId.ToString()},
-                            {"orderId", orderId.ToString()}
-                        };
-                        var content = new FormUrlEncodedContent(formData);
-                        resultContent = await client.PostAsync($"{Config.WebApiUrl}/api/Order/NotifyDriverAboutOrder", content);
-                    }
+                    var hubConnection = new HubConnection("http://localhost:8080/");
+                    //hubConnection.TraceLevel = TraceLevels.All;
+                    //hubConnection.TraceWriter = Console.Out;
+                    IHubProxy hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
 
-                    var result = new { data = resultContent, content = await resultContent.Content.ReadAsHttpResponseMessageAsync() };
+                    await hubConnection.Start();
+                    var r = hubProxy.Invoke("NotifyDriverAboutOrder", new OrderDetails(order), driverId);
+
 
                     // TODO: check it the result is successful then continue if not throw an exception
 

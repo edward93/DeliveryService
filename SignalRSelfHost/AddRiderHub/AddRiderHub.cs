@@ -18,7 +18,6 @@ namespace SignalRSelfHost.AddRiderHub
         private System.Threading.Timer timer;
         public AddRiderHub(IOrderService orderService)
         {
-            Console.WriteLine("Initializing object.");
             _orderService = new Lazy<IOrderService>(() => orderService);
         }
 
@@ -28,7 +27,7 @@ namespace SignalRSelfHost.AddRiderHub
         }
         public ServiceResult NotifyDriverAboutOrder(OrderDetails orderDetails, int driverId)
         {
-            orderDetails.OrderStatus = OrderStatus.AcceptedByDriver;
+            orderDetails.OrderStatus = OrderStatus.Pending;
             var serviceResult = new ServiceResult();
             try
             {
@@ -58,25 +57,25 @@ namespace SignalRSelfHost.AddRiderHub
 
         public override Task OnConnected()
         {
-            var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
-            if (ticket != null)
-            {
-                var driverHub = new DriverHubModel
-                {
-                    Name = "",
-                    DriverId = int.Parse(Context.Headers["DriverId"])
-                };
+            //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
+            //if (ticket != null)
+            //{
+            //    var driverHub = new DriverHubModel
+            //    {
+            //        Name = "",
+            //        DriverId = int.Parse(Context.Headers["DriverId"])
+            //    };
 
-                Connections.Add(driverHub.DriverId, Context.ConnectionId);
-
-
-                timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
-                   null,
-                   TimeSpan.Zero,
-                   TimeSpan.FromSeconds(50));
+            //    Connections.Add(driverHub.DriverId, Context.ConnectionId);
 
 
-            }
+            //    timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
+            //       null,
+            //       TimeSpan.Zero,
+            //       TimeSpan.FromSeconds(50));
+
+
+            //}
             return base.OnConnected();
         }
 
@@ -91,33 +90,33 @@ namespace SignalRSelfHost.AddRiderHub
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
-            var driverHub = new DriverHubModel
-            {
-                Name = "",
-                DriverId = int.Parse(Context.Headers["DriverId"])
-            };
+            //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
+            //var driverHub = new DriverHubModel
+            //{
+            //    Name = "",
+            //    DriverId = int.Parse(Context.Headers["DriverId"])
+            //};
 
-            Connections.Remove(driverHub.DriverId, Context.ConnectionId);
+            //Connections.Remove(driverHub.DriverId, Context.ConnectionId);
 
-            await base.OnDisconnected(stopCalled);
+            //await base.OnDisconnected(stopCalled);
         }
 
         public override async Task OnReconnected()
         {
-            var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
+            //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
 
-            var driverHub = new DriverHubModel
-            {
-                Name = "",
-                DriverId = int.Parse(Context.Headers["DriverId"])
-            };
+            //var driverHub = new DriverHubModel
+            //{
+            //    Name = "",
+            //    DriverId = int.Parse(Context.Headers["DriverId"])
+            //};
 
-            if (!Connections.GetConnections(driverHub.DriverId).Contains(Context.ConnectionId))
-            {
-                Connections.Add(driverHub.DriverId, Context.ConnectionId);
-            }
-            await base.OnReconnected();
+            //if (!Connections.GetConnections(driverHub.DriverId).Contains(Context.ConnectionId))
+            //{
+            //    Connections.Add(driverHub.DriverId, Context.ConnectionId);
+            //}
+            //await base.OnReconnected();
         }
 
         public void NotifyBusiness(Order order, Driver driver)

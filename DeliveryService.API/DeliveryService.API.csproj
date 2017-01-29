@@ -73,8 +73,8 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.1.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.1\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -393,10 +393,6 @@
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
       <Project>{537BD4F6-7FD2-4E0C-94F6-B6728BBBFC6A}</Project>
       <Name>ServiceLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SignalRSelfHost\SignalRSelfHost.csproj">
-      <Project>{1795B9E2-AC32-40BF-A01E-24493456A6E8}</Project>
-      <Name>SignalRSelfHost</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
