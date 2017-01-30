@@ -334,7 +334,7 @@ $(document).ready(function () {
         });
     }
 
-    function GetAddress() {
+    function getAddress() {
         var lat = parseFloat(document.getElementById("txtLatitude").value);
         var lng = parseFloat(document.getElementById("txtLongitude").value);
         var latlng = new window.google.maps.LatLng(lat, lng);
@@ -513,7 +513,7 @@ $(document).ready(function () {
         window.BlockUi();
         $.post("/BusinessOrder/AddNewOrder",
         { ordersId: ordersId },
-        function (data) {
+        function () {
             window.UnBlockUi();
             $("#order_" + ordersId).remove();
             swal("Deleted!", "Your order has been deleted.", "success");

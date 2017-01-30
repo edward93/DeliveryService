@@ -13,7 +13,7 @@ $(document).ready(function () {
         // show the close overlay button
         $(".close-overlay").removeClass("hidden");
         // handle the adding of hover class when clicked
-        $(".img").click(function (e) {
+        $(".img").click(function () {
             if (!$(this).hasClass("hover")) {
                 $(this).addClass("hover");
             }
@@ -49,14 +49,14 @@ $(document).ready(function () {
         }
     });
 
-    $(".next-step").click(function (e) {
+    $(".next-step").click(function () {
 
         var $active = $('.wizard .nav-tabs li.active');
         $active.next().removeClass('disabled');
         nextTab($active);
 
     });
-    $(".prev-step").click(function (e) {
+    $(".prev-step").click(function () {
 
         var $active = $('.wizard .nav-tabs li.active');
         prevTab($active);
@@ -94,7 +94,6 @@ function prevTab(elem) {
 }
 
 function getDriverDocuments(driverId) {
-    var form = $("#rejection-form");
     var documentId;
     var validator = $("#rejection-form").validate({
         rules: {
@@ -137,15 +136,18 @@ function getDriverDocuments(driverId) {
         });
 
     var prvewDriver = $("#rejection-modal");
+    var docID;
     var documentType;
     $(document).on('click', ".rejectDriverDocument", function (e) {
         e.preventDefault();
         clearRejectModal();
         documentId = $(this).parent().attr('data-id');
-        documentType = $(this).parent().attr("id");
+       // documentType = $(this).parent().attr("id");
         prvewDriver.modal("show");
         prvewDriver.attr("data-documentId", documentId);
-        prvewDriver.attr("data-documentType", documentType);
+        //prvewDriver.attr("data-documentType", documentType);
+        documentType = e.currentTarget.parentElement.parentElement;
+        console.log();
     });
 
     $("textarea").keydown(function () {
@@ -154,7 +156,8 @@ function getDriverDocuments(driverId) {
 
     $('#reject').click(function () {
         if (validator.form()) {
-            var docId = prvewDriver.attr("data-documentId");
+            var docId = prvewDriver;
+            console.log(docId);
             var rejectionComment = $("#rejection-comment").val();
             $("#rejection-modal").modal('hide');
             RejectDriverDocument(docId, rejectionComment, documentType);
@@ -169,7 +172,7 @@ function getDriverDocuments(driverId) {
 function ApproveDriverDocument(documentId, e) {
     var currentButton = $(e.currentTarget);
     if (documentId) {
-        //window.BlockUi();
+        window.BlockUi();
         $.post("/Drivers/ApproveDriverDocument",
             { documentId: documentId },
             function (data) {
@@ -177,11 +180,11 @@ function ApproveDriverDocument(documentId, e) {
                 if (data.Success) {
                     currentButton.addClass('disabled approveSelected');
                     for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.success(data.Messages[i].Value);
+                        window.toastr.success(data.Messages[i].Value);
                     }
                 } else {
                     for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.error(data.Messages[i].Value);
+                        window.toastr.error(data.Messages[i].Value);
                     }
                 }
             });
@@ -189,33 +192,31 @@ function ApproveDriverDocument(documentId, e) {
 }
 
 function RejectDriverDocument(documentId, rejectionComment, documentType) {
-    var currentButton, approveButton;
-   
-    var acceptDocument = $("#" + documentType + " " + ".acceptDriverDocument");
-    var rejectDriverDocument = $("#" + documentType + " " + ".rejectDriverDocument");
+    var acceptDocument = $(documentType.childNodes[2]);
+    var rejectDriverDocument = $(documentType.childNodes[1]);
     window.BlockUi();
-     if (documentId != undefined) {
-         var data = {
-             DocumentId: documentId,
-             RejectionComment: rejectionComment
-         };
-         $.post("/Drivers/RejectDriverDocument",
-             { model: data },
-             function (data) {
-                 window.UnBlockUi();
-                 if (data.Success) {
-                     rejectDriverDocument.addClass('disabled rejectSelected');
-                     acceptDocument.addClass('disabled');
-                     for (let i = 0; i < data.Messages.length; i++) {
-                         window.toastr.success(data.Messages[i].Value);
-                     }
-                 } else {
-                     for (let i = 0; i < data.Messages.length; i++) {
-                         window.toastr.error(data.Messages[i].Value);
-                     }
-                 }
-             });
-     }
+    if (documentId != undefined) {
+        var data = {
+            DocumentId: documentId,
+            RejectionComment: rejectionComment
+        };
+        $.post("/Drivers/RejectDriverDocument",
+            { model: data },
+            function (data) {
+                //window.UnBlockUi();s
+                if (data.Success) {
+                    rejectDriverDocument.addClass('disabled rejectSelected');
+                    acceptDocument.addClass('disabled');
+                    for (let i = 0; i < data.Messages.length; i++) {
+                        window.toastr.success(data.Messages[i].Value);
+                    }
+                } else {
+                    for (let i = 0; i < data.Messages.length; i++) {
+                        window.toastr.error(data.Messages[i].Value);
+                    }
+                }
+            });
+    }
 }
 
 function ClearModal() {
@@ -267,7 +268,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             var proofOfAddressconteiner = $("." + UploadType.ProofOfAddress.name);
             proofOfAddressconteiner.attr("data-id", documentId);
 
-            setStatuses(UploadType.ProofOfAddress.name, data.filter(a => a.UploadType === UploadType.ProofOfAddress.value)[0].DocumentStatus);
+            setStatuses(proofOfAdddress.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.ProofOfAddress.value)[0].DocumentStatus);
 
             break;
         case UploadType.Insurance.value:
@@ -281,7 +282,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             var insuranceConteiner = $("." + UploadType.Insurance.name);
             insuranceConteiner.attr("data-id", documentId);
 
-            setStatuses(UploadType.Insurance.name, data.filter(a => a.UploadType === UploadType.Insurance.value)[0].DocumentStatus);
+            setStatuses(insurance.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.Insurance.value)[0].DocumentStatus);
 
             break;
         case UploadType.License.value:
@@ -294,7 +295,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             license.removeAttribute("class");
             var licenseConteiner = $("." + UploadType.License.name);
             licenseConteiner.attr("data-id", documentId);
-            setStatuses(UploadType.License.name, data.filter(a => a.UploadType === UploadType.License.value)[0].DocumentStatus);
+            setStatuses(license.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.License.value)[0].DocumentStatus);
 
             break;
         case UploadType.Passport.value:
@@ -308,8 +309,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             var passportConteiner = $("." + UploadType.Passport.name);
             passportConteiner.attr("data-id", documentId);
 
-            setStatuses(UploadType.Passport.name, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
-
+            setStatuses(passport.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
             break;
             //case UploadType.Photo.value:
             //    var photo = document.getElementById(UploadType.Photo.name);
@@ -330,10 +330,10 @@ function createDocumentsView(fullPath, documentId, docType, data) {
 function setStatuses(uploadTypeNmae, documentStatus) {
     debugger;
     if (documentStatus === 1) {
-        $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled approveSelected');
+        $(uploadTypeNmae[3].childNodes).addClass('disabled approveSelected');
     } else if (documentStatus === 2) {
-        $("." + uploadTypeNmae + " .rejectDriverButton").addClass('disabled rejectSelected');
-        $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled');
+        $(uploadTypeNmae[5].childNodes).addClass('disabled rejectSelected');
+        $(uploadTypeNmae[3].childNodes).addClass('disabled');
     }
 }
 

@@ -127,6 +127,8 @@
         }
     });
 
+    $('#step1').show();
+
     $("#addNewBusinessBtn").on("click",
         function (e) {
             e.preventDefault();
@@ -134,9 +136,13 @@
             submitBussinessBtn.val("Create");
             heading.text("Add New Business");
             $("#addNewBusinessModal").modal("show");
-            $('.edit-password').hide();
+            
             $('#collapse').attr("style", "");
             $('#collapse').show();
+            $(".wizard-inner").hide();
+            $('#step1').hide();
+            $('#step2').show();
+            $('#BusinessEmail').show();
         });
 
     $("#submitBussinessBtn").on("click",
@@ -158,39 +164,45 @@
                }
        });
 
+    function clearModal() {
+        var passport = document.getElementById("Passport");
+        passport.setAttribute("src", "Images/passport.png");
+        passport.setAttribute("class", "no-img");
+        var license = document.getElementById("License");
+        license.setAttribute("src", "Images/license.png");
+        license.setAttribute("class", "no-img");
+        $(".wizard-inner").show();
+        $("#businessDocument").parent().attr("class", "active");
+        $("#businessData").parent().attr("class", "");
+        $('#step2').hide();
+        $('#step1').show();
+        $('#collapse').hide();
+        $('#BusinessEmail').hide();
+    };
+
     $(".btnPreviewBusiness").on("click",
         function (e) {
             var businessIdForPreview = $(this).attr('data-id');
-            var form = $("#submitBusinessForm");
-            form.validate();
-            form.valid();
+            clearModal();
             validator.form();
             e.preventDefault();
             clearBusinessModal();
             submitBussinessBtn.val("Update");
             heading.text("Update Business");
             getBusinessById(businessIdForPreview);
-            $('.edit-password').show();
-            $('#edit-password').attr('checked', false);
-            $('#collapse').hide();
         });
 
-    $('#edit-password').click(function () {
-        if ($('#edit-password').is(":checked")) {
-            $('#collapse').attr("style", "");
-            $('#collapse').show();
-        } else {
-            password.val("");
-            confirmPassword.val("");
-            $('#password-error').hide();
-            $('#confirmPassword-error').hide();
-            $('.validation-icon').removeClass('glyphicon-ok-sign');
-            $('.validation-icon').removeClass('glyphicon-remove-sign');
-            $('#collapse').hide();
-
-        }
-
+    $(document).on('click', '#businessData', function () {
+        $('#step1').hide();
+        $('#step2').show();
     });
+    $(document).on('click', '#businessDocument', function () {
+        $('#step2').hide();
+        $('#step1').show();
+    });
+
+    
+
     $(document).on('click', '.btnDeleteBusiness',
       function () {
           var businessIdForDelete = $(this).attr('data-id');
@@ -216,7 +228,9 @@
     function getBusinessById(businessId) {
         window.BlockUi();
         $.get("/Business/GetBusiness",
-            { businessId: businessId },
+        {
+            businessId: businessId
+        },
             function (data) {
                 initBusinessModal(data);
                 $("#addNewBusinessModal").modal("show");
@@ -243,7 +257,9 @@
 
         window.BlockUi();
         $.post("/Business/UpdateBusiness",
-                  { registerBusiness: data },
+        {
+            registerBusiness: data
+        },
                   function (data) {
                       window.UnBlockUi();
                       if (data.Success) {
@@ -321,8 +337,10 @@
     function deleteBusiness(businessId) {
         window.BlockUi();
         $.post("/Business/DeleteBusiness",
-            { businessId: businessId },
-            function (data) {
+        {
+            businessId: businessId
+        },
+            function () {
                 window.UnBlockUi();
                 $("#business_" + businessId).remove();
                 swal("Deleted!", "Your business has been deleted.", "success");

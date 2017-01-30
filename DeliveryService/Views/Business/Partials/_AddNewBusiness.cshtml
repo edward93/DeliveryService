@@ -9,119 +9,171 @@
                 <h4 class="modal-title" id="Heading">Add New Business</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" id="submitBusinessForm">
-                    <div class="form-group">
-                        <label for="businessName" class="col-sm-3 col-md-3 control-label">Business Name</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="businessName" name="BusinessName" placeholder="Business Name" pattern="[A-Za-z]{3}" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="businessPhone" class="col-sm-3 col-md-3 control-label">Business Phone</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="number" class="form-control" id="businessPhone" name="PhoneNumber" placeholder="Business Phone Number" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="businessEmail" class="col-sm-3 col-md-3 control-label">Business Email</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="email" class="form-control" id="businessEmail" name="BusinessEmail" placeholder="Business Email" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group edit-password">
-                        <label for="edit-password" class="col-sm-3 col-md-3 control-label">Edit  Password</label>
-                        <label class="switch">
-                            <input type="checkbox" class="btn btn-info" id="edit-password">
-                            <div class="slider round"></div>
-                        </label>
-                    </div>
-                    <div id="collapse" class="collapse">
-                        <div class="form-group">
-                            <label for="password" class="col-sm-3 col-md-3 control-label">Password</label>
-                            <div class="col-sm-9 col-md-9">
-                                <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
-                                <span class="message-icon glyphicon validation-icon"></span>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="wizard">
+                            <div class="wizard-inner">
+                                <div class="connecting-line"></div>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#step1" id="businessDocument" data-toggle="tab" aria-controls="step1" role="tab" title="Business Documents">
+                                            <span class="round-tab">
+                                                <i class="glyphicon glyphicon-picture"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" style="margin-left: 40%">
+                                        <a href="#step2" id="businessData" data-toggle="tab" aria-controls="step2" role="tab" title="Earnings">
+                                            <span class="round-tab">
+                                                <i class="fa fa-money"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword" class="col-sm-3 col-md-3 control-label">Confirm</label>
-                            <div class="col-sm-9 col-md-9">
-                                <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
-                                <span class="message-icon glyphicon validation-icon"></span>
-                            </div>
+                            <form class="form-horizontal" id="submitBusinessForm">
+                                <div class="tab-pane active business-tab" role="tabpanel" id="step1">
+                                    <div class="wrapper wrapper-content">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="row firsDocRow">
+                                                    <div class="effect-1 effects clearfix">
+
+                                                        <div class="col-lg-6 img">
+                                                            <h5>Passport</h5>
+                                                            <img id="Passport" class="no-img" />
+                                                            <div class="row" id="passportOverlay">
+                                                                <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                <div class="col-lg-4 rejectDriverDocument"><a class="expand rejectDriverButton"><span class="fa fa-times"></span></a></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-6 img">
+                                                            <h5>License</h5>
+                                                            <img id="License" class="no-img" />
+                                                            <div class="row" id="licenseOverlay">
+                                                                <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                <div class="col-lg-4 rejectDriverDocument"><a class="expand rejectDriverButton"><span class="fa fa-times"></span></a></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane business-tab" role="tabpanel" id="step2">
+                                    <div class="form-group">
+                                        <label for="businessName" class="col-sm-3 col-md-3 control-label">Business Name</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="businessName" name="BusinessName" placeholder="Business Name" pattern="[A-Za-z]{3}" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="businessPhone" class="col-sm-3 col-md-3 control-label">Business Phone</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="number" class="form-control" id="businessPhone" name="PhoneNumber" placeholder="Business Phone Number" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="BusinessEmail">
+                                        <label for="businessEmail" class="col-sm-3 col-md-3 control-label">Business Email</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="email" class="form-control" id="businessEmail" name="BusinessEmail" placeholder="Business Email" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div id="collapse" class="collapse">
+                                        <div class="form-group">
+                                            <label for="password" class="col-sm-3 col-md-3 control-label">Password</label>
+                                            <div class="col-sm-9 col-md-9">
+                                                <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
+                                                <span class="message-icon glyphicon validation-icon"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirmPassword" class="col-sm-3 col-md-3 control-label">Confirm</label>
+                                            <div class="col-sm-9 col-md-9">
+                                                <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
+                                                <span class="message-icon glyphicon validation-icon"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <!-- The contact person section -->
+                                    <div class="form-group">
+                                        <label for="contPersFName" class="col-sm-3 col-md-3 control-label">First Name</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="contPersFName" name="ContactPersonFirstName" placeholder="Contact Person First Name" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contPersLName" class="col-sm-3 col-md-3 control-label">Last Name</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="contPersLName" name="ContactPersonLastName" placeholder="Contact Person Last Name" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contPersPhone" class="col-sm-3 col-md-3 control-label">Phone Number</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="number" class="form-control" id="contPersPhone" name="ContactPersonPhoneNumber" placeholder="Contact Person Phone Number" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <!-- The address section -->
+                                    <hr />
+                                    <div class="form-group">
+                                        <label for="addressLine1" class="col-sm-3 col-md-3 control-label">Address Line 1</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="addressLine1" name="AddressLine1" placeholder="Address Line 1" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addressLine2" class="col-sm-3 col-md-3 control-label">Address Line 2</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="addressLine2" name="AddressLine2" placeholder="Address Line 2">
+                                            <span class="message-icon glyphicon hide"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <!-- This should be done with selectize -->
+                                        <label for="country" class="col-sm-3 col-md-3 control-label">Country</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="country" name="Country" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="city" class="col-sm-3 col-md-3 control-label">City</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="city" name="City" placeholder="City" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="state" class="col-sm-3 col-md-3 control-label">State</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="state" name="State" placeholder="State" required>
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="zipCode" class="col-sm-3 col-md-3 control-label">Zip Code</label>
+                                        <div class="col-sm-9 col-md-9">
+                                            <input type="text" class="form-control" id="zipCode" name="ZipCode" placeholder="Zip Code">
+                                            <span class="message-icon glyphicon"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <hr />
-                    <!-- The contact person section -->
-                    <div class="form-group">
-                        <label for="contPersFName" class="col-sm-3 col-md-3 control-label">First Name</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="contPersFName" name="ContactPersonFirstName" placeholder="Contact Person First Name" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="contPersLName" class="col-sm-3 col-md-3 control-label">Last Name</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="contPersLName" name="ContactPersonLastName" placeholder="Contact Person Last Name" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="contPersPhone" class="col-sm-3 col-md-3 control-label">Phone Number</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="number" class="form-control" id="contPersPhone" name="ContactPersonPhoneNumber" placeholder="Contact Person Phone Number" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <!-- The address section -->
-                    <hr />
-                    <div class="form-group">
-                        <label for="addressLine1" class="col-sm-3 col-md-3 control-label">Address Line 1</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="addressLine1" name="AddressLine1" placeholder="Address Line 1" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="addressLine2" class="col-sm-3 col-md-3 control-label">Address Line 2</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="addressLine2" name="AddressLine2" placeholder="Address Line 2">
-                            <span class="message-icon glyphicon hide"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <!-- This should be done with selectize -->
-                        <label for="country" class="col-sm-3 col-md-3 control-label">Country</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="country" name="Country" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="city" class="col-sm-3 col-md-3 control-label">City</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="city" name="City" placeholder="City" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="state" class="col-sm-3 col-md-3 control-label">State</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="state" name="State" placeholder="State" required>
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="zipCode" class="col-sm-3 col-md-3 control-label">Zip Code</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="zipCode" name="ZipCode" placeholder="Zip Code">
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer ">
                 <ul class="list-inline pull-right">
@@ -134,6 +186,7 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
 
 <script>
     $("#country").selectize({

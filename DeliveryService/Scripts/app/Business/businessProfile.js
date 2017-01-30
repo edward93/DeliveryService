@@ -34,8 +34,12 @@ $(function () {
    
 
     $(".datepicker").datepicker("option", "minDate");
-    var minDate = $(".datepicker").datepicker("option", "minDate", new Date(2017, 1 - 1, 1));
-    
+    //var minDate = $(".datepicker").datepicker("option", "minDate", new Date(2017, 1 - 1, 1));
+    $('.datepicker').pickadate({
+        min: new Date(2015, 3, 20),
+        max: new Date(2015, 7, 14)
+    });
+
 });
 
 $(document).on("click", ".vehicle-fileuploads-active", function () {

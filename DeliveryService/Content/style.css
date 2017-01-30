@@ -9419,7 +9419,7 @@ body.md-skin {
 
 
         .wizard {
-            margin: 20px auto;
+            margin: 0 auto;
             background: #fff;
         }
 
@@ -9527,9 +9527,12 @@ body.md-skin {
 
         .wizard .tab-pane {
             position: relative;
-            padding-top: 50px;
+            padding-top: 20px;
         }
 
+        .business-tab {
+            display: none;
+        }
         .wizard h3 {
             margin-top: 0;
         }
