@@ -11,14 +11,17 @@ using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Helpers.DataTableHelper;
 using DeliveryService.Helpers.DataTableHelper.Models;
-using DeliveryService.Hubs;
+using DeliveryService.Models.ViewModels;
 using DeliveryService.ViewModels.Business;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.SignalR.Client;
+using Microsoft.AspNet.SignalR.Client.Hubs;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
+using WebGrease.Css.Extensions;
 
 namespace DeliveryService.Controllers.Business
 {
@@ -30,6 +33,7 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
+        //private readonly Lazy<IHubConnection> _hubConnection;
         private DataTable<BusinessOrder> _ordersDataTable;
 
         public BusinessOrderController(IConfig config,
@@ -38,8 +42,10 @@ namespace DeliveryService.Controllers.Business
             IPersonService personService,
             IBusinessService businessService,
             IDriverService driverService, 
-            IDriverLocationService driverLocationService) : base(config, context)
+            IDriverLocationService driverLocationService 
+            /*IHubConnection hubConnection*/) : base(config, context)
         {
+            //_hubConnection = new Lazy<IHubConnection>(() => hubConnection);
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
             _driverService = new Lazy<IDriverService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
@@ -82,11 +88,19 @@ namespace DeliveryService.Controllers.Business
                     {
                         var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
                         // TODO: Send this information to business via SignalR
-                        var signalrHub = new AddRiderHub();
-                        signalrHub.NotifyBusiness(order, nearDriver);
+                        var hubConnection = new HubConnection("http://localhost:8000/");
+                        //hubConnection.TraceLevel = TraceLevels.All;
+                        //hubConnection.TraceWriter = Console.Out;
+                        var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                        hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+
+                        hubConnection.Headers.Add("Cookie", string.Join(";", Request.Cookies.AllKeys.Select(c => $" {c} = {Request.Cookies[c]?.Value}")));
+
+                        await hubConnection.Start();
+                        var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", order, nearDriver);
+                        hubConnection.Stop();
+
                     }
-                    
-                    
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");
@@ -132,23 +146,20 @@ namespace DeliveryService.Controllers.Business
                     await _orderService.Value.AcceptDriverForOrderAsync(orderId, driverId);
 
                     // Notify driver that he/she recieved an order.
-                    HttpResponseMessage resultContent;
-                    using (var client = new HttpClient())
+                    // TODO: move HubConnection into DI
+                    var hubConnection = new HubConnection("http://localhost:8000/");
+                    //hubConnection.TraceLevel = TraceLevels.All;
+                    //hubConnection.TraceWriter = Console.Out;
+                    var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+
+                    await hubConnection.Start();
+                    var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", new OrderDetails(order), driverId);
+
+                    if (!sigResult.Success)
                     {
-                        // TODO: authorization?
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
-                        var formData = new Dictionary<string, string>
-                        {
-                            {"driverId", driverId.ToString()},
-                            {"orderId", orderId.ToString()}
-                        };
-                        var content = new FormUrlEncodedContent(formData);
-                        resultContent = await client.PostAsync($"{Config.WebApiUrl}/api/Order/NotifyDriverAboutOrder", content);
+                        // This display message method is never tested.
+                        throw new Exception(sigResult.DisplayMessage());
                     }
-
-                    var result = new { data = resultContent, content = await resultContent.Content.ReadAsHttpResponseMessageAsync() };
-
-                    // TODO: check it the result is successful then continue if not throw an exception
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver was accepted for this order by the business.");
