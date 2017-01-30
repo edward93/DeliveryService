@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using DAL.Constants;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Models.ViewModels;
@@ -15,22 +17,27 @@ namespace SignalRSelfHost.AddRiderHub
     {
         private static readonly ConnectionMapping<int> Connections = new ConnectionMapping<int>();
         private readonly Lazy<IOrderService> _orderService;
-        private System.Threading.Timer timer;
+        private Timer timer;
         public AddRiderHub(IOrderService orderService)
         {
             _orderService = new Lazy<IOrderService>(() => orderService);
         }
 
+        // TODO: implement authorizatoin later
+        //[Authorize(Roles = Roles.Business)]
         public void Send(string param1, string param2)
         {
             Console.WriteLine("Sending something. Debugging is not working.");
         }
+
+        [Authorize(Roles = Roles.Business)]
         public ServiceResult NotifyDriverAboutOrder(OrderDetails orderDetails, int driverId)
         {
-            orderDetails.OrderStatus = OrderStatus.Pending;
             var serviceResult = new ServiceResult();
             try
             {
+                orderDetails.OrderStatus = OrderStatus.Pending;
+
                 var connectionId = Connections.GetConnections(driverId).FirstOrDefault();
                 if (connectionId != null)
                 {
@@ -59,23 +66,46 @@ namespace SignalRSelfHost.AddRiderHub
         {
             //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
             //if (ticket != null)
-            //{
-            //    var driverHub = new DriverHubModel
-            //    {
-            //        Name = "",
-            //        DriverId = int.Parse(Context.Headers["DriverId"])
-            //    };
+            if (Context.Headers != null)
+            {
 
-            //    Connections.Add(driverHub.DriverId, Context.ConnectionId);
+                if (Context.Headers["DriverId"] != null)
+                {
+                    int driverId;
+
+                    int.TryParse(Context.Headers["DriverId"], out driverId);
+                    var driverHub = new DriverHubModel
+                    {
+                        Name = "",
+                        DriverId = driverId,
+                    };
+
+                    Connections.Add(driverHub.DriverId, Context.ConnectionId);
+                }
+                else if (Context.Headers["BusinessId"] != null)
+                {
+                    int businessId;
+
+                    int.TryParse(Context.Headers["BusinessId"], out businessId);
+
+                    var businessHub = new BusinessHubModel
+                    {
+                        Name = "",
+                        BusinessId = businessId
+                    };
+
+                    // TODO: Sarkis make this more generic. Saving only ids is incorrect!
+                    Connections.Add(businessHub.BusinessId, Context.ConnectionId);
+                }
+            }
 
 
-            //    timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
-            //       null,
-            //       TimeSpan.Zero,
-            //       TimeSpan.FromSeconds(50));
+            //timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
+            //   null,
+            //   TimeSpan.Zero,
+            //   TimeSpan.FromSeconds(50));
 
 
-            //}
             return base.OnConnected();
         }
 
@@ -99,7 +129,40 @@ namespace SignalRSelfHost.AddRiderHub
 
             //Connections.Remove(driverHub.DriverId, Context.ConnectionId);
 
-            //await base.OnDisconnected(stopCalled);
+            if (Context.Headers != null)
+            {
+
+                if (Context.Headers["DriverId"] != null)
+                {
+                    int driverId;
+
+                    int.TryParse(Context.Headers["DriverId"], out driverId);
+                    var driverHub = new DriverHubModel
+                    {
+                        Name = "",
+                        DriverId = driverId,
+                    };
+
+                    Connections.Remove(driverHub.DriverId, Context.ConnectionId);
+                }
+                else if (Context.Headers["BusinessId"] != null)
+                {
+                    int businessId;
+
+                    int.TryParse(Context.Headers["BusinessId"], out businessId);
+
+                    var businessHub = new BusinessHubModel
+                    {
+                        Name = "",
+                        BusinessId = businessId
+                    };
+
+                    // TODO: Sarkis make this more generic. Saving only ids is incorrect!
+                    Connections.Remove(businessHub.BusinessId, Context.ConnectionId);
+                }
+            }
+
+            await base.OnDisconnected(stopCalled);
         }
 
         public override async Task OnReconnected()
@@ -116,13 +179,58 @@ namespace SignalRSelfHost.AddRiderHub
             //{
             //    Connections.Add(driverHub.DriverId, Context.ConnectionId);
             //}
-            //await base.OnReconnected();
+
+            if (Context.Headers != null)
+            {
+
+                if (Context.Headers["DriverId"] != null)
+                {
+                    int driverId;
+
+                    int.TryParse(Context.Headers["DriverId"], out driverId);
+                    var driverHub = new DriverHubModel
+                    {
+                        Name = "",
+                        DriverId = driverId,
+                    };
+
+                    if (!Connections.GetConnections(driverHub.DriverId).Contains(Context.ConnectionId))
+                    {
+                        Connections.Add(driverHub.DriverId, Context.ConnectionId);
+                    }
+                }
+                else if (Context.Headers["BusinessId"] != null)
+                {
+                    int businessId;
+
+                    int.TryParse(Context.Headers["BusinessId"], out businessId);
+
+                    var businessHub = new BusinessHubModel
+                    {
+                        Name = "",
+                        BusinessId = businessId
+                    };
+
+                    // TODO: Sarkis make this more generic. Saving only ids is incorrect!
+                    if (!Connections.GetConnections(businessHub.BusinessId).Contains(Context.ConnectionId))
+                    {
+                        Connections.Add(businessHub.BusinessId, Context.ConnectionId);
+                    }
+                }
+            }
+
+
+            await base.OnReconnected();
         }
 
-        public void NotifyBusiness(Order order, Driver driver)
+        public async Task<ServiceResult> NotifyBusiness(Order order, Driver driver)
         {
-            //var hubContext = GlobalHost.ConnectionManager.GetHubContext<AddRiderHub>();
-            Clients.All.notifyBusiness("hello", "myFriend");
+            var serviceResult = new ServiceResult();
+
+            // TODO: Sarkis Implement this method correctly
+            throw new NotImplementedException();
+
+            return serviceResult;
         }
     }
 }

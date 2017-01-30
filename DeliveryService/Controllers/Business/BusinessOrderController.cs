@@ -18,8 +18,10 @@ using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR.Client;
+using Microsoft.AspNet.SignalR.Client.Hubs;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
+using WebGrease.Css.Extensions;
 
 namespace DeliveryService.Controllers.Business
 {
@@ -31,6 +33,7 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
+        //private readonly Lazy<IHubConnection> _hubConnection;
         private DataTable<BusinessOrder> _ordersDataTable;
 
         public BusinessOrderController(IConfig config,
@@ -39,8 +42,10 @@ namespace DeliveryService.Controllers.Business
             IPersonService personService,
             IBusinessService businessService,
             IDriverService driverService, 
-            IDriverLocationService driverLocationService) : base(config, context)
+            IDriverLocationService driverLocationService 
+            /*IHubConnection hubConnection*/) : base(config, context)
         {
+            //_hubConnection = new Lazy<IHubConnection>(() => hubConnection);
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
             _driverService = new Lazy<IDriverService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
@@ -87,9 +92,13 @@ namespace DeliveryService.Controllers.Business
                         //hubConnection.TraceLevel = TraceLevels.All;
                         //hubConnection.TraceWriter = Console.Out;
                         var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                        hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+
+                        hubConnection.Headers.Add("Cookie", string.Join(";", Request.Cookies.AllKeys.Select(c => $" {c} = {Request.Cookies[c]?.Value}")));
 
                         await hubConnection.Start();
-                        var r = hubProxy.Invoke("NotifyBusiness", order, new Driver());
+                        var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", order, nearDriver);
+                        hubConnection.Stop();
 
                     }
 
