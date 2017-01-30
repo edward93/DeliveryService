@@ -16,14 +16,21 @@ $(document).ready(function () {
             "type": "GET"
         },
         "columns": [
-            { "data": "Id", "orderable": true },
             { "data": "CustomerName", "orderable": true },
             { "data": "CustomerPhone", "orderable": false },
             { "data": "OrderNumber", "orderable": true },
             { "data": "TimeToReachPickUpLocation", "orderable": true },
             { "data": "TimeToReachDropOffLocation", "orderable": true },
             { "data": "OrderStatus", "orderable": true },
-            { "data": "VehicleType", "orderable": true }
+            { "data": "VehicleType", "orderable": true },
+            {
+                mRender: function (data, type, row) {
+
+                    return '<button class="btn btn-primary btn-xs" data-title="Preview" data-id="' +
+                        row.Id +
+                        '" id="btnPreviewOrder"><span class="fa fa-eye" title="Preview"></span></button>';
+                }
+            }
         ],
         "order": [[0, "asc"]]
     });

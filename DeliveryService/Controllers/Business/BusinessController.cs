@@ -9,6 +9,8 @@ using DAL.Constants;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.Helpers.DataTableHelper;
+using DeliveryService.Helpers.DataTableHelper.Models;
 using DeliveryService.ViewModels.Business;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
@@ -24,6 +26,7 @@ namespace DeliveryService.Controllers
     {
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IPersonService> _personService;
+        private DataTable<BusinessListItem> _ordersDataTable;
         // GET: Business
         public BusinessController(IConfig config, IBusinessService businessService, IPersonService personService, IDbContext context) : base(config, context)
         {
@@ -31,10 +34,28 @@ namespace DeliveryService.Controllers
             _personService = new Lazy<IPersonService>(() => personService);
         }
 
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var businessList = await _businessService.Value.GetAllEntitiesAsync<DAL.Entities.Business>();
-            return View(businessList);
+            return View();
+        }
+
+        public async Task<ActionResult> GetBusinessList(int draw, int start, int length)
+        {
+            var businesses = (await _businessService.Value.GetAllEntitiesAsync<DAL.Entities.Business>()).Select(o => new BusinessListItem(o)).ToList();
+
+            var param = new DataParam
+            {
+                Search = Request.QueryString["search[value]"],
+                SortColumn = Request.QueryString["order[0][column]"] == null ? -1 : int.Parse(Request.QueryString["order[0][column]"]),
+                SortDirection = Request.QueryString["order[0][dir]"] ?? "asc",
+                Start = start,
+                Draw = draw,
+                Length = length
+            };
+
+            _ordersDataTable = new DataTable<BusinessListItem>(businesses, param);
+
+            return Json(_ordersDataTable.AjaxGetJsonData(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -45,10 +66,12 @@ namespace DeliveryService.Controllers
             var businessView = new RegisterBusinessModel()
             {
                 BusinessId = business.Id,
+                PhoneNumber = business.PhoneNumber,
                 ContactPersonFirstName = business.ContactPerson.FirstName,
                 ContactPersonLastName = business.ContactPerson.LastName,
                 ContactPersonPhoneNumber = business.ContactPersonPhoneNumber,
                 BusinessName = business.BusinessName,
+                DateOfBirth = business.ContactPerson.DateOfBirth,
                 BusinessEmail = business.BusinessEmail,
                 AddressLine1 = businessAddress.AddressLine1,
                 Addressline2 = businessAddress.AddressLine2,
@@ -160,7 +183,15 @@ namespace DeliveryService.Controllers
                             UpdatedDt = DateTime.UtcNow,
                             Approved = false,
                             CreatedBy = adminUser.Id,
-                            UpdatedBy = adminUser.Id
+                            UpdatedBy = adminUser.Id,
+                            Rating = new Rating
+                            {
+                                CreatedBy = contactPerson.Id,
+                                UpdatedBy = contactPerson.Id,
+                                AverageScore = 5,
+                                CreatedDt = DateTime.Now,
+                                UpdatedDt = DateTime.Now
+                            }
                         });
 
                         serviceResult.Messages.AddMessage(MessageType.Info, "The Business was successfuly created");

@@ -1,29 +1,63 @@
 ﻿$(document).ready(function () {
 
-    $('#tblBusinessList').DataTable({
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [
-            { extend: 'copy' },
-            { extend: 'csv' },
-            { extend: 'excel', title: 'Business' },
-            {
-                extend: 'pdf', title: 'Business',
-                exportOptions: {
-                    columns: [0, 1, 2, 3]
-                }
-            },
-            {
-                extend: 'print',
-                customize: function (win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
+    /* $('#tblBusinessList').DataTable({
+         dom: '<"html5buttons"B>lTfgitp',
+         buttons: [
+             { extend: 'copy' },
+             { extend: 'csv' },
+             { extend: 'excel', title: 'Business' },
+             {
+                 extend: 'pdf', title: 'Business',
+                 exportOptions: {
+                     columns: [0, 1, 2, 3]
+                 }
+             },
+             {
+                 extend: 'print',
+                 customize: function (win) {
+                     $(win.document.body).addClass('white-bg');
+                     $(win.document.body).css('font-size', '10px');
+                     $(win.document.body).find('table')
+                         .addClass('compact')
+                         .css('font-size', 'inherit');
+                 }
+             }
+         ]
+     });*/
+
+    var tableBusinessList = $('#tblBusinessList').dataTable({
+        "processing": true, // control the processing indicator.
+        "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
+        "info": true,   // control table information display field
+        "stateSave": false,  //restore table state on page reload,
+        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
+        "ajax": {
+            "url": "/Business/GetBusinessList",
+            "type": "GET"
+        },
+        "columns": [
+            { "data": "BusinessName", "orderable": false },
+            { "data": "ContactPersonPhoneNumber", "orderable": true },
+            { "data": "BusinessEmail", "orderable": true },
+            { "data": "Approved", "orderable": true },
+            { "data": "RatingAverageScore", "orderable": true },
+             {
+                 mRender: function (data, type, row) {
+                     return '<button class="btn btn-primary btn-xs btnPreviewBusiness" data-title="Preview" data-id="' +
+                         row.Id +
+                         '" >' +
+                         '<span class="fa fa-eye" title="Preview"></span></button>' +
+                         '<button class="btn btn-danger btn-xs" data-title="Delete" data-id="' +
+                         row.Id +
+                         '" id="btnDeleteDriver">' +
+                         '<span class="glyphicon glyphicon-trash" title="Delete"></span>' +
+                         '</button>';
+                 }
+             }
+        ],
+        "order": [[0, "asc"]]
     });
+
 
     var businessName = $("#businessName");
     var businessPhone = $("#businessPhone");
@@ -136,7 +170,7 @@
             submitBussinessBtn.val("Create");
             heading.text("Add New Business");
             $("#addNewBusinessModal").modal("show");
-            
+
             $('#collapse').attr("style", "");
             $('#collapse').show();
             $(".wizard-inner").hide();
@@ -201,7 +235,7 @@
         $('#step1').show();
     });
 
-    
+
 
     $(document).on('click', '.btnDeleteBusiness',
       function () {
@@ -297,7 +331,7 @@
     function initBusinessModal(data) {
         data = JSON.parse(data);
         businessName.val(data.BusinessName);
-        businessPhone.val(data.BusinessPhone);
+        businessPhone.val(data.PhoneNumber);
         businessEmail.val(data.BusinessEmail);
         contPersFName.val(data.ContactPersonFirstName);
         contPersLName.val(data.ContactPersonLastName);

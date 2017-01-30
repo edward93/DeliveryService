@@ -20,8 +20,8 @@ namespace DeliveryService.ViewModels.Business
             OrderNumber = order.OrderNumber;
             TimeToReachDropOffLocation = order.TimeToReachDropOffLocation;
             TimeToReachPickUpLocation = order.TimeToReachPickUpLocation;
-            OrderStatus = order.OrderStatus;
-            VehicleType = order.VehicleType;
+            OrderStatus = order.OrderStatus.ToString();
+            VehicleType = order.VehicleType.ToString();
         }
 
         public int Id { get; set; }
@@ -30,7 +30,7 @@ namespace DeliveryService.ViewModels.Business
         public string OrderNumber { get; set; }
         public int TimeToReachPickUpLocation { get; set; }
         public int TimeToReachDropOffLocation { get; set; }
-        public OrderStatus OrderStatus { get; set; }
-        public VehicleType VehicleType { get; set; }
+        public string OrderStatus { get; set; }
+        public string VehicleType { get; set; }
     }
 }
