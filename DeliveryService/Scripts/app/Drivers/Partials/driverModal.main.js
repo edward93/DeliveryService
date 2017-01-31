@@ -136,18 +136,12 @@ function getDriverDocuments(driverId) {
         });
 
     var prvewDriver = $("#rejection-modal");
-    var docID;
     var documentType;
     $(document).on('click', ".rejectDriverDocument", function (e) {
         e.preventDefault();
         clearRejectModal();
-        documentId = $(this).parent().attr('data-id');
-       // documentType = $(this).parent().attr("id");
         prvewDriver.modal("show");
-        prvewDriver.attr("data-documentId", documentId);
-        //prvewDriver.attr("data-documentType", documentType);
         documentType = e.currentTarget.parentElement.parentElement;
-        console.log();
     });
 
     $("textarea").keydown(function () {
@@ -156,8 +150,10 @@ function getDriverDocuments(driverId) {
 
     $('#reject').click(function () {
         if (validator.form()) {
-            var docId = prvewDriver;
-            console.log(docId);
+            var docId = $(documentType)[0].dataset.id;
+            if (docId == undefined) {
+                docId = documentType.childNodes[5].dataset.id;
+            }
             var rejectionComment = $("#rejection-comment").val();
             $("#rejection-modal").modal('hide');
             RejectDriverDocument(docId, rejectionComment, documentType);
@@ -192,9 +188,15 @@ function ApproveDriverDocument(documentId, e) {
 }
 
 function RejectDriverDocument(documentId, rejectionComment, documentType) {
-    var acceptDocument = $(documentType.childNodes[2]);
-    var rejectDriverDocument = $(documentType.childNodes[1]);
-    window.BlockUi();
+    var acceptDocument, rejectDriverDocument;
+    if (documentId == 1 || documentId == 4) {
+        acceptDocument = documentType.childNodes[5].childNodes[3].childNodes[0];
+        rejectDriverDocument = documentType.childNodes[5].childNodes[5].childNodes[0];
+    } else {
+        acceptDocument = documentType.childNodes[3].childNodes[0];
+        rejectDriverDocument = documentType.childNodes[5].childNodes[0];
+    }
+    //window.BlockUi();
     if (documentId != undefined) {
         var data = {
             DocumentId: documentId,
@@ -203,10 +205,11 @@ function RejectDriverDocument(documentId, rejectionComment, documentType) {
         $.post("/Drivers/RejectDriverDocument",
             { model: data },
             function (data) {
-                //window.UnBlockUi();s
+                //window.UnBlockUi();
                 if (data.Success) {
-                    rejectDriverDocument.addClass('disabled rejectSelected');
-                    acceptDocument.addClass('disabled');
+                    $(rejectDriverDocument).addClass('disabled rejectSelected');
+                    $(acceptDocument).addClass('disabled');
+                    $(acceptDocument).removeClass('approveSelected');
                     for (let i = 0; i < data.Messages.length; i++) {
                         window.toastr.success(data.Messages[i].Value);
                     }

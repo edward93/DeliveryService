@@ -8,8 +8,12 @@ using DAL.Enums;
 
 namespace DeliveryService.Models.ViewModels
 {
+    [Serializable]
     public class OrderDetails
     {
+        public OrderDetails()
+        {
+        }
         public OrderDetails(Order order)
         {
             Id = order.Id;

@@ -53,13 +53,36 @@ namespace ServiceLayer.Service
 
             if (driver.Status == newStatus)
             {
-                // this means that something is wrong since you cannot assign same status. 
-                //TODO: Question for Sarkis do we need to throw an exception here?
+                // this means that something is wrong since you cannot assign same status.
+                throw new Exception($"Your status is already {driver.Status}");
             }
 
             driver.Status = newStatus;
             driver.UpdatedDt = DateTime.UtcNow;
             driver.UpdatedBy = driver.Person.Id;
+
+            await UpdateDriverAsync(driver);
+        }
+
+        public async Task ApproveDriverAsync(int driverId, int currentPersonId)
+        {
+            await ChangeDriverStateAsync(driverId, true, currentPersonId);
+
+        }
+
+        public async Task RejectDriverAsync(int driverId, int currentPersonId)
+        {
+            await ChangeDriverStateAsync(driverId, false, currentPersonId);
+        }
+
+        private async Task ChangeDriverStateAsync(int driverId, bool approved, int currentPersonId)
+        {
+            var driver = await GetByIdAsync<Driver>(driverId);
+            if (driver == null) throw new Exception($"No driver found for given Id {driverId}");
+
+            driver.Approved = approved;
+            driver.UpdatedDt = DateTime.UtcNow;
+            driver.UpdatedBy = currentPersonId;
 
             await UpdateDriverAsync(driver);
         }

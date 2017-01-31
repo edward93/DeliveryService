@@ -51,6 +51,7 @@ namespace DeliveryService.Controllers
             return Json(Utilities.ToSelectizeItemsList<Country>());
         }
 
+        // TODO: This actions should be moved to admin or into the other controller
         public ActionResult GetVehicleTypes()
         {
             return Json(Utilities.ToSelectizeItemsList<VehicleType>());

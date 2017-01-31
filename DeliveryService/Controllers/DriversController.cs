@@ -131,6 +131,9 @@ namespace DeliveryService.Controllers
                                 throw new Exception("This document is already rejected.");
                             await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id,
                                 model.RejectionComment);
+
+                            await _driverService.Value.RejectDriverAsync(document.DriverId, person.Id);
+
                             serviceResult.Success = true;
                             serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
 

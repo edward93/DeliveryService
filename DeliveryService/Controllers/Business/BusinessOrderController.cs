@@ -41,8 +41,8 @@ namespace DeliveryService.Controllers.Business
             IOrderService orderService,
             IPersonService personService,
             IBusinessService businessService,
-            IDriverService driverService, 
-            IDriverLocationService driverLocationService 
+            IDriverService driverService,
+            IDriverLocationService driverLocationService
             /*IHubConnection hubConnection*/) : base(config, context)
         {
             //_hubConnection = new Lazy<IHubConnection>(() => hubConnection);
@@ -54,8 +54,13 @@ namespace DeliveryService.Controllers.Business
 
         }
 
-        public ActionResult BusinessOrders()
+        public async Task<ActionResult> BusinessOrders()
         {
+            var currBusiness =
+                await _businessService.Value.GetBusinessByPersonId(
+                    (await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId())).Id);
+
+            ViewBag.BusinessId = currBusiness.Id;
             return View();
         }
 
@@ -87,19 +92,22 @@ namespace DeliveryService.Controllers.Business
                     if (driverLocation != null)
                     {
                         var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
-                        // TODO: Send this information to business via SignalR
-                        var hubConnection = new HubConnection("http://localhost:8000/");
-                        //hubConnection.TraceLevel = TraceLevels.All;
-                        //hubConnection.TraceWriter = Console.Out;
-                        var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
-                        hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+                        // Send this information to business via SignalR
+                        using (var hubConnection = new HubConnection("http://localhost:8000/")
+                        {
+                            TraceLevel = TraceLevels.All,
+                            TraceWriter = Console.Out
+                        })
+                        {
+                            var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                            hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
 
-                        hubConnection.Headers.Add("Cookie", string.Join(";", Request.Cookies.AllKeys.Select(c => $" {c} = {Request.Cookies[c]?.Value}")));
+                            await hubConnection.Start();
+                            var driverDetails = new DriverDetails(order, nearDriver);
+                            var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
 
-                        await hubConnection.Start();
-                        var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", order, nearDriver);
-                        hubConnection.Stop();
-
+                            if (!result.Success) throw new Exception($"Error while notifying business about nearest driver.");
+                        }
                     }
 
                     serviceResult.Success = true;
@@ -147,19 +155,23 @@ namespace DeliveryService.Controllers.Business
 
                     // Notify driver that he/she recieved an order.
                     // TODO: move HubConnection into DI
-                    var hubConnection = new HubConnection("http://localhost:8000/");
-                    //hubConnection.TraceLevel = TraceLevels.All;
-                    //hubConnection.TraceWriter = Console.Out;
-                    var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
-
-                    await hubConnection.Start();
-                    var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", new OrderDetails(order), driverId);
-
-                    if (!sigResult.Success)
+                    using (var hubConnection = new HubConnection("http://localhost:8000/")
                     {
-                        // This display message method is never tested.
-                        throw new Exception(sigResult.DisplayMessage());
+                        TraceLevel = TraceLevels.All,
+                        TraceWriter = Console.Out
+                    })
+                    {
+                        var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+
+                        await hubConnection.Start();
+                        var orderDetails = new OrderDetails(order);
+                        
+                        var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", orderDetails, driverId);
+
+                        if (!sigResult.Success) throw new Exception(sigResult.DisplayMessage());
                     }
+
+
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver was accepted for this order by the business.");

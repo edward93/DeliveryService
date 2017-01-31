@@ -101,6 +101,7 @@ namespace DeliveryService.Controllers
                     var business = await _businessService.Value.GetByIdAsync<DAL.Entities.Business>(registerBusiness.BusinessId);
                     var adminUser = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                     var businessAddress = registerBusiness.GetAddress();
+                    var rating = business.Rating;
 
                     await _businessService.Value.CreateBusiness(new DAL.Entities.Business()
                     {
@@ -114,7 +115,9 @@ namespace DeliveryService.Controllers
                         UpdatedDt = DateTime.UtcNow,
                         Approved = false,
                         CreatedBy = adminUser.Id,
-                        UpdatedBy = adminUser.Id
+                        UpdatedBy = adminUser.Id,
+                        RatingId = business.RatingId,
+                        Rating = business.Rating
                     });
 
                     scope.Complete();

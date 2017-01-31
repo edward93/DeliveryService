@@ -13,24 +13,17 @@ using SignalRSelfHost.App_Start;
 
 namespace SignalRSelfHost.AddRiderHub
 {
+    // TODO: implement authorizatoin later
     public class AddRiderHub : Hub
     {
         private static readonly ConnectionMapping<int> Connections = new ConnectionMapping<int>();
         private readonly Lazy<IOrderService> _orderService;
-        private Timer timer;
+        //private Timer timer;
         public AddRiderHub(IOrderService orderService)
         {
             _orderService = new Lazy<IOrderService>(() => orderService);
         }
 
-        // TODO: implement authorizatoin later
-        //[Authorize(Roles = Roles.Business)]
-        public void Send(string param1, string param2)
-        {
-            Console.WriteLine("Sending something. Debugging is not working.");
-        }
-
-        [Authorize(Roles = Roles.Business)]
         public ServiceResult NotifyDriverAboutOrder(OrderDetails orderDetails, int driverId)
         {
             var serviceResult = new ServiceResult();
@@ -64,8 +57,6 @@ namespace SignalRSelfHost.AddRiderHub
 
         public override Task OnConnected()
         {
-            //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
-            //if (ticket != null)
             if (Context.Headers != null)
             {
 
@@ -74,13 +65,13 @@ namespace SignalRSelfHost.AddRiderHub
                     int driverId;
 
                     int.TryParse(Context.Headers["DriverId"], out driverId);
-                    var driverHub = new DriverHubModel
-                    {
-                        Name = "",
-                        DriverId = driverId,
-                    };
 
-                    Connections.Add(driverHub.DriverId, Context.ConnectionId);
+                    Connections.Add(driverId, Context.ConnectionId);
+
+                    //timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
+                    //null,
+                    //TimeSpan.Zero,
+                    //TimeSpan.FromSeconds(50));
                 }
                 else if (Context.Headers["BusinessId"] != null)
                 {
@@ -88,23 +79,16 @@ namespace SignalRSelfHost.AddRiderHub
 
                     int.TryParse(Context.Headers["BusinessId"], out businessId);
 
-                    var businessHub = new BusinessHubModel
-                    {
-                        Name = "",
-                        BusinessId = businessId
-                    };
+                    Connections.Add(businessId, Context.ConnectionId);
+                } else if (Context.QueryString["ClientBusinessId"] != null)
+                {
+                    int businessId;
 
-                    // TODO: Sarkis make this more generic. Saving only ids is incorrect!
-                    Connections.Add(businessHub.BusinessId, Context.ConnectionId);
+                    int.TryParse(Context.QueryString["ClientBusinessId"], out businessId);
+
+                    Connections.Add(businessId, Context.ConnectionId);
                 }
             }
-
-
-            //timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
-            //   null,
-            //   TimeSpan.Zero,
-            //   TimeSpan.FromSeconds(50));
-
 
             return base.OnConnected();
         }
@@ -120,15 +104,6 @@ namespace SignalRSelfHost.AddRiderHub
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
-            //var driverHub = new DriverHubModel
-            //{
-            //    Name = "",
-            //    DriverId = int.Parse(Context.Headers["DriverId"])
-            //};
-
-            //Connections.Remove(driverHub.DriverId, Context.ConnectionId);
-
             if (Context.Headers != null)
             {
 
@@ -137,13 +112,8 @@ namespace SignalRSelfHost.AddRiderHub
                     int driverId;
 
                     int.TryParse(Context.Headers["DriverId"], out driverId);
-                    var driverHub = new DriverHubModel
-                    {
-                        Name = "",
-                        DriverId = driverId,
-                    };
 
-                    Connections.Remove(driverHub.DriverId, Context.ConnectionId);
+                    Connections.Remove(driverId, Context.ConnectionId);
                 }
                 else if (Context.Headers["BusinessId"] != null)
                 {
@@ -151,14 +121,15 @@ namespace SignalRSelfHost.AddRiderHub
 
                     int.TryParse(Context.Headers["BusinessId"], out businessId);
 
-                    var businessHub = new BusinessHubModel
-                    {
-                        Name = "",
-                        BusinessId = businessId
-                    };
+                    Connections.Remove(businessId, Context.ConnectionId);
+                }
+                else if (Context.QueryString["ClientBusinessId"] != null)
+                {
+                    int businessId;
 
-                    // TODO: Sarkis make this more generic. Saving only ids is incorrect!
-                    Connections.Remove(businessHub.BusinessId, Context.ConnectionId);
+                    int.TryParse(Context.QueryString["ClientBusinessId"], out businessId);
+
+                    Connections.Remove(businessId, Context.ConnectionId);
                 }
             }
 
@@ -167,19 +138,6 @@ namespace SignalRSelfHost.AddRiderHub
 
         public override async Task OnReconnected()
         {
-            //var ticket = Startup.OAuthOptions.AccessTokenFormat.Unprotect(Context.Headers["Authorization"]);
-
-            //var driverHub = new DriverHubModel
-            //{
-            //    Name = "",
-            //    DriverId = int.Parse(Context.Headers["DriverId"])
-            //};
-
-            //if (!Connections.GetConnections(driverHub.DriverId).Contains(Context.ConnectionId))
-            //{
-            //    Connections.Add(driverHub.DriverId, Context.ConnectionId);
-            //}
-
             if (Context.Headers != null)
             {
 
@@ -188,15 +146,10 @@ namespace SignalRSelfHost.AddRiderHub
                     int driverId;
 
                     int.TryParse(Context.Headers["DriverId"], out driverId);
-                    var driverHub = new DriverHubModel
-                    {
-                        Name = "",
-                        DriverId = driverId,
-                    };
 
-                    if (!Connections.GetConnections(driverHub.DriverId).Contains(Context.ConnectionId))
+                    if (!Connections.GetConnections(driverId).Contains(Context.ConnectionId))
                     {
-                        Connections.Add(driverHub.DriverId, Context.ConnectionId);
+                        Connections.Add(driverId, Context.ConnectionId);
                     }
                 }
                 else if (Context.Headers["BusinessId"] != null)
@@ -205,16 +158,20 @@ namespace SignalRSelfHost.AddRiderHub
 
                     int.TryParse(Context.Headers["BusinessId"], out businessId);
 
-                    var businessHub = new BusinessHubModel
+                    if (!Connections.GetConnections(businessId).Contains(Context.ConnectionId))
                     {
-                        Name = "",
-                        BusinessId = businessId
-                    };
+                        Connections.Add(businessId, Context.ConnectionId);
+                    }
+                }
+                else if (Context.QueryString["ClientBusinessId"] != null)
+                {
+                    int businessId;
 
-                    // TODO: Sarkis make this more generic. Saving only ids is incorrect!
-                    if (!Connections.GetConnections(businessHub.BusinessId).Contains(Context.ConnectionId))
+                    int.TryParse(Context.QueryString["ClientBusinessId"], out businessId);
+
+                    if (!Connections.GetConnections(businessId).Contains(Context.ConnectionId))
                     {
-                        Connections.Add(businessHub.BusinessId, Context.ConnectionId);
+                        Connections.Add(businessId, Context.ConnectionId);
                     }
                 }
             }
@@ -223,12 +180,26 @@ namespace SignalRSelfHost.AddRiderHub
             await base.OnReconnected();
         }
 
-        public async Task<ServiceResult> NotifyBusiness(Order order, Driver driver)
+        public ServiceResult NotifyBusiness(DriverDetails dirverDetails)
         {
             var serviceResult = new ServiceResult();
+            try
+            {
+                var connectionId = Connections.GetConnections(-dirverDetails.BusinessId).FirstOrDefault();
 
-            // TODO: Sarkis Implement this method correctly
-            throw new NotImplementedException();
+                if(connectionId == null) throw new Exception($"No client with {dirverDetails.BusinessId} business id was found.");
+
+                Clients.Client(connectionId).NotifyBusinessAboutDriver(dirverDetails);
+
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Business was successfully notified");
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while notifying business about driver.");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+            }
 
             return serviceResult;
         }

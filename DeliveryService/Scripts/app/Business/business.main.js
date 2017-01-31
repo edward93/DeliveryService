@@ -25,6 +25,24 @@
          ]
      });*/
 
+   var country = $("#country").selectize({
+        searchField: ['text'],
+        maxItems: 1,
+        allowEmptyOption: false,
+        plugins: ['remove_button'],
+        preload: true,
+        //options: countries,
+        load: function (query, callback) {
+            $.post("/home/GetCountries")
+              .done(function (data) {
+                  if (data !== '') {
+                      callback(data);
+                  }
+              }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+              });
+        }
+    });
+
     var tableBusinessList = $('#tblBusinessList').dataTable({
         "processing": true, // control the processing indicator.
         "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
@@ -43,7 +61,7 @@
             { "data": "RatingAverageScore", "orderable": true },
              {
                  mRender: function (data, type, row) {
-                     return '<button class="btn btn-primary btn-xs btnPreviewBusiness" data-title="Preview" data-id="' +
+                     return '<div class="btn-group"> <button class="btn btn-primary btn-xs btnPreviewBusiness" data-title="Preview" data-id="' +
                          row.Id +
                          '" >' +
                          '<span class="fa fa-eye" title="Preview"></span></button>' +
@@ -51,7 +69,7 @@
                          row.Id +
                          '" id="btnDeleteDriver">' +
                          '<span class="glyphicon glyphicon-trash" title="Delete"></span>' +
-                         '</button>';
+                         '</button> </div>';
                  }
              }
         ],
@@ -69,7 +87,7 @@
     var contPersPhone = $("#contPersPhone");
     var addressLine1 = $("#addressLine1");
     var addressLine2 = $("#addressLine2");
-    var country = $("#country");
+    //var country = $("#country");
     var city = $("#city");
     var state = $("#state");
     var zipCode = $("#zipCode");
@@ -213,18 +231,16 @@
         $('#collapse').hide();
         $('#BusinessEmail').hide();
     };
-
-    $(".btnPreviewBusiness").on("click",
-        function (e) {
-            var businessIdForPreview = $(this).attr('data-id');
-            clearModal();
-            validator.form();
-            e.preventDefault();
-            clearBusinessModal();
-            submitBussinessBtn.val("Update");
-            heading.text("Update Business");
-            getBusinessById(businessIdForPreview);
-        });
+    $(document).on('click', '.btnPreviewBusiness', function (e) {
+        var businessIdForPreview = $(this).attr('data-id');
+        clearModal();
+        validator.form();
+        e.preventDefault();
+        clearBusinessModal();
+        submitBussinessBtn.val("Update");
+        heading.text("Update Business");
+        getBusinessById(businessIdForPreview);
+    });
 
     $(document).on('click', '#businessData', function () {
         $('#step1').hide();
@@ -235,9 +251,7 @@
         $('#step1').show();
     });
 
-
-
-    $(document).on('click', '.btnDeleteBusiness',
+    $(document).on('click', '#btnDeleteDriver',
       function () {
           var businessIdForDelete = $(this).attr('data-id');
           swal({
@@ -275,7 +289,7 @@
     function editBusiness() {
         var data = {
             BusinessName: businessName.val(),
-            BusinessPhone: businessPhone.val(),
+            PhoneNumber: businessPhone.val(),
             BusinessEmail: businessEmail.val(),
             ContactPersonFirstName: contPersFName.val(),
             ContactPersonLastName: contPersLName.val(),
@@ -338,7 +352,8 @@
         contPersPhone.val(data.ContactPersonPhoneNumber);
         addressLine1.val(data.AddressLine1);
         addressLine2.val(data.AddressLine2);
-        country.val(data.Country);
+        //var countrySelectize = country.selectize();
+        //countrySelectize.setValue(data.Country);
         city.val(data.City);
         state.val(data.State);
         zipCode.val(data.ZipCode);

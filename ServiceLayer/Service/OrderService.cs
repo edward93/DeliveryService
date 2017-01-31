@@ -185,6 +185,7 @@ namespace ServiceLayer.Service
                 await
                     _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driver.Id, order.Id,
                         ActionType.DriverIsOnTheWayToPickUp);
+
             var actualTimeToReachPickUpLocation = (DateTime.UtcNow - lastOrderRecord.UpdatedDt).TotalMinutes;
 
             var orderHistory = new OrderHistory
@@ -210,10 +211,16 @@ namespace ServiceLayer.Service
         {
             await _orderRepository.OrderPickedUpAsync(order, driver);
 
+            var lastOrderRecord =
+                await
+                    _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driver.Id, order.Id,
+                        ActionType.DriverPickedUpTheOrder);
+
             var orderHistory = new OrderHistory
             {
                 Action = ActionType.DriverPickedUpTheOrder,
                 CreatedBy = driver.Id,
+                DriverId = driver.Id,
                 CreatedDt = DateTime.UtcNow,
                 IsDeleted = false,
                 OrderId = order.Id,
@@ -221,6 +228,7 @@ namespace ServiceLayer.Service
                 UpdatedDt = DateTime.UtcNow,
                 TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
                 TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                ActuallTimeToPickUpLocation = lastOrderRecord.ActuallTimeToPickUpLocation,
                 OrderPrice = order.OrderPrice
             };
 
@@ -242,6 +250,7 @@ namespace ServiceLayer.Service
             {
                 Action = ActionType.OrderDelivered,
                 CreatedBy = driver.Id,
+                DriverId = driver.Id,
                 CreatedDt = DateTime.UtcNow,
                 IsDeleted = false,
                 OrderId = order.Id,
@@ -249,6 +258,7 @@ namespace ServiceLayer.Service
                 UpdatedDt = DateTime.UtcNow,
                 TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
                 TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                ActuallTimeToPickUpLocation = lastOrderRecord.ActuallTimeToPickUpLocation,
                 ActualTimeToDropOffLocation = new decimal(actualTimeToReachDropOffLocation),
                 OrderPrice = order.OrderPrice
             };
@@ -259,6 +269,10 @@ namespace ServiceLayer.Service
         public async Task OrderNotDeliveredAsync(Driver driver, Order order, string reason)
         {
             await _orderRepository.OrderNotDeliveredAsync(order, driver, reason);
+            var lastOrderRecord =
+                await
+                    _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driver.Id, order.Id,
+                        ActionType.DriverPickedUpTheOrder);
 
             var orderHistory = new OrderHistory
             {
@@ -271,6 +285,7 @@ namespace ServiceLayer.Service
                 UpdatedDt = DateTime.UtcNow,
                 TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
                 TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
+                ActuallTimeToPickUpLocation = lastOrderRecord.ActuallTimeToPickUpLocation,
                 OrderPrice = order.OrderPrice,
                 NotDeliveredReason = reason
             };

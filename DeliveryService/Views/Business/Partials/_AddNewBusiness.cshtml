@@ -189,21 +189,5 @@
 
 
 <script>
-    $("#country").selectize({
-        searchField: ['text'],
-        maxItems: 1,
-        allowEmptyOption: false,
-        plugins: ['remove_button'],
-        preload: true,
-        //options: countries,
-        load: function (query, callback) {
-            $.post("/home/GetCountries")
-              .done(function (data) {
-                  if (data !== '') {
-                      callback(data);
-                  }
-              }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-              });
-        }
-    });
+    
 </script>

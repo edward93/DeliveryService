@@ -489,7 +489,7 @@ $(document).ready(function () {
     function initOrderModal(data) {
         data = JSON.parse(data);
         customerName.val(data.customerName);
-        customerPhone.val(data.customerPhone);
+        customerPhone.val(data.CustomerPhone);
         timeToReachPickUpLocation.val(data.timeToReachPickUpLocation);
         timeToReachDropOffLocation.val(data.timeToReachDropOffLocation);
         pickUpLocation.val(data.pickUpLocation);

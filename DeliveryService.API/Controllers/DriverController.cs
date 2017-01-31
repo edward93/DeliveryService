@@ -120,6 +120,40 @@ namespace DeliveryService.API.Controllers
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver Data was updated successfully");
 
+
+                    var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
+                    int counter = 0;
+                    foreach (var document in driverDocuments)
+                    {
+                        if (document.DocumentStatus == DocumentStatus.Approved)
+                        {
+                            counter++;
+                        }
+                    }
+                    if (driverDetails.VehicleType == VehicleType.Van || driverDetails.VehicleType == VehicleType.Car ||
+                        driverDetails.VehicleType == VehicleType.Motorbike)
+                    {
+                        if (counter == 4)
+                        {
+                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                        }
+                        else
+                        {
+                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                        }
+                    }
+                    else
+                    {
+                        if (counter > 2)
+                        {
+                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                        }
+                        else
+                        {
+                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                        }
+                    }
+
                     scope.Complete();
                     transaction.Commit();
 

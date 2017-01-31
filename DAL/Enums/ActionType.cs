@@ -1,6 +1,5 @@
 ﻿namespace DAL.Enums
 {
-    // TODO: Complete this list
     public enum ActionType
     {
         OrderCreated = 0,

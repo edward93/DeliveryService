@@ -8,84 +8,63 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title custom_align" id="Heading">Edit Driver Details</h4>
+                <h4 class="modal-title custom_align" id="Heading">View Driver Documents</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="wizard">
-                            <div class="wizard-inner">
-                                <div class="connecting-line"></div>
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li role="presentation" class="active">
-                                        <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Driver Documents">
-                                            <span class="round-tab">
-                                                <i class="glyphicon glyphicon-picture"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li role="presentation" style="margin-left: 40%">
-                                        <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Earnings">
-                                            <span class="round-tab">
-                                                <i class="fa fa-money"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <form role="form">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" role="tabpanel" id="step1">
-                                        <div class="wrapper wrapper-content">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="row firsDocRow">
-                                                        <div class="effect-1 effects clearfix">
+                        <form role="form">
+                            <div class="tab-content">
+                                <div class="tab-pane active" role="tabpanel" id="step1">
+                                    <div class="wrapper wrapper-content">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="row firsDocRow">
+                                                    <div class="effect-1 effects clearfix">
 
-                                                            <div class="col-lg-6 img">
-                                                                <h5>Passport</h5>
-                                                                <img id="Passport" class="no-img" />
-                                                                <div class="row Passport" id="passportOverlay">
-                                                                    <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
-                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4 rejectDriverDocument"><a class="expand rejectDriverButton"><span class="fa fa-times"></span></a></div>
-                                                                </div>
+                                                        <div class="col-lg-6 img text-center">
+                                                            <h3 >Passport</h3>
+                                                            <img id="Passport" class="no-img" />
+                                                            <div class="row Passport" id="passportOverlay">
+                                                                <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                <div class="col-lg-4 rejectDriverDocument"><a class="expand rejectDriverButton"><span class="fa fa-times"></span></a></div>
                                                             </div>
+                                                        </div>
 
-                                                            <div class="col-lg-6 img">
-                                                                <h5>Insuracne</h5>
-                                                                <img id="Insurance" class="no-img" />
-                                                                <div class="row Insurance" id="insuranceOverlay">
-                                                                    <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
-                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4 rejectDriverDocument"><a class="expand rejectDriverButton"><span class="fa fa-times"></span></a></div>
-                                                                </div>
+                                                        <div class="col-lg-6 img text-center">
+                                                            <h3>Insuracne</h3>
+                                                            <img id="Insurance" class="no-img" />
+                                                            <div class="row Insurance" id="insuranceOverlay">
+                                                                <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                <div class="col-lg-4 rejectDriverDocument"><a class="expand rejectDriverButton"><span class="fa fa-times"></span></a></div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="effect-1 effects clearfix">
-                                                            <div class="col-lg-6 img">
-                                                                <h5>Proof Of Address</h5>
-                                                                <img id="ProofOfAddress" class="no-img" />
-                                                                <div class="row ProofOfAddress" id="proofOfAddressOverlay">
-                                                                    <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
-                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
-                                                                </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="effect-1 effects clearfix">
+                                                        <div class="col-lg-6 img text-center">
+                                                            <h3>Proof Of Address</h3>
+                                                            <img id="ProofOfAddress" class="no-img" />
+                                                            <div class="row ProofOfAddress" id="proofOfAddressOverlay">
+                                                                <div class="col-lg-4 image"><a class="expand previewDriverDocument"><span class="fa fa-search"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
                                                             </div>
+                                                        </div>
 
-                                                            <div class="col-lg-6 img">
-                                                                <h5>License</h5>
-                                                                <img id="License" class="no-img" />
-                                                                <div class="row License" id="licenseOverlay">
-                                                                    <div class="col-lg-4 image">
-                                                                        <a href="#"
-                                                                           data-toggle="tab" data-placement="top" title="Hooray!" class="expand previewDriverDocument"><span class="fa fa-search"></span></a>
-                                                                    </div>
-                                                                    <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
-                                                                    <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
+                                                        <div class="col-lg-6 img text-center">
+                                                            <h3>License</h3>
+                                                            <img id="License" class="no-img" />
+                                                            <div class="row License" id="licenseOverlay">
+                                                                <div class="col-lg-4 image">
+                                                                    <a href="#"
+                                                                       data-toggle="tab" data-placement="top" title="Hooray!" class="expand previewDriverDocument"><span class="fa fa-search"></span></a>
                                                                 </div>
+                                                                <div class="col-lg-4"><a class="expand acceptDriverDocument"><span class="fa fa-check"></span></a></div>
+                                                                <div class="col-lg-4"><a class="expand rejectDriverDocument"><span class="fa fa-times"></span></a></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -93,21 +72,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane" role="tabpanel" id="step2">
-                                        <h3>Step 2</h3>
-                                        <p>This is step 2</p>
-                                    </div>
-                                    <div class="clearfix"></div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
             <div class="modal-footer ">
                 <ul class="list-inline pull-right">
-                    <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
-                    <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
+                    <li><button type="button" class="btn btn-danger prev-step" data-dismiss="modal">Close</button></li>
                 </ul>
             </div>
         </div>

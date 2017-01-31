@@ -22,6 +22,8 @@ namespace DAL.Entities
         public DriverStatus Status { get; set; }
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
+        [ForeignKey("DriverLocation")]
+        public int? DriverLocationId { get; set; }
 
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
@@ -29,7 +31,7 @@ namespace DAL.Entities
         public int UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
 
-
+        public virtual DriverLocation DriverLocation { get; set; }
         public virtual Rating Rating { get; set; }
         public virtual ICollection<Card> Cards { get; set; }
         public virtual Person Person { get; set; }

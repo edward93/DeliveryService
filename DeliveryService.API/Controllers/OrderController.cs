@@ -116,7 +116,7 @@ namespace DeliveryService.API.Controllers
 
                     if (order == null) throw new Exception($"No order found with id: {orderId}");
 
-                    if (order.OrderStatus != OrderStatus.DriverAcceptedByBusiness)
+                    if (order.OrderStatus != OrderStatus.Pending)
                         throw new Exception($"Driver cannot accept order which has {order.OrderStatus} status.");
 
                     await _orderService.Value.RejectOrderAsync(order, driver);
@@ -127,12 +127,13 @@ namespace DeliveryService.API.Controllers
                     // Calculate rejection penalty if ther is one
                     var orders = await _orderHistoryService.Value.GetRejectedOrdersByDriverForCurrentDayAsync(driverId);
 
-                    if (orders.Count() >= 3)
-                    {
-                        // Penalize driver for rejecting more then 3 times during last 24 hours.
-                        await
-                            _driverPenaltyService.Value.PenalizeDriverForRejectingMoreThenThreeTimesAsync(driver, order);
-                    }
+                    // TODO: test this method
+                    //if (orders.Count() >= 3)
+                    //{
+                    //    // Penalize driver for rejecting more then 3 times during last 24 hours.
+                    //    await
+                    //        _driverPenaltyService.Value.PenalizeDriverForRejectingMoreThenThreeTimesAsync(driver, order);
+                    //}
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info,
@@ -225,7 +226,7 @@ namespace DeliveryService.API.Controllers
 
                     if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
 
-                    if (order.OrderStatus != OrderStatus.AcceptedByDriver)
+                    if (order.OrderStatus != OrderStatus.OnTheWayToPickUp)
                         throw new Exception(Config.Messages["CannotChangeOrderStatus"]);
 
                     await _orderService.Value.ArrivedAtPickUpLocationAsync(driver, order);
@@ -323,8 +324,6 @@ namespace DeliveryService.API.Controllers
                         // Penelize business for making driver to wait
                         await _businessPenaltyService.Value.CalculatePenaltyForDriverWaitingAsync(driver, order, driverWaitingTime);
                     }
-
-                    // TODO: Calculate Business penalties if there are eny
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info,
@@ -466,50 +465,6 @@ namespace DeliveryService.API.Controllers
         public async Task<IHttpActionResult> ReturnConfirmed(int driverId, int orderId)
         {
             throw new NotImplementedException();
-        }
-
-        [HttpPost, Authorize(Roles = Roles.Business)]
-        public async Task<IHttpActionResult> NotifyDriverAboutOrder(int driverId, int orderId)
-        {
-            var serviceResult = new ServiceResult();
-            using (var transaction = Context.Database.BeginTransaction())
-            {
-                try
-                {
-                    // Get driver
-                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
-
-                    if (driver == null)
-                        throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
-
-
-                    if (!driver.Approved)
-                        throw new Exception(Config.Messages["NonApprovedDriver"]);
-
-                    // Get order
-                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
-
-                    if (order == null) throw new Exception(string.Format(Config.Messages["OrderIdNotFound"], orderId));
-
-                    // Notify driver about order
-                    //var signalrHub = new AddRiderHub(_orderService.Value);
-
-                    //serviceResult = signalrHub.NotifyDriverAboutOrder(new OrderDetails(order), driverId);
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-
-                    serviceResult.Success = false;
-                    serviceResult.Messages.AddMessage(MessageType.Error,
-                        $"Error while notifying driver about order.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
-                }
-            }
-
-            return Json(serviceResult);
         }
     }
 }
