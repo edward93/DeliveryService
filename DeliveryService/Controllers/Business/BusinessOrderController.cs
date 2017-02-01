@@ -127,22 +127,24 @@ namespace DeliveryService.Controllers.Business
         }
 
         [HttpPost]
-        public async Task<ActionResult> AcceptDriver(int orderId, int driverId)
+        public async Task<ActionResult> AcceptDriver(AcceptRejectDriverViewModel model)
         {
             var serviceResult = new ServiceResult();
             using (var trasnaction = Context.Database.BeginTransaction())
             {
                 try
                 {
-                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+                    if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
 
-                    if (driver == null) throw new Exception($"Cannot find driver by driver id: {driverId}");
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(model.DriverId);
+
+                    if (driver == null) throw new Exception($"Cannot find driver by driver id: {model.DriverId}");
 
                     if (!driver.Approved) throw new Exception($"This driver is not approved by administration and is not allowed to proceed.");
 
-                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+                    var order = await _orderService.Value.GetByIdAsync<Order>(model.OrderId);
 
-                    if (order == null) throw new Exception($"Couldn't find an order with id: {orderId}.");
+                    if (order == null) throw new Exception($"Couldn't find an order with id: {model.OrderId}.");
 
                     // Calculate order initial price
                     order.OrderPrice = await _orderService.Value.CalculateOrderPriceAsync(order, driver);
@@ -151,7 +153,7 @@ namespace DeliveryService.Controllers.Business
                     await _orderService.Value.UpdateOrderAsync(order, order.Business.ContactPerson);
 
                     // Accept Driver
-                    await _orderService.Value.AcceptDriverForOrderAsync(orderId, driverId);
+                    await _orderService.Value.AcceptDriverForOrderAsync(model.OrderId, model.DriverId);
 
                     // Notify driver that he/she recieved an order.
                     // TODO: move HubConnection into DI
@@ -166,7 +168,7 @@ namespace DeliveryService.Controllers.Business
                         await hubConnection.Start();
                         var orderDetails = new OrderDetails(order);
                         
-                        var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", orderDetails, driverId);
+                        var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", orderDetails, model.DriverId);
 
                         if (!sigResult.Success) throw new Exception(sigResult.DisplayMessage());
                     }
@@ -190,24 +192,24 @@ namespace DeliveryService.Controllers.Business
         }
 
         [HttpPost]
-        public async Task<ActionResult> CancelDriver(int orderId, int driverId)
+        public async Task<ActionResult> CancelDriver(AcceptRejectDriverViewModel model)
         {
             var serviceResult = new ServiceResult();
             using (var trasnaction = Context.Database.BeginTransaction())
             {
                 try
                 {
-                    var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+                    var driver = await _driverService.Value.GetByIdAsync<Driver>(model.DriverId);
 
-                    if (driver == null) throw new Exception($"Cannot find driver by driver id: {driverId}");
+                    if (driver == null) throw new Exception($"Cannot find driver by driver id: {model.DriverId}");
 
                     if (!driver.Approved) throw new Exception($"This driver is not approved by administration and is not allowed to proceed.");
 
-                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+                    var order = await _orderService.Value.GetByIdAsync<Order>(model.OrderId);
 
-                    if (order == null) throw new Exception($"Couldn't find an order with id: {orderId}.");
+                    if (order == null) throw new Exception($"Couldn't find an order with id: {model.OrderId}.");
 
-                    await _orderService.Value.CancelDriverForOrderAsync(orderId, driverId);
+                    await _orderService.Value.CancelDriverForOrderAsync(model.OrderId, model.DriverId);
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver was canceled for this order by the business.");

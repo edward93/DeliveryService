@@ -137,6 +137,7 @@ $(document).ready(function () {
         clearOrdersModal();
         $("#addOrderModal").modal("show");
     });
+
     function addOrder(form) {
         getLongLatPickUp();
         getLongLatDropOff();
@@ -145,6 +146,7 @@ $(document).ready(function () {
                 window.UnBlockUi();
                 tableDriversList.fnDraw();
                 if (data.Success) {
+                    $("#acceptRejectDriverModal").modal("show");
                     for (let i = 0; i < data.Messages.length; i++) {
                         window.toastr.success(data.Messages[i].Value);
                     }

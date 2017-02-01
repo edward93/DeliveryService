@@ -73,10 +73,8 @@
     </div>
 </div>
 
-
-
-
 @Html.Partial("~/Views/BusinessOrder/Partials/_AddOrder.cshtml")
+@Html.Partial("~/Views/BusinessOrder/Partials/_AcceptRejectDriver.cshtml")
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -90,8 +88,18 @@
     @Scripts.Render("~/plugins/validate")
     @Scripts.Render("~/bundles/BusinessOrders")
 }
+
 <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
 <script src="http://localhost:8000/signalr/hubs"></script>
+<script>
+    function showNearestDriverOnMap(data) {
+        var driverLoc = {
+            lat: data.DriverLat,
+            lng: data.DriverLong
+        };
+        window.initMapAndShowDriver(driverLoc, 14, data);
+    }
+</script>
 <script>
     $.connection.hub.url = "http://localhost:8000/signalr";
     $.connection.hub.qs = "ClientBusinessId=-@Html.Raw(ViewBag.BusinessId)";
@@ -99,13 +107,10 @@
     // Declare a proxy to reference the hub.
     var hub = $.connection.addRiderHub;
 
-    // Create a function that the hub can call to broadcast messages.
+    // show driver when found one
     hub.client.notifyBusinessAboutDriver = function (data) {
-        // Html encode display name and message.
-        console.log("this is spartaaaaaaa", data);
+        showNearestDriverOnMap(data);
     };
-    // Set initial focus to message input box.
-    $('#message').focus();
     // Start the connection.
     $.connection.hub.start().done(function () {
     });

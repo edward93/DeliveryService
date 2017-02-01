@@ -298,6 +298,8 @@
     <Content Include="Content\landing\header_one.jpg" />
     <Content Include="Content\landing\header_two.jpg" />
     <Content Include="Content\landing\word_map.png" />
+    <Content Include="Content\mapIcons\rider-icon.png" />
+    <Content Include="Content\mapIcons\RiderIcon.png" />
     <Content Include="Content\patterns\1.png" />
     <Content Include="Content\patterns\2.png" />
     <Content Include="Content\patterns\3.png" />
@@ -1075,6 +1077,7 @@
     <Content Include="Views\Business\Partials\_AddNewBusiness.cshtml" />
     <Content Include="Views\Partials\FileUpload\_Files.cshtml" />
     <Content Include="Views\BusinessOrder\Partials\_AddOrder.cshtml" />
+    <Content Include="Views\BusinessOrder\Partials\_AcceptRejectDriver.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
