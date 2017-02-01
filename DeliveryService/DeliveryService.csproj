@@ -278,6 +278,7 @@
     <Compile Include="ViewModels\Business\BusinessOrder.cs" />
     <Compile Include="ViewModels\Business\PreviewBusinessModel.cs" />
     <Compile Include="ViewModels\Business\RegisterBusinessModel.cs" />
+    <Compile Include="ViewModels\Drivers\DriverDetailsForOrder.cs" />
     <Compile Include="ViewModels\Orders\MakeOrderViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

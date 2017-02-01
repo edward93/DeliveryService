@@ -6,7 +6,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title" id="Heading">Nearest Drivers</h4>
+                <h4 class="modal-title" id="Heading">Nearest Drivers Found For Order</h4>
             </div>
 
             <div class="modal-body">
@@ -16,9 +16,10 @@
                     <div class="name"></div>
                     <div class="rating"></div>
                     <div class="vehicle-type"></div>
+                    <div class="vehicle-reg-number"></div>
                 </div>
                 <input type="text" id="nearestDriverOrderId" value="" hidden />
-                <input type="text" id="nearestDriverId" value="" hidden/>
+                <input type="text" id="nearestDriverId" value="" hidden />
                 <div class="modal-footer ">
                     <button type="button" class="btn btn-danger" id="cancelDriver">Cancel Driver</button>
                     <button type="button" class="btn btn-primary" id="acceptDriver">Accept Driver</button>
@@ -168,12 +169,34 @@
         });
     }
 
+    function getDriverDetails(driverId) {
+        window.BlockUi();
+        $.post("/BusinessOrder/GetDriverDetailsForOrder",
+                    { driverId: driverId },
+       function (data) {
+           if (data.Success) {
+               var driver = data.Data;
+               $(".driver-information .name").html("<h3> Driver Full Name: " + driver.FullName + "</h3>");
+               $(".driver-information .vehicle-type").html("<h3> Driver Vehicle Type: " + driver.VehicleType + "</h3>");
+               $(".driver-information .rating").html("<h3> Driver Rating: " + driver.RatingAverageScore + "</h3>");
+               $(".driver-information .vehicle-reg-number").html("<h3> Driver Vehicle Registration Number: " + driver.VehicleRegNumber + "</h3>");
+           } else {
+               for (let i = 0; i < data.Messages.length; i++) {
+                   window.toastr.error(data.Messages[i].Value);
+               }
+           }
+       }).allways(function() {
+           window.UnBlockUi();
+        });
+    }
+
     window.initMapAndShowDriver = function (center, zoom, data) {
         centerLocation = center;
-        $("#nearestDriverOrderId").val = data.OrderId;
-        $("#nearestDriverId").val = data.DriverId;
+        $("#nearestDriverOrderId").val(data.OrderId);
+        $("#nearestDriverId").val(data.DriverId);
         map = new window.google.maps.Map(mapElement, mapOptions(center, zoom));
         showNearestDriver(center);
+        getDriverDetails(data.DriverId);
     }
 </script>
 
@@ -209,6 +232,7 @@
                         }
                     }).always(function () {
                         window.UnBlockUi();
+                    }).fail(function () {
                         window.toastr.error("Internal Server Error.");
                     });
                 modal.modal("hide");
@@ -236,10 +260,11 @@
                                 window.toastr.error(data.Messages[i].Value);
                             }
                         }
-                    }).always(function() {
+                    }).always(function () {
                         window.UnBlockUi();
+                    }).fail(function () {
                         window.toastr.error("Internal Server Error.");
-                });
+                    });
                 modal.modal("hide");
             });
 </script>

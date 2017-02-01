@@ -23,7 +23,6 @@ namespace DAL.Entities
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
         [ForeignKey("DriverLocation")]
-        public int? DriverLocationId { get; set; }
 
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }

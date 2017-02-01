@@ -18,7 +18,6 @@ namespace SignalRSelfHost.AddRiderHub
     {
         private static readonly ConnectionMapping<int> Connections = new ConnectionMapping<int>();
         private readonly Lazy<IOrderService> _orderService;
-        //private Timer timer;
         public AddRiderHub(IOrderService orderService)
         {
             _orderService = new Lazy<IOrderService>(() => orderService);
@@ -68,10 +67,6 @@ namespace SignalRSelfHost.AddRiderHub
 
                     Connections.Add(driverId, Context.ConnectionId);
 
-                    //timer = new System.Threading.Timer(async e => NotifyDriverAboutOrder(await GetOrder(), driverHub.DriverId),
-                    //null,
-                    //TimeSpan.Zero,
-                    //TimeSpan.FromSeconds(50));
                 }
                 else if (Context.Headers["BusinessId"] != null)
                 {
@@ -198,7 +193,7 @@ namespace SignalRSelfHost.AddRiderHub
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, "Error while notifying business about driver.");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
             }
 
             return serviceResult;

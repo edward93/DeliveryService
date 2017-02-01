@@ -349,11 +349,11 @@ namespace DeliveryService.API.Controllers
                     Person person = await _personService.Value.CreatePersonAsync(model.GetPerson(currentUser));
 
                     // Assign Member role to user
-                    var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Member);
+                    var roleResult = await UserManager.AddToRoleAsync(currentUser.Id, Roles.Driver);
 
                     if (roleResult.Succeeded)
                     {
-                        UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Member));
+                        UserManager.AddClaim(currentUser.Id, new Claim(ClaimTypes.Role, Roles.Driver));
                         serviceResult.Messages.AddMessage(MessageType.Info, "Person was successfully created!");
 
                         var driverAddress = model.GetAddress();
@@ -404,7 +404,7 @@ namespace DeliveryService.API.Controllers
                     // If any errors generate the error message and return json
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while registering driver");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
 
             }

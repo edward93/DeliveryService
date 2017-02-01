@@ -13,6 +13,7 @@ using DeliveryService.Helpers.DataTableHelper;
 using DeliveryService.Helpers.DataTableHelper.Models;
 using DeliveryService.Models.ViewModels;
 using DeliveryService.ViewModels.Business;
+using DeliveryService.ViewModels.Drivers;
 using DeliveryService.ViewModels.Orders;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
@@ -33,8 +34,8 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
-        //private readonly Lazy<IHubConnection> _hubConnection;
         private DataTable<BusinessOrder> _ordersDataTable;
+        private readonly string _signalRConnection;
 
         public BusinessOrderController(IConfig config,
             IDbContext context,
@@ -42,10 +43,9 @@ namespace DeliveryService.Controllers.Business
             IPersonService personService,
             IBusinessService businessService,
             IDriverService driverService,
-            IDriverLocationService driverLocationService
-            /*IHubConnection hubConnection*/) : base(config, context)
+            IDriverLocationService driverLocationService) : base(config, context)
         {
-            //_hubConnection = new Lazy<IHubConnection>(() => hubConnection);
+            _signalRConnection = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}/";
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
             _driverService = new Lazy<IDriverService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
@@ -93,7 +93,7 @@ namespace DeliveryService.Controllers.Business
                     {
                         var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
                         // Send this information to business via SignalR
-                        using (var hubConnection = new HubConnection("http://localhost:8000/")
+                        using (var hubConnection = new HubConnection(_signalRConnection)
                         {
                             TraceLevel = TraceLevels.All,
                             TraceWriter = Console.Out
@@ -106,8 +106,13 @@ namespace DeliveryService.Controllers.Business
                             var driverDetails = new DriverDetails(order, nearDriver);
                             var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
 
-                            if (!result.Success) throw new Exception($"Error while notifying business about nearest driver.");
+                            if (!result.Success)
+                                throw new Exception($"Error while notifying business about nearest driver.");
                         }
+                    }
+                    else
+                    {
+                        // TODO: Show business that 
                     }
 
                     serviceResult.Success = true;
@@ -119,7 +124,7 @@ namespace DeliveryService.Controllers.Business
                     transaction.Rollback();
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while creating new order.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -157,7 +162,7 @@ namespace DeliveryService.Controllers.Business
 
                     // Notify driver that he/she recieved an order.
                     // TODO: move HubConnection into DI
-                    using (var hubConnection = new HubConnection("http://localhost:8000/")
+                    using (var hubConnection = new HubConnection(_signalRConnection)
                     {
                         TraceLevel = TraceLevels.All,
                         TraceWriter = Console.Out
@@ -184,7 +189,7 @@ namespace DeliveryService.Controllers.Business
                     trasnaction.Rollback();
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting driver for the order.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -220,7 +225,7 @@ namespace DeliveryService.Controllers.Business
                     trasnaction.Rollback();
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while canceling driver for the order.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -244,6 +249,38 @@ namespace DeliveryService.Controllers.Business
             _ordersDataTable = new DataTable<BusinessOrder>(orders, param);
 
             return Json(_ordersDataTable.AjaxGetJsonData(), JsonRequestBehavior.AllowGet);
+        }
+
+        [Authorize(Roles = Roles.Business)]
+        [HttpPost]
+        public async Task<JsonResult> GetDriverDetailsForOrder(int driverId)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                var driver = (await _driverService.Value.GetByIdAsync<Driver>(driverId));
+                if (driver == null) throw new Exception($"Driver was not found {driverId}.");
+
+                var driverDetailsForOrder = new DriverDetailsForOrder
+                {
+                    FullName = $"{driver.Person.FirstName} {driver.Person.LastName}",
+                    VehicleType = driver.VehicleType.ToString(),
+                    RatingAverageScore = driver.Rating.AverageScore,
+                    VehicleRegNumber = driver.VehicleRegistrationNumber
+                };
+
+                serviceResult.Success = true;
+                serviceResult.Data = driverDetailsForOrder;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Driver Data for Order details was getted successfully");
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Internal Error");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+            }
+
+            return Json(serviceResult);
         }
     }
 }

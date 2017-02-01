@@ -11,8 +11,7 @@ namespace SignalRSelfHost.Infrastructure
         public string WebApiUrl { get; }
         public string DistanceMatrixApiUrl { get; }
 
-        public string ServerUrl => ConfigurationManager.AppSettings["ServerUrl"];
-        public string ServerPort => ConfigurationManager.AppSettings["ServerPort"];
-
+        public string SignalRServerUrl => ConfigurationManager.AppSettings["SignalRServerUrl"];
+        public string SignalRServerPort => ConfigurationManager.AppSettings["SignalRServerPort"];
     }
 }

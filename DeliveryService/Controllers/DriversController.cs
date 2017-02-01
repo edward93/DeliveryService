@@ -7,6 +7,8 @@ using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Models;
+using DeliveryService.Models.ViewModels;
+using DeliveryService.ViewModels.Drivers;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
@@ -53,6 +55,8 @@ namespace DeliveryService.Controllers
             return Content(list);
         }
 
+        
+
         [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> DeleteDriver(int driverId)
         {
@@ -86,7 +90,7 @@ namespace DeliveryService.Controllers
                     {
                         transaction.Rollback();
                         serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
+                        serviceResult.Messages.AddMessage(MessageType.Error, $"Could not find current logged in person by user id {User.Identity.GetUserId()}");
                     }
 
                 }
@@ -97,7 +101,7 @@ namespace DeliveryService.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while approving the document (Id: {documentId})");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -157,7 +161,7 @@ namespace DeliveryService.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while rejecting the document (Id: {model.DocumentId})");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
 
             }

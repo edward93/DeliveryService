@@ -70,7 +70,7 @@ namespace DeliveryService.API.Controllers
 
                     result.Success = false;
                     result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
-                    result.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    result.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
             return Json(result);
@@ -114,6 +114,7 @@ namespace DeliveryService.API.Controllers
                     driver.Person = person;
                     driver.UpdatedDt = DateTime.Now;
                     driver.VehicleType = driverDetails.VehicleType;
+                    driver.VehicleRegistrationNumber = driverDetails.VehicleRegistrationNumber;
                     await _driverService.Value.CreateDriverAsync(driver);
 
                     serviceResult.Data = null;
@@ -210,6 +211,7 @@ namespace DeliveryService.API.Controllers
                         DriverDocuments = driverDocList,
                         DriverId = driver.Id,
                         VehicleType = driver.VehicleType,
+                        VehicleRegistrationNumber = driver.VehicleRegistrationNumber,
                         Approved = driver.Approved,
                         RatingAverageScore = (double)driver.Rating.AverageScore
                     };
@@ -237,7 +239,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [System.Web.Http.Authorize(Roles = Roles.Member)]
+        [System.Web.Http.Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
         {
             var serviceResult = new ServiceResult();
@@ -261,7 +263,7 @@ namespace DeliveryService.API.Controllers
 
                     /* TODO: This should be changed to ex.Message to display only messages 
                        TODO: and ex.Tostring for logging to display more detailed information about error in a log file */
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                     // throw;
                 }
             }
@@ -285,14 +287,14 @@ namespace DeliveryService.API.Controllers
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, "Error while retrieving driver's location.");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
             }
 
             return Json(serviceResult);
         }
 
         [HttpPost]
-        [System.Web.Http.Authorize(Roles = Roles.Member)]
+        [System.Web.Http.Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> UpdateDriverLocation(DriverLocationModel model)
         {
 
@@ -333,7 +335,7 @@ namespace DeliveryService.API.Controllers
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, "Error while updating driver's location.");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
             }
 
             return Json(serviceResult, new JsonSerializerSettings

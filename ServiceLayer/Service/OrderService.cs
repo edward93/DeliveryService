@@ -214,7 +214,7 @@ namespace ServiceLayer.Service
             var lastOrderRecord =
                 await
                     _orderHistoryService.Value.GetRecordByDriverIdOrderIdAndActionTypeAsync(driver.Id, order.Id,
-                        ActionType.DriverPickedUpTheOrder);
+                        ActionType.DriverArrivedAtPickUpLocation);
 
             var orderHistory = new OrderHistory
             {
@@ -228,7 +228,7 @@ namespace ServiceLayer.Service
                 UpdatedDt = DateTime.UtcNow,
                 TimeToReachDropOffLocation = order.TimeToReachDropOffLocation,
                 TimeToReachPickUpLocation = order.TimeToReachPickUpLocation,
-                ActuallTimeToPickUpLocation = lastOrderRecord.ActuallTimeToPickUpLocation,
+                ActuallTimeToPickUpLocation = lastOrderRecord?.ActuallTimeToPickUpLocation,
                 OrderPrice = order.OrderPrice
             };
 

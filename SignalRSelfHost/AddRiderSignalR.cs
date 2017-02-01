@@ -16,7 +16,7 @@ namespace SignalRSelfHost
 {
     class AddRiderSignalR
     {
-        private static readonly Config Config;
+        private static readonly IConfig Config;
 
         static AddRiderSignalR()
         {
@@ -28,7 +28,7 @@ namespace SignalRSelfHost
         }
         public static void StartServer()
         {
-            string url = $"{Config.ServerUrl}:{Config.ServerPort}";
+            string url = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}";
             using (WebApp.Start<Startup>(url))
             {
                 Console.WriteLine("Server running on {0}", url);

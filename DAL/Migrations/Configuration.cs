@@ -21,7 +21,7 @@ namespace DAL.Migrations
         protected override void Seed(Context.DbContext context)
         {
             var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
-            rm.Create(new IdentityRole(Roles.Member));
+            rm.Create(new IdentityRole(Roles.Driver));
             rm.Create(new IdentityRole(Roles.Admin));
             rm.Create(new IdentityRole(Roles.Business));
 

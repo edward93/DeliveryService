@@ -46,7 +46,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> AcceptOrder(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();
@@ -85,7 +85,7 @@ namespace DeliveryService.API.Controllers
                     transaction.Rollback();
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while accepting an order.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -93,7 +93,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
 
         public async Task<IHttpActionResult> RejectOrder(int driverId, int orderId)
         {
@@ -146,7 +146,7 @@ namespace DeliveryService.API.Controllers
                     transaction.Rollback();
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, "Error while rejecting an order.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -155,7 +155,7 @@ namespace DeliveryService.API.Controllers
 
         // TODO: Q: Why do we need this action?
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> OnTheWayToPickUp(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();
@@ -195,7 +195,7 @@ namespace DeliveryService.API.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while changing order status to {OrderStatus.OnTheWayToPickUp}.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -203,7 +203,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> ArrivedAtThePickUpLocation(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();
@@ -268,7 +268,7 @@ namespace DeliveryService.API.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while changing order status to {OrderStatus.ArrivedAtThePickUpLocation}.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -276,7 +276,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> OrderPickedUp(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();
@@ -338,7 +338,7 @@ namespace DeliveryService.API.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while changing order status to {OrderStatus.ArrivedAtThePickUpLocation}.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -346,7 +346,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> Delivered(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();
@@ -390,7 +390,7 @@ namespace DeliveryService.API.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while changing order status to {OrderStatus.Delivered}.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -398,7 +398,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> NotDelivered(int driverId, int orderId, string reason)
         {
             var serviceResult = new ServiceResult();
@@ -439,7 +439,7 @@ namespace DeliveryService.API.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while changing order status to {OrderStatus.Delivered}.");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -447,21 +447,21 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> BookReturn(int driverId, int orderId)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> CancelReturn(int driverId, int orderId)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Member)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> ReturnConfirmed(int driverId, int orderId)
         {
             throw new NotImplementedException();
