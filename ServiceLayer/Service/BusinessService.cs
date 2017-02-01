@@ -22,5 +22,10 @@ namespace ServiceLayer.Service
         {
             return await _businessRepository.Value.CreateBusiness(business);
         }
+
+        public async Task<Business> GetBusinessByPersonId(int personId)
+        {
+            return await _businessRepository.Value.GetBusinessByPersonIdAsync(personId);
+        }
     }
 }

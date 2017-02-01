@@ -1,0 +1,270 @@
+﻿@Scripts.Render("~/bundles/selectize")
+@Styles.Render("~/plugins/selectize")
+
+<div class="modal fade" id="acceptRejectDriverModal" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title" id="Heading">Nearest Drivers Found For Order</h4>
+            </div>
+
+            <div class="modal-body">
+                <div id="nearestDriverMap" style="width: 100%; height: 300px"></div>
+                <div class="row driver-information">
+                    <div class="profile-pic-wrapper"></div>
+                    <div class="name"></div>
+                    <div class="rating"></div>
+                    <div class="vehicle-type"></div>
+                    <div class="vehicle-reg-number"></div>
+                </div>
+                <input type="text" id="nearestDriverOrderId" value="" hidden />
+                <input type="text" id="nearestDriverId" value="" hidden />
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-danger" id="cancelDriver">Cancel Driver</button>
+                    <button type="button" class="btn btn-primary" id="acceptDriver">Accept Driver</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+
+
+<style>
+    .pac-container {
+        background-color: #FFF;
+        z-index: 3000 !important;
+        position: fixed !important;
+        display: inline-block;
+        float: left;
+    }
+
+    #nearestDriverMap * {
+        overflow: visible;
+    }
+</style>
+
+<script>
+    var map;
+    var mapElement = document.getElementById('nearestDriverMap');
+    function mapOptions(center, zoom) {
+        return {
+            zoom: zoom,
+            center: center,
+            styles: [
+                {
+                    "featureType": "water",
+                    "stylers": [
+                        { "saturation": 43 },
+                        { "lightness": -11 },
+                        { "hue": "#0088ff" }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        { "hue": "#ff0000" },
+                        { "saturation": -100 },
+                        { "lightness": 99 }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "geometry.stroke",
+                    "stylers": [
+                        { "color": "#808080" },
+                        { "lightness": 54 }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        { "color": "#ece2d9" }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        { "color": "#ccdca1" }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        { "color": "#767676" }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [
+                        { "color": "#ffffff" }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "stylers": [
+                        { "visibility": "off" }
+                    ]
+                },
+                {
+                    "featureType": "landscape.natural",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        { "visibility": "on" },
+                        { "color": "#b8cb93" }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "stylers": [
+                        { "visibility": "on" }
+                    ]
+                },
+                {
+                    "featureType": "poi.sports_complex",
+                    "stylers": [
+                        { "visibility": "on" }
+                    ]
+                },
+                {
+                    "featureType": "poi.medical",
+                    "stylers": [
+                        { "visibility": "on" }
+                    ]
+                },
+                {
+                    "featureType": "poi.business",
+                    "stylers": [
+                        { "visibility": "simplified" }
+                    ]
+                }
+            ]
+        };
+    }
+
+    var centerLocation;
+    var modal = $("#acceptRejectDriverModal");
+
+    //TODO: Add Icon for the business also
+    var icons = {
+        rider: {
+            url: "@Url.Content("~/Content/mapIcons/rider-icon.png")"
+        }
+    };
+
+</script>
+<script>
+    function showNearestDriver(position) {
+        var marker = new window.google.maps.Marker({
+            position: new window.google.maps.LatLng(position.lat, position.lng),
+            icon: icons["rider"],
+            map: map
+        });
+    }
+
+    function getDriverDetails(driverId) {
+        window.BlockUi();
+        $.post("/BusinessOrder/GetDriverDetailsForOrder",
+                    { driverId: driverId },
+       function (data) {
+           if (data.Success) {
+               var driver = data.Data;
+               $(".driver-information .name").html("<h3> Driver Full Name: " + driver.FullName + "</h3>");
+               $(".driver-information .vehicle-type").html("<h3> Driver Vehicle Type: " + driver.VehicleType + "</h3>");
+               $(".driver-information .rating").html("<h3> Driver Rating: " + driver.RatingAverageScore + "</h3>");
+               $(".driver-information .vehicle-reg-number").html("<h3> Driver Vehicle Registration Number: " + driver.VehicleRegNumber + "</h3>");
+           } else {
+               for (let i = 0; i < data.Messages.length; i++) {
+                   window.toastr.error(data.Messages[i].Value);
+               }
+           }
+       }).allways(function() {
+           window.UnBlockUi();
+        });
+    }
+
+    window.initMapAndShowDriver = function (center, zoom, data) {
+        centerLocation = center;
+        $("#nearestDriverOrderId").val(data.OrderId);
+        $("#nearestDriverId").val(data.DriverId);
+        map = new window.google.maps.Map(mapElement, mapOptions(center, zoom));
+        showNearestDriver(center);
+        getDriverDetails(data.DriverId);
+    }
+</script>
+
+<script>
+    // This line insures that the modal is loaded befor the maps initialization by calling resize after modal animation is over
+    $("#acceptRejectDriverModal").on("shown.bs.modal", function () {
+        window.google.maps.event.trigger(map, "resize");
+        map.setCenter(centerLocation);
+    });
+
+
+    // Cancel offered driver
+    $("#cancelDriver")
+        .on("click",
+            function (e) {
+                e.preventDefault();
+                window.BlockUi();
+                $.post("/BusinessOrder/CancelDriver",
+                    {
+                        orderId: $("#nearestDriverOrderId").val(),
+                        driverId: $("#nearestDriverId").val()
+                    },
+                    function (data) {
+                        window.UnBlockUi();
+                        if (data.Success) {
+                            for (let i = 0; i < data.Messages.length; i++) {
+                                window.toastr.success(data.Messages[i].Value);
+                            }
+                        } else {
+                            for (let i = 0; i < data.Messages.length; i++) {
+                                window.toastr.error(data.Messages[i].Value);
+                            }
+                        }
+                    }).always(function () {
+                        window.UnBlockUi();
+                    }).fail(function () {
+                        window.toastr.error("Internal Server Error.");
+                    });
+                modal.modal("hide");
+            });
+
+    // Accept offered driver
+    $("#acceptDriver")
+        .on("click",
+            function (e) {
+                e.preventDefault();
+                window.BlockUi();
+                $.post("/BusinessOrder/AcceptDriver",
+                    {
+                        orderId: $("#nearestDriverOrderId").val(),
+                        driverId: $("#nearestDriverId").val()
+                    },
+                    function (data) {
+                        window.UnBlockUi();
+                        if (data.Success) {
+                            for (let i = 0; i < data.Messages.length; i++) {
+                                window.toastr.success(data.Messages[i].Value);
+                            }
+                        } else {
+                            for (let i = 0; i < data.Messages.length; i++) {
+                                window.toastr.error(data.Messages[i].Value);
+                            }
+                        }
+                    }).always(function () {
+                        window.UnBlockUi();
+                    }).fail(function () {
+                        window.toastr.error("Internal Server Error.");
+                    });
+                modal.modal("hide");
+            });
+</script>

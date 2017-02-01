@@ -1,0 +1,131 @@
+﻿@Styles.Render("~/Content/jQuery-File-Upload")
+
+@* <form id="fileupload" method="POST" enctype="multipart/form-data" data-url="@Url.Action("Upload", "Profile", new { userId = 5 })">*@
+
+    <div class="row fileupload-buttonbar" >
+        <div class="col-lg-7">
+            <span class="btn btn-success fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Upload Image</span>
+                <input type="file" name="files[]" />
+            </span>
+            <span class="fileupload-process"></span>
+        </div>
+    </div>
+    <table role="presentation" id="imageContainer" class="table table-striped"><tbody class="files"></tbody></table>
+
+
+
+<script id="template-upload" type="text/x-tmpl">
+    {% for (var i=0, file; file=o.files[i]; i++) {
+    %}
+    <tr class="template-upload fade">
+        <td>
+            <span class="preview"></span>
+        </td>
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="error text-danger"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+            <div class="progress " role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-bar progress-bar-success" style="width:0%;">
+                </div>
+            </div>
+        </td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+            <button class="btn btn-primary start" disabled>
+                <i class="glyphicon glyphicon-upload"></i>
+                <span>Start</span>
+            </button>
+            {% } %}
+            {% if (!i) { %}
+            <button class="btn btn-warning cancel">
+                <i class="glyphicon glyphicon-ban-circle"></i>
+                <span>Cancel</span>
+            </button>
+            {% } %}
+        </td>
+    </tr>
+    {% } %}
+</script>
+<script id="template-download" type="text/x-tmpl">
+    {% for (var i=0, file; file=o.files[i]; i++) {
+    $("#uploadContent").hide();
+    $("#memberImage").attr("src",file.thumbnailUrl);
+    $("#imageContent").show();
+
+
+    %}
+    <tr class="template-download fade">
+        <td>
+          @*  {% if (file.thumbnailUrl) { %}
+    <div id="imageContent" class="img-wrap preview">
+        <div onclick="foo('{%=file.deleteUrl%}');" class="close delete">&times;</div>
+        <img id="memberImage" src="{%=file.thumbnailUrl%}">
+    </div>
+    {% } %}*@
+        </td>
+        <td>
+            {% if (file.deleteUrl) { %}
+            {% } else { %}
+            <button class="btn btn-warning cancel">
+                <i class="glyphicon glyphicon-ban-circle"></i>
+                <span>Cancel</span>
+            </button>
+            {% } %}
+        </td>
+    </tr>
+    {% } %}
+</script>
+
+
+<script>
+    function completeAndRedirect() {
+        console.log()
+        alert("sssss");
+    }
+
+    var $form = null;
+    $(function () {
+
+        $form = $('#fileupload').fileupload({
+            dataType: 'json',
+            autoUpload: true,
+        });
+    });
+</script>
+
+<style>
+    .img-wrap {
+        position: relative;
+        display: inline-block;
+        font-size: 0;
+    }
+
+        .img-wrap .close {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 100;
+            background-color: #fff;
+            padding: 5px 4px 4px;
+            color: #c54646;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: .2;
+            text-align: center;
+            font-size: 26px;
+            line-height: 13px;
+            border-radius: 50%;
+        }
+
+        .img-wrap:hover .close {
+            opacity: 1;
+        }
+</style>
+@Scripts.Render("~/bundles/jQuery-File-Upload")
+
+

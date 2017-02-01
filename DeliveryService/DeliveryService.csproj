@@ -72,6 +72,10 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.1\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -243,19 +247,25 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\BusinessController.cs" />
-    <Compile Include="Controllers\BusinessDashboardController.cs" />
-    <Compile Include="Controllers\BusinessProfileController.cs" />
+    <Compile Include="Controllers\Business\BusinessController.cs" />
+    <Compile Include="Controllers\Business\BusinessDashboardController.cs" />
+    <Compile Include="Controllers\Business\BusinessProfileController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\DriversController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LiveMapController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\BusinesRequestsController.cs" />
+    <Compile Include="Controllers\Business\BusinessOrderController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DataTableHelper\DataTable.cs" />
+    <Compile Include="Helpers\DataTableHelper\Models\DataParam.cs" />
+    <Compile Include="Helpers\DataTableHelper\Models\DataTableData.cs" />
+    <Compile Include="Helpers\FilesHelper.cs" />
+    <Compile Include="Helpers\FileUpload.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
+    <Compile Include="Helpers\ImageHandler.cs" />
     <Compile Include="Infrastructure\Config.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminDashBoardModel.cs" />
@@ -263,18 +273,34 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\RegisterBusinessModel.cs" />
+    <Compile Include="ViewModels\Business\BusinessDocumentModel.cs" />
+    <Compile Include="ViewModels\Business\BusinessListItem.cs" />
+    <Compile Include="ViewModels\Business\BusinessOrder.cs" />
+    <Compile Include="ViewModels\Business\PreviewBusinessModel.cs" />
+    <Compile Include="ViewModels\Business\RegisterBusinessModel.cs" />
+    <Compile Include="ViewModels\Drivers\DriverDetailsForOrder.cs" />
+    <Compile Include="ViewModels\Orders\MakeOrderViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\email.css" />
     <Content Include="Content\globalStyles.css" />
+    <Content Include="Content\jQuery.FileUpload\css\jquery.fileupload-noscript.css" />
+    <Content Include="Content\jQuery.FileUpload\css\jquery.fileupload-ui-noscript.css" />
+    <Content Include="Content\jQuery.FileUpload\css\jquery.fileupload-ui.css" />
+    <Content Include="Content\jQuery.FileUpload\css\jquery.fileupload.css" />
+    <Content Include="Content\jQuery.FileUpload\img\loading.gif" />
+    <Content Include="Content\jQuery.FileUpload\img\progressbar.gif" />
     <Content Include="Content\landing\avatar_all.png" />
     <Content Include="Content\landing\header_one.jpg" />
     <Content Include="Content\landing\header_two.jpg" />
     <Content Include="Content\landing\word_map.png" />
+    <Content Include="Content\mapIcons\rider-icon.png" />
+    <Content Include="Content\mapIcons\RiderIcon.png" />
     <Content Include="Content\patterns\1.png" />
     <Content Include="Content\patterns\2.png" />
     <Content Include="Content\patterns\3.png" />
@@ -394,7 +420,57 @@
     <Content Include="Content\plugins\switchery\switchery.css" />
     <Content Include="Content\plugins\toastr\toastr.min.css" />
     <Content Include="Content\plugins\touchspin\jquery.bootstrap-touchspin.min.css" />
+    <Content Include="Content\Selectize\css\selectize.bootstrap2.css" />
+    <Content Include="Content\Selectize\css\selectize.bootstrap3.css" />
+    <Content Include="Content\Selectize\css\selectize.css" />
+    <Content Include="Content\Selectize\css\selectize.default.css" />
+    <Content Include="Content\Selectize\css\selectize.legacy.css" />
+    <Content Include="Content\Selectize\js\selectize.js" />
+    <Content Include="Content\Selectize\js\selectize.min.js" />
+    <Content Include="Content\Selectize\js\standalone\selectize.js" />
+    <Content Include="Content\Selectize\js\standalone\selectize.min.js" />
     <Content Include="Content\style.css" />
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\menu.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\font-awesome\css\font-awesome.css" />
     <Content Include="fonts\font-awesome\css\font-awesome.min.css" />
@@ -402,6 +478,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\boldmindLogo.png" />
     <Content Include="Images\dagmara.jpg" />
     <Content Include="Images\insurance.png" />
     <Content Include="Images\license.png" />
@@ -409,7 +486,12 @@
     <Content Include="Images\main_logo.png" />
     <Content Include="Images\passport.png" />
     <Content Include="Images\proofOfAddres.png" />
+    <Content Include="Scripts\app\BusinessDashboard\businessDashboard.main.js" />
+    <Content Include="Scripts\app\BusinessOrders\businessOrder.js" />
     <Content Include="Scripts\app\Business\business.main.js" />
+    <Content Include="Scripts\app\Business\businessLiveMap.js" />
+    <Content Include="Scripts\app\Business\businessProfile.js" />
+    <Content Include="Scripts\app\Business\Partials\businessMakeOrder.js" />
     <Content Include="Scripts\app\DashBoard\dashboard.main.js" />
     <Content Include="Scripts\app\Drivers\drivers.main.js" />
     <Content Include="Scripts\app\Drivers\Partials\driverModal.main.js" />
@@ -461,21 +543,58 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Selectize\less\selectize.less" />
+    <Content Include="Content\Selectize\less\selectize.legacy.less" />
+    <Content Include="Content\Selectize\less\selectize.default.less" />
+    <Content Include="Content\Selectize\less\selectize.bootstrap3.less" />
+    <Content Include="Content\Selectize\less\selectize.bootstrap2.less" />
+    <Content Include="Content\Selectize\less\plugins\remove_button.less" />
+    <Content Include="Content\Selectize\less\plugins\optgroup_columns.less" />
+    <Content Include="Content\Selectize\less\plugins\dropdown_header.less" />
+    <Content Include="Content\Selectize\less\plugins\drag_drop.less" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\addRiderEdward.pubxml" />
     <None Include="Properties\PublishProfiles\AddRiderSarkis.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-2.1.1.min.map" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <None Include="Scripts\jquery-3.1.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.1.1.js" />
+    <Content Include="Scripts\jquery-3.1.1.min.js" />
+    <Content Include="Scripts\jquery-3.1.1.slim.js" />
+    <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.1.1.min.map" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
+    <Content Include="Scripts\jQuery.FileUpload\canvas-to-blob.min.js" />
+    <Content Include="Scripts\jQuery.FileUpload\cors\jquery.postmessage-transport.js" />
+    <Content Include="Scripts\jQuery.FileUpload\cors\jquery.xdr-transport.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-angular.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-audio.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-image.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-jquery-ui.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-process.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-ui.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-validate.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload-video.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.fileupload.js" />
+    <Content Include="Scripts\jQuery.FileUpload\jquery.iframe-transport.js" />
+    <Content Include="Scripts\jQuery.FileUpload\load-image.all.min.js" />
+    <Content Include="Scripts\jQuery.FileUpload\tmpl.min.js" />
+    <Content Include="Scripts\jQuery.FileUpload\vendor\jquery.ui.widget.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.1.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.1.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\plugins\blueimp\jquery.blueimp-gallery.min.js" />
     <Content Include="Scripts\plugins\bootstrap-markdown\bootstrap-markdown.js" />
     <Content Include="Scripts\plugins\bootstrap-markdown\markdown.js" />
@@ -898,8 +1017,11 @@
     <Content Include="Scripts\plugins\velocity\velocity.ui.min.js" />
     <Content Include="Scripts\plugins\video\responsible-video.js" />
     <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Style\BusinessProfile\businessProfile.css" />
     <Content Include="Style\DashBoard\dashboard.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -947,17 +1069,20 @@
     <Content Include="Views\DashBoard\Index.cshtml" />
     <Content Include="Views\Drivers\Partials\_DriverModal.cshtml" />
     <Content Include="Views\Business\Index.cshtml" />
-    <Content Include="Views\Business\Partials\_AddNewBusiness.cshtml" />
     <Content Include="Views\BusinessDashboard\DashBoard.cshtml" />
     <Content Include="Views\Partials\LeftNavigation\_SuperAdminNavigation.cshtml" />
     <Content Include="Views\Partials\LeftNavigation\_BusinessNavigation.cshtml" />
     <Content Include="Views\BusinessProfile\BusinessProfile.cshtml" />
-    <Content Include="Views\BusinesRequests\BusinesRequests.cshtml" />
+    <Content Include="Views\BusinessOrder\BusinessOrders.cshtml" />
     <Content Include="Views\LiveMap\Map.cshtml" />
+    <Content Include="Views\Business\Partials\_AddNewBusiness.cshtml" />
+    <Content Include="Views\Partials\FileUpload\_Files.cshtml" />
+    <Content Include="Views\BusinessOrder\Partials\_AddOrder.cshtml" />
+    <Content Include="Views\BusinessOrder\Partials\_AcceptRejectDriver.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\app\Business\Partials\" />
+    <Folder Include="Hubs\" />
     <Folder Include="Views\PartnerRequests\" />
   </ItemGroup>
   <ItemGroup>
@@ -966,12 +1091,15 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{a7a03484-d2de-45f9-9b47-603d1975b4b8}</Project>
       <Name>DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DeliveryService.Models\DeliveryService.Models.csproj">
+      <Project>{B0ED943F-9333-4C81-9293-33AAF7761678}</Project>
+      <Name>DeliveryService.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
       <Project>{d1d10bf2-d520-43de-b4db-c94436c67ba9}</Project>

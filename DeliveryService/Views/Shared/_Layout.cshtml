@@ -17,11 +17,11 @@
     @Styles.Render("~/Content/css")
     @Styles.Render("~/font-awesome/css")
     @Scripts.Render("~/bundles/jquery")
-    
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQ-zmK2ZkGddWsFDy_cPz4TwLJOYvZD7o&&libraries=places"></script>
 </head>
 <body>
     <!-- Skin configuration box -->
-    <!-- @Html.Partial("_SkinConfig") -->
+    @Html.Partial("_SkinConfig")
     <!-- Wrapper-->
     <!-- PageClass give you ability to specify custom style for specific view based on action -->
     <div id="wrapper" class="@Html.PageClass()">

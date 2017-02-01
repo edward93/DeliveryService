@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Orders List";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Orders List</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="@Url.Action("Index", "DashBoard")">Home</a>
+            </li>
+            <li class="active">
+                <strong>Orders</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools" style="margin-top: -5px">
+                        <a id="btnMakeNewOrder" class="btn btn-primary btn-sm">
+                            <i class="fa fa-plus"></i> Make Order
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="#">Config option 2</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table id="tblDriversList" class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Customer Phone</th>
+                                <th>Order Number</th>
+                                <th>Time To Reach PickUpLocation</th>
+                                <th>Time To Reach DropOffLocation</th>
+                                <th>Order Status</th>
+                                <th>Vehicle Type</th>
+                                <th class="text-right" data-sort-ignore="true">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Customer Phone</th>
+                                <th>Order Number</th>
+                                <th>Time To Reach PickUpLocation</th>
+                                <th>Time To Reach DropOffLocation</th>
+                                <th>Order Status</th>
+                                <th>Vehicle Type</th>
+                                <th class="text-right" data-sort-ignore="true">Action</th>
+                            </tr>
+                        </tfoot>
+                      
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Views/BusinessOrder/Partials/_AddOrder.cshtml")
+@Html.Partial("~/Views/BusinessOrder/Partials/_AcceptRejectDriver.cshtml")
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    @Styles.Render("~/plugins/toastrStyles")
+}
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+    @Scripts.Render("~/plugins/toastr")
+    @Scripts.Render("~/plugins/validate")
+    @Scripts.Render("~/bundles/BusinessOrders")
+}
+
+<script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+<script src="http://localhost:8000/signalr/hubs"></script>
+<script>
+    function showNearestDriverOnMap(data) {
+        var driverLoc = {
+            lat: data.DriverLat,
+            lng: data.DriverLong
+        };
+        window.initMapAndShowDriver(driverLoc, 14, data);
+    }
+</script>
+<script>
+    $.connection.hub.url = "http://localhost:8000/signalr";
+    $.connection.hub.qs = "ClientBusinessId=-@Html.Raw(ViewBag.BusinessId)";
+
+    // Declare a proxy to reference the hub.
+    var hub = $.connection.addRiderHub;
+
+    // show driver when found one
+    hub.client.notifyBusinessAboutDriver = function (data) {
+        showNearestDriverOnMap(data);
+    };
+    // Start the connection.
+    $.connection.hub.start().done(function () {
+    });
+</script>

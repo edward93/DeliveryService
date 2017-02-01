@@ -43,7 +43,6 @@ namespace DeliveryService.App_Start
             // NOTE: To load from web.config uncomment the line below. Make sure to add a Microsoft.Practices.Unity.Configuration to the using statements.
             // container.LoadConfiguration();
 
-            // TODO: Register your types here
             container.RegisterType<IDbContext, DbContext>(new PerRequestLifetimeManager());
             container.RegisterType<IConfig, Config>(new PerRequestLifetimeManager());
 
@@ -55,6 +54,15 @@ namespace DeliveryService.App_Start
             container.RegisterType<IDriverUploadRepository, DriverUploadRepository>(new PerRequestLifetimeManager());
             container.RegisterType<IPersonRepository, PersonRepository>(new PerRequestLifetimeManager());
             container.RegisterType<IBusinessRepository, BusinessRespository>(new PerRequestLifetimeManager());
+            container.RegisterType<IOrderRepository, OrderRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IOrderHistoryRepository, OrderHistoryRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IBusinessUploadRepository, BusinessUploadRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IRateRepository, RateRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverLocationRepository, DriverLocationRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IBusinessPenaltyRepository, BusinessPenaltyRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverPenaltyRepository, DriverPenaltyRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverFeeRepository, DriverFeeRepository>(new PerRequestLifetimeManager());
+            container.RegisterType<IDiscountRepository, DiscountRepository>(new PerRequestLifetimeManager());
 
             // register Services
             container.RegisterType<IEntityService, EntityService>(new PerRequestLifetimeManager());
@@ -64,6 +72,15 @@ namespace DeliveryService.App_Start
             container.RegisterType<IDriverUploadService, DriverUploadService>(new PerRequestLifetimeManager());
             container.RegisterType<IPersonService, PersonService>(new PerRequestLifetimeManager());
             container.RegisterType<IBusinessService, BusinessService>(new PerRequestLifetimeManager());
+            container.RegisterType<IOrderService, OrderService>(new PerRequestLifetimeManager());
+            container.RegisterType<IOrderHistoryService, OrderHistoryService>(new PerRequestLifetimeManager());
+            container.RegisterType<IBusinessUploadService, BusinessUploadService>(new PerRequestLifetimeManager());
+            container.RegisterType<IRateService, RateService>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverLocationService, DriverLocationService>(new PerRequestLifetimeManager());
+            container.RegisterType<IBusinessPenaltyService, BusinessPenaltyService>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverPenaltyService, DriverPenaltyService>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverFeeService, DriverFeeService>(new PerRequestLifetimeManager());
+            container.RegisterType<IDiscountService, DiscountService>(new PerRequestLifetimeManager());
         }
     }
 }

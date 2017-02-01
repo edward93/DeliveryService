@@ -3,6 +3,8 @@
     public enum PenaltyType
     {
         DriverThirdRejection = 0,
+        DriverArrivalDelay,
+        DriverIsWaitingForBusiness,
         Other
     }
 }

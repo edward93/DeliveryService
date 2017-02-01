@@ -24,9 +24,13 @@ namespace DAL.Entities
         public DateTime UpdatedDt { get; set; }
         public int UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
+        [ForeignKey("Rating")]
+        public int? RatingId { get; set; }
 
+        public virtual Rating Rating { get; set; }
         public virtual ICollection<Card> Cards { get; set; }
         public virtual Person ContactPerson { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Discount> Discounts { get; set; }
     }
 }

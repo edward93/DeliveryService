@@ -51,6 +51,8 @@ namespace DeliveryService.API.Models
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
+        [Required]
+        public string VehicleRegistrationNumber { get; set; }
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
@@ -58,6 +60,8 @@ namespace DeliveryService.API.Models
         public Sex Sex { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Phone { get; set; }
+
+        public VehicleType VehicleType { get; set; }
 
 #region Address
         public string AddressLine1 { get; set; }

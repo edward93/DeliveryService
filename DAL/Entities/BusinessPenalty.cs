@@ -11,12 +11,6 @@ namespace DAL.Entities
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedDt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsDeleted { get; set; }
-
         [Required]
         [Precision(19, 4)]
         public decimal Amount { get; set; }
@@ -32,6 +26,11 @@ namespace DAL.Entities
 
         [ForeignKey("Order")]
         public int? AssociatedOrderId { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedDt { get; set; }
+        public int UpdatedBy { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual Order Order { get; set; }
         public virtual Business Business { get; set; }

@@ -65,7 +65,7 @@
                                     <td>@item.Person.Email</td>
                                     <td>@item.Status</td>
                                     <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
-                                    <td>@item.Person.DateOfBirth</td>
+                                    <td>@item.Person.DateOfBirth.ToString(@"dd MMMM yyyy")</td>
                                     <td>@item.Person.Sex</td>
                                     <td class="text-center">
                                         <div class="btn-group">
@@ -99,6 +99,7 @@
     </div>
 </div>
 
+
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
     @Styles.Render("~/plugins/sweetAlertStyles")
@@ -114,6 +115,7 @@
     @Scripts.Render("~/bundles/lightBox")
     @Scripts.Render("~/bundles/Drivers")
     @Scripts.Render("~/bundles/Drivers_Partials")
+    @Scripts.Render("~/plugins/validate")
 }
 
 

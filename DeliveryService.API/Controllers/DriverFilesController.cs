@@ -42,9 +42,16 @@ namespace DeliveryService.API.Controllers
             {
                 try
                 {
+                    var document = await _driverUploadService.Value.GetByIdAsync<DriverUpload>(Id);
+                    if (document == null) throw new Exception($"No document found for given Id {Id}");
+
                     await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(Id);
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Document was deleted successfully");
+
+
+                    await _driverService.Value.RejectDriverAsync(document.DriverId, document.DriverId);
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Driver was rejected because of missing document");
 
                     scope.Complete();
                     transaction.Commit();
@@ -78,9 +85,17 @@ namespace DeliveryService.API.Controllers
                     var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
                     var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
 
+                    var driverVehicleType = driver.VehicleType;
+
+                    var driverDocumentWithState = new DriverDocumentsWithState();
                     var driverDocList = new List<DriverDocumentModel>();
+                    int counter = 0;
                     foreach (var document in driverDocuments)
                     {
+                        if (document.DocumentStatus == DocumentStatus.Approved)
+                        {
+                            counter++;
+                        }
                         driverDocList.Add(new DriverDocumentModel()
                         {
                             DocumentType = document.UploadType,
@@ -92,8 +107,37 @@ namespace DeliveryService.API.Controllers
                             DocumentId = document.Id
                         });
                     }
+
+                    if (driverVehicleType == VehicleType.Van || driverVehicleType == VehicleType.Car ||
+                        driverVehicleType == VehicleType.Motorbike)
+                    {
+                        if (counter == 4)
+                        {
+                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                        }
+                        else
+                        {
+                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                        }
+                    }
+                    else
+                    {
+                        if (counter > 2)
+                        {
+                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                        }
+                        else
+                        {
+                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                        }
+                    }
+
+                    driverDocumentWithState.Approved = await IsDriverApproved(driver.Id);
+                    driverDocumentWithState.DriverDocumentsList = driverDocList;
+
+
                     serviceResult.Success = true;
-                    serviceResult.Data = driverDocList;
+                    serviceResult.Data = driverDocumentWithState;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver Documents list was created successfully");
 
                     scope.Complete();
@@ -114,14 +158,20 @@ namespace DeliveryService.API.Controllers
             return Json(serviceResult);
         }
 
+        private async Task<bool> IsDriverApproved(int driverId)
+        {
+            var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+            return driver.Approved;
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IHttpActionResult> AddFileForDriver()
         {
             var serviceResult = new ServiceResult();
 
-           // using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-           // using (var transaction = Context.Database.BeginTransaction())
+            // using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            // using (var transaction = Context.Database.BeginTransaction())
             {
                 try
                 {
@@ -138,15 +188,15 @@ namespace DeliveryService.API.Controllers
                         HttpContext.Current.Request.Form["ExpireDate"] != null)
                     {
                         documentType =
-                            (UploadType) Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
+                            (UploadType)Convert.ToInt32(HttpContext.Current.Request.Form["DocumentType"]);
                     }
                     else
                     {
                         serviceResult.Success = false;
                         serviceResult.Messages.AddMessage(MessageType.Error, "This request is not properly formatted");
 
-                    //    scope.Dispose();
-                   //     transaction.Rollback();
+                        //    scope.Dispose();
+                        //     transaction.Rollback();
                     }
 
                     string root = HttpContext.Current.Server.MapPath("~/App_Data");
@@ -165,8 +215,8 @@ namespace DeliveryService.API.Controllers
                             serviceResult.Messages.AddMessage(MessageType.Error,
                                 "This request is not properly formatted");
 
-                        //    scope.Dispose();
-                        //    transaction.Rollback();
+                            //    scope.Dispose();
+                            //    transaction.Rollback();
                         }
 
                         var document = PrepareFile(file, documentType);
@@ -204,8 +254,8 @@ namespace DeliveryService.API.Controllers
 
                         var driverDocument = await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
 
-                   //     scope.Complete();
-                   //     transaction.Rollback();
+                        //     scope.Complete();
+                        //     transaction.Rollback();
 
                         serviceResult.Data = driverDocument.Id;
                         serviceResult.Success = true;
@@ -215,8 +265,8 @@ namespace DeliveryService.API.Controllers
                 }
                 catch (Exception e)
                 {
-                  //  scope.Dispose();
-                  //  transaction.Rollback();
+                    //  scope.Dispose();
+                    //  transaction.Rollback();
 
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error, e.Message);

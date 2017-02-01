@@ -46,6 +46,26 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -63,10 +83,13 @@
     <Compile Include="Entities\Address.cs" />
     <Compile Include="Entities\Business.cs" />
     <Compile Include="Entities\BusinessPenalty.cs" />
+    <Compile Include="Entities\BusinessUpload.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\DeviceOrientation.cs" />
+    <Compile Include="Entities\Discount.cs" />
     <Compile Include="Entities\Driver.cs" />
     <Compile Include="Entities\DriverFee.cs" />
+    <Compile Include="Entities\OrderHistory.cs" />
     <Compile Include="Entities\DriverPenalty.cs" />
     <Compile Include="Entities\DriverUpload.cs" />
     <Compile Include="Entities\DriverLocation.cs" />
@@ -76,8 +99,11 @@
     <Compile Include="Entities\Interfaces\IGeoLocation.cs" />
     <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\Person.cs" />
+    <Compile Include="Entities\Rate.cs" />
     <Compile Include="Entities\Rating.cs" />
     <Compile Include="Entities\User.cs" />
+    <Compile Include="Enums\ActionType.cs" />
+    <Compile Include="Enums\BusinessUploadType.cs" />
     <Compile Include="Enums\CardType.cs" />
     <Compile Include="Enums\Country.cs" />
     <Compile Include="Enums\DocumentStatus.cs" />
@@ -85,6 +111,7 @@
     <Compile Include="Enums\FeeType.cs" />
     <Compile Include="Enums\MessageType.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
+    <Compile Include="Enums\PaymentType.cs" />
     <Compile Include="Enums\PenaltyType.cs" />
     <Compile Include="Enums\Sex.cs" />
     <Compile Include="Enums\UploadType.cs" />
@@ -92,8 +119,6 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constants\Roles.cs" />
-    <Compile Include="UnitOfWork\GenericRepository.cs" />
-    <Compile Include="UnitOfWork\UnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

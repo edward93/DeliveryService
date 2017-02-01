@@ -9,12 +9,14 @@ using System.Web.Http;
 using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.API.Hubs;
 using DeliveryService.API.ViewModel.Models;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using ServiceLayer.Service;
+using DAL.Constants;
 
 namespace DeliveryService.API.Controllers
 {
@@ -26,7 +28,7 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IDriverLocationService> _driverLocationService;
 
         public DriverController(IDriverService service, IConfig config, IDbContext context,
-            IPersonService personService, 
+            IPersonService personService,
             IDriverUploadService driverUploadService,
             IDriverLocationService driverLocationService) : base(config, context)
         {
@@ -68,13 +70,13 @@ namespace DeliveryService.API.Controllers
 
                     result.Success = false;
                     result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
-                    result.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    result.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
             return Json(result);
         }
 
-        [Authorize]
+        [System.Web.Http.Authorize]
         [HttpPost]
         public async Task<IHttpActionResult> UpdateDriver(DriverDetails driverDetails)
         {
@@ -111,11 +113,47 @@ namespace DeliveryService.API.Controllers
                     person.UpdatedDt = DateTime.Now;
                     driver.Person = person;
                     driver.UpdatedDt = DateTime.Now;
+                    driver.VehicleType = driverDetails.VehicleType;
+                    driver.VehicleRegistrationNumber = driverDetails.VehicleRegistrationNumber;
                     await _driverService.Value.CreateDriverAsync(driver);
 
                     serviceResult.Data = null;
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver Data was updated successfully");
+
+
+                    var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
+                    int counter = 0;
+                    foreach (var document in driverDocuments)
+                    {
+                        if (document.DocumentStatus == DocumentStatus.Approved)
+                        {
+                            counter++;
+                        }
+                    }
+                    if (driverDetails.VehicleType == VehicleType.Van || driverDetails.VehicleType == VehicleType.Car ||
+                        driverDetails.VehicleType == VehicleType.Motorbike)
+                    {
+                        if (counter == 4)
+                        {
+                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                        }
+                        else
+                        {
+                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                        }
+                    }
+                    else
+                    {
+                        if (counter > 2)
+                        {
+                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                        }
+                        else
+                        {
+                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                        }
+                    }
 
                     scope.Complete();
                     transaction.Commit();
@@ -136,7 +174,7 @@ namespace DeliveryService.API.Controllers
             Json(serviceResult);
         }
 
-        [Authorize]
+        [System.Web.Http.Authorize]
         [HttpPost]
         public async Task<IHttpActionResult> GetDriverDetails()
         {
@@ -170,7 +208,12 @@ namespace DeliveryService.API.Controllers
                         Phone = driver.Person.Phone,
                         Sex = driver.Person.Sex,
                         Addresses = driver.Addresses.ToList(),
-                        DriverDocuments = driverDocList
+                        DriverDocuments = driverDocList,
+                        DriverId = driver.Id,
+                        VehicleType = driver.VehicleType,
+                        VehicleRegistrationNumber = driver.VehicleRegistrationNumber,
+                        Approved = driver.Approved,
+                        RatingAverageScore = (double)driver.Rating.AverageScore
                     };
 
                     result.Success = true;
@@ -196,6 +239,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
+        [System.Web.Http.Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
         {
             var serviceResult = new ServiceResult();
@@ -219,8 +263,8 @@ namespace DeliveryService.API.Controllers
 
                     /* TODO: This should be changed to ex.Message to display only messages 
                        TODO: and ex.Tostring for logging to display more detailed information about error in a log file */
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
-                    throw;
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+                    // throw;
                 }
             }
 
@@ -243,30 +287,55 @@ namespace DeliveryService.API.Controllers
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, "Error while retrieving driver's location.");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
             }
 
             return Json(serviceResult);
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> UpdateDriverLocation(DriverLocation model)
+        [System.Web.Http.Authorize(Roles = Roles.Driver)]
+        public async Task<IHttpActionResult> UpdateDriverLocation(DriverLocationModel model)
         {
+
             var serviceResult = new ServiceResult();
             try
             {
                 if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
 
-                await _driverLocationService.Value.UpdateDriverLocation(model);
+                var driver = await _driverService.Value.GetByIdAsync<Driver>(model.DriverId);
+                if (driver != null)
+                {
+                    var driverLocation = new DriverLocation
+                    {
+                        Name = model.Name,
+                        Address = model.Address,
+                        Id = model.DriverId,
+                        Lat = model.Lat,
+                        Long = model.Long,
+                        CreatedBy = model.DriverId,
+                        CreatedDt = DateTime.Now,
+                        UpdatedBy = model.DriverId,
+                        UpdatedDt = DateTime.Now
+                    };
 
-                serviceResult.Success = true;
-                serviceResult.Messages.AddMessage(MessageType.Info, "The driver location was updated.");
+                    await _driverLocationService.Value.UpdateDriverLocation(driverLocation);
+
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "The driver location was updated.");
+                }
+                else
+                {
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, $"No driver found for given Id {model.DriverId}");
+                }
+
             }
             catch (Exception ex)
             {
                 serviceResult.Success = false;
                 serviceResult.Messages.AddMessage(MessageType.Error, "Error while updating driver's location.");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
             }
 
             return Json(serviceResult, new JsonSerializerSettings

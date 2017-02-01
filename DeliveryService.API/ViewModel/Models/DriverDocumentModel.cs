@@ -7,6 +7,12 @@ using DeliveryService.API.ViewModel.Enums;
 
 namespace DeliveryService.API.ViewModel.Models
 {
+    public class DriverDocumentsWithState
+    {
+        public bool Approved { get; set; }
+        public List<DriverDocumentModel> DriverDocumentsList { get; set; }
+    }
+
     public class DriverDocumentModel
     {
         public int DocumentId { get; set; }

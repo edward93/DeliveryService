@@ -4,12 +4,12 @@ namespace DAL.Enums
 {
     public enum VehicleType
     {
-        Sedan= 0,
-        Coup,
-        [Display(Name = "SUV")]
-        Suv,
+        Car = 0,
+        Van,
         Bicycle,
+        Scooter,
+        Motorbike,
+        Drone,
         Other
-
     }
 }

@@ -74,7 +74,10 @@ h3, h4, h5 {
 }
 
 .nav > li > a i {
-    margin-right: 0px;
+    margin-right: 0;
+}
+.business-list {
+    margin-left: -5px;
 }
 
 .navbar {
@@ -1383,10 +1386,10 @@ div.dt-button-info {
 }
 
 @media (max-width: 768px) {
-    .html5buttons {
+    /*.html5buttons {
         float: none;
         margin-top: 10px;
-    }
+    }*/
 
     .dataTables_length {
         float: none;
@@ -1435,6 +1438,7 @@ div.dt-button-info {
         font-size: 24px;
         line-height: 1.33;
     }
+
 
 .show-grid [class^="col-"] {
     padding-top: 10px;
@@ -1588,6 +1592,9 @@ div.dt-button-info {
             line-height: 1.5;
             padding: 1px 2px 1px 5px;
         }
+        .btn-group > .btnPreviewBusiness {
+            margin-right: 4px;
+        }
 
     .todo-list > li {
         background: #f3f3f4;
@@ -1661,7 +1668,9 @@ div.dt-button-info {
     width: 100%;
     font-size: 14px;
 }
-
+.help-block {
+    color: red;
+}
     /*.form-control:focus, .single-line:focus {
         border-color: #1ab394 !important;
     }*/
@@ -1678,9 +1687,9 @@ div.dt-button-info {
     border-color: #ED5565;
 }
 
-.has-success .control-label {
+/*.has-success .control-label {
     color: #1ab394;
-}
+}*/
 
 .has-warning .control-label {
     color: #f8ac59;
@@ -1700,6 +1709,64 @@ div.dt-button-info {
     line-height: 1;
     padding: 6px 12px;
     text-align: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 55px;
+  height: 30px;
+  left: 15px;
+  top: 10px;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 
 .spinner-buttons.input-group-btn .btn-xs {
@@ -3546,7 +3613,27 @@ video {
     cursor: pointer;
     transition: 0.3s;
 }
-
+.message-icon {
+    position: absolute;
+    right: 20px;
+    font-size: 18px;
+    top: 8px;
+}
+.glyphicon-ok-sign {
+    color: green;
+}
+.glyphicon-remove-sign {
+    color: red;
+}
+.hide {
+    display: none;
+}
+.invalid {
+    border:1px solid red; 
+}
+.valid {
+    border:1px solid green; 
+}
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */
@@ -3566,7 +3653,7 @@ video {
 .modal-content {
     margin: auto;
     display: block;
-    width: 80%;
+    width: 90%;
     max-width: 700px;
 }
 
@@ -3581,8 +3668,8 @@ video {
 /* The Close Button */
 .close {
     position: absolute;
-    top: 15px;
-    right: 35px;
+    top: 5px;
+    right: 5px;
     color: #f1f1f1;
     font-size: 40px;
     font-weight: bold;
@@ -4025,12 +4112,14 @@ table.table-mail tr td {
 
 .ibox-tools {
     display: block;
-    float: left;
-    margin: 0 0 0 5%;
+    float: right;
+    margin: 0 1%;
     position: relative;
     padding: 0;
     text-align: right;
 }
+::-webkit-inner-spin-button { -webkit-appearance: none;}
+::-webkit-outer-spin-button { -webkit-appearance: none;}
 
     .ibox-tools a {
         cursor: pointer;
@@ -9187,14 +9276,14 @@ body.md-skin {
 @media (min-width: 768px) {
     #page-wrapper {
         position: inherit;
-        margin: 0 0 0 220px;
+        margin: 0 0 0 190px;
         min-height: 1200px;
     }
 
     .navbar-static-side {
         z-index: 2001;
         position: absolute;
-        width: 220px;
+        width: 190px;
     }
 
     .navbar-top-links .dropdown-messages,
@@ -9263,6 +9352,14 @@ body.md-skin {
         text-align: right;
         display: block;
     }
+
+    .dataTables_filter label {
+        margin-right: 0;
+    }
+
+    .ibox-content {
+        padding: 15px 20px 20px 10px;
+    }
 }
 
 @media (max-width: 350px) {
@@ -9322,7 +9419,7 @@ body.md-skin {
 
 
         .wizard {
-            margin: 20px auto;
+            margin: 0 auto;
             background: #fff;
         }
 
@@ -9430,9 +9527,12 @@ body.md-skin {
 
         .wizard .tab-pane {
             position: relative;
-            padding-top: 50px;
+            padding-top: 20px;
         }
 
+        .business-tab {
+            display: none;
+        }
         .wizard h3 {
             margin-top: 0;
         }

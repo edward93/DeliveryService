@@ -10,5 +10,7 @@ namespace ServiceLayer.Service
     public interface IBusinessService : IEntityService
     {
         Task<Business> CreateBusiness(Business address);
+
+        Task<Business> GetBusinessByPersonId(int personId);
     }
 }

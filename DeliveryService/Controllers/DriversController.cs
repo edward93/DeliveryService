@@ -7,6 +7,8 @@ using DAL.Context;
 using DAL.Entities;
 using DAL.Enums;
 using DeliveryService.Models;
+using DeliveryService.Models.ViewModels;
+using DeliveryService.ViewModels.Drivers;
 using Infrastructure.Config;
 using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
@@ -53,6 +55,8 @@ namespace DeliveryService.Controllers
             return Content(list);
         }
 
+        
+
         [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> DeleteDriver(int driverId)
         {
@@ -64,7 +68,6 @@ namespace DeliveryService.Controllers
         public async Task<JsonResult> ApproveDriverDocument(int documentId)
         {
             var serviceResult = new ServiceResult();
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (var transaction = Context.Database.BeginTransaction())
             {
                 try
@@ -80,28 +83,25 @@ namespace DeliveryService.Controllers
                         await _driverUploadService.Value.ApproveDriverDocumentAsync(documentId, person.Id);
                         serviceResult.Success = true;
                         serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
-
-                        scope.Complete();
+                        
                         transaction.Commit();
                     }
                     else
                     {
-                        scope.Dispose();
                         transaction.Rollback();
                         serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error, "Internal Server Error");
+                        serviceResult.Messages.AddMessage(MessageType.Error, $"Could not find current logged in person by user id {User.Identity.GetUserId()}");
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    scope.Dispose();
                     transaction.Rollback();
 
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while approving the document (Id: {documentId})");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
             }
 
@@ -135,6 +135,9 @@ namespace DeliveryService.Controllers
                                 throw new Exception("This document is already rejected.");
                             await _driverUploadService.Value.RejectDriverDocumentAsync(model.DocumentId, person.Id,
                                 model.RejectionComment);
+
+                            await _driverService.Value.RejectDriverAsync(document.DriverId, person.Id);
+
                             serviceResult.Success = true;
                             serviceResult.Messages.AddMessage(MessageType.Info, "The document was rejected");
 
@@ -158,7 +161,7 @@ namespace DeliveryService.Controllers
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Error,
                         $"Error while rejecting the document (Id: {model.DocumentId})");
-                    serviceResult.Messages.AddMessage(MessageType.Error, ex.ToString());
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
                 }
 
             }

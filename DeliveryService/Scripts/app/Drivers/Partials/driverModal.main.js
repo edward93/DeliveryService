@@ -13,7 +13,7 @@ $(document).ready(function () {
         // show the close overlay button
         $(".close-overlay").removeClass("hidden");
         // handle the adding of hover class when clicked
-        $(".img").click(function (e) {
+        $(".img").click(function () {
             if (!$(this).hasClass("hover")) {
                 $(this).addClass("hover");
             }
@@ -29,7 +29,7 @@ $(document).ready(function () {
     } else {
         // handle the mouseenter functionality
         $(".img").mouseenter(function () {
-                $(this).addClass("hover");
+            $(this).addClass("hover");
         })
             // handle the mouseleave functionality
             .mouseleave(function () {
@@ -49,14 +49,14 @@ $(document).ready(function () {
         }
     });
 
-    $(".next-step").click(function (e) {
+    $(".next-step").click(function () {
 
         var $active = $('.wizard .nav-tabs li.active');
         $active.next().removeClass('disabled');
         nextTab($active);
 
     });
-    $(".prev-step").click(function (e) {
+    $(".prev-step").click(function () {
 
         var $active = $('.wizard .nav-tabs li.active');
         prevTab($active);
@@ -74,20 +74,15 @@ $(document).ready(function () {
         var documentId = $(this).parent().parent().attr('data-id');
     });
 
-    $(document).on('click', ".rejectDriverDocument", function (e) {
-        e.preventDefault();
-        var documentId = $(this).parent().parent().attr('data-id');
-        RejectDriverDocument(documentId, e);
-    });
-    
-    $('.image').on('click',function(e) {
+
+
+    $('.image').on('click', function (e) {
         var imageSrc = e.currentTarget.offsetParent.offsetParent.childNodes[3].src;
         $('#image-modal').show();
         $('#zoom-image').attr('src', imageSrc);
-        console.log();
     });
     $('#image-modal').on('click', function () {
-            $('#image-modal').hide();
+        $('#image-modal').hide();
     });
 });
 
@@ -97,7 +92,39 @@ function nextTab(elem) {
 function prevTab(elem) {
     $(elem).prev().find('a[data-toggle="tab"]').click();
 }
+
 function getDriverDocuments(driverId) {
+    var documentId;
+    var validator = $("#rejection-form").validate({
+        rules: {
+            RejectionComment: {
+                required: true
+            }
+        },
+        highlight: function (element) {
+            $(element).addClass('invalid').removeClass('valid');
+        },
+        unhighlight: function (element) {
+            $(element).addClass('valid').removeClass('invalid');
+        },
+        errorElement: 'span',
+        errorClass: 'help-block',
+        errorPlacement: function (error, element) {
+            if (element.length) {
+                error.insertAfter(element);
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
+    function clearRejectModal() {
+        documentId = "";
+        validator.resetForm();
+        $("#rejection-comment").val("");
+        $("#rejection-comment").removeClass("valid");
+        $("#rejection-comment").removeClass("invalid");
+        $("#rejection-comment").attr("placeholder", "");
+    }
     window.BlockUi();
     ClearModal();
     $.post("/Drivers/GetDriverDocuments",
@@ -107,6 +134,35 @@ function getDriverDocuments(driverId) {
             window.UnBlockUi();
             InitDocuments(data);
         });
+
+    var prvewDriver = $("#rejection-modal");
+    var documentType;
+    $(document).on('click', ".rejectDriverDocument", function (e) {
+        e.preventDefault();
+        clearRejectModal();
+        prvewDriver.modal("show");
+        documentType = e.currentTarget.parentElement.parentElement;
+    });
+
+    $("textarea").keydown(function () {
+        validator.element(this);
+    });
+
+    $('#reject').click(function () {
+        if (validator.form()) {
+            var docId = $(documentType)[0].dataset.id;
+            if (docId == undefined) {
+                docId = documentType.childNodes[5].dataset.id;
+            }
+            var rejectionComment = $("#rejection-comment").val();
+            $("#rejection-modal").modal('hide');
+            RejectDriverDocument(docId, rejectionComment, documentType);
+        } else {
+            $("#rejection-comment").attr("placeholder", "This field is required.");
+            $("#rejection-comment").removeClass("help-block");
+        }
+    });
+
 }
 
 function ApproveDriverDocument(documentId, e) {
@@ -120,40 +176,46 @@ function ApproveDriverDocument(documentId, e) {
                 if (data.Success) {
                     currentButton.addClass('disabled approveSelected');
                     for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.success(data.Messages[i].Value);
+                        window.toastr.success(data.Messages[i].Value);
                     }
                 } else {
                     for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.error(data.Messages[i].Value);
+                        window.toastr.error(data.Messages[i].Value);
                     }
                 }
             });
     }
 }
 
-function RejectDriverDocument(documentId, e) {
-    var currentButton = $(e.currentTarget);
-    var approveButton = currentButton.closest(".row").find(".acceptDriverDocument");
+function RejectDriverDocument(documentId, rejectionComment, documentType) {
+    var acceptDocument, rejectDriverDocument;
+    if (documentId == 1 || documentId == 4) {
+        acceptDocument = documentType.childNodes[5].childNodes[3].childNodes[0];
+        rejectDriverDocument = documentType.childNodes[5].childNodes[5].childNodes[0];
+    } else {
+        acceptDocument = documentType.childNodes[3].childNodes[0];
+        rejectDriverDocument = documentType.childNodes[5].childNodes[0];
+    }
+    //window.BlockUi();
     if (documentId != undefined) {
         var data = {
             DocumentId: documentId,
-            RejectionComment: "ddd"
+            RejectionComment: rejectionComment
         };
-
-        window.BlockUi();
         $.post("/Drivers/RejectDriverDocument",
             { model: data },
             function (data) {
-                window.UnBlockUi();
+                //window.UnBlockUi();
                 if (data.Success) {
-                    currentButton.addClass('disabled rejectSelected');
-                    approveButton.addClass('disabled');
+                    $(rejectDriverDocument).addClass('disabled rejectSelected');
+                    $(acceptDocument).addClass('disabled');
+                    $(acceptDocument).removeClass('approveSelected');
                     for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.success(data.Messages[i].Value);
+                        window.toastr.success(data.Messages[i].Value);
                     }
                 } else {
                     for (let i = 0; i < data.Messages.length; i++) {
-                        toastr.error(data.Messages[i].Value);
+                        window.toastr.error(data.Messages[i].Value);
                     }
                 }
             });
@@ -209,7 +271,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             var proofOfAddressconteiner = $("." + UploadType.ProofOfAddress.name);
             proofOfAddressconteiner.attr("data-id", documentId);
 
-            setStatuses(UploadType.ProofOfAddress.name, data.filter(a => a.UploadType === UploadType.ProofOfAddress.value)[0].DocumentStatus);
+            setStatuses(proofOfAdddress.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.ProofOfAddress.value)[0].DocumentStatus);
 
             break;
         case UploadType.Insurance.value:
@@ -223,7 +285,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             var insuranceConteiner = $("." + UploadType.Insurance.name);
             insuranceConteiner.attr("data-id", documentId);
 
-            setStatuses(UploadType.Insurance.name, data.filter(a => a.UploadType === UploadType.Insurance.value)[0].DocumentStatus);
+            setStatuses(insurance.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.Insurance.value)[0].DocumentStatus);
 
             break;
         case UploadType.License.value:
@@ -236,7 +298,7 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             license.removeAttribute("class");
             var licenseConteiner = $("." + UploadType.License.name);
             licenseConteiner.attr("data-id", documentId);
-            setStatuses(UploadType.License.name, data.filter(a => a.UploadType === UploadType.License.value)[0].DocumentStatus);
+            setStatuses(license.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.License.value)[0].DocumentStatus);
 
             break;
         case UploadType.Passport.value:
@@ -250,19 +312,18 @@ function createDocumentsView(fullPath, documentId, docType, data) {
             var passportConteiner = $("." + UploadType.Passport.name);
             passportConteiner.attr("data-id", documentId);
 
-            setStatuses(UploadType.Passport.name, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
-                
+            setStatuses(passport.nextElementSibling.childNodes, data.filter(a => a.UploadType === UploadType.Passport.value)[0].DocumentStatus);
             break;
-        //case UploadType.Photo.value:
-        //    var photo = document.getElementById(UploadType.Photo.name);
-        //    photo.setAttribute("src", fullPath);
-        //    photo.setAttribute("data-id", documentId);
-        //    photo.removeAttribute("class");
-        //    var photoConteiner = $("." + UploadType.Photo.name);
-        //    photoConteiner.attr("data-id", documentId);
-        //    setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
+            //case UploadType.Photo.value:
+            //    var photo = document.getElementById(UploadType.Photo.name);
+            //    photo.setAttribute("src", fullPath);
+            //    photo.setAttribute("data-id", documentId);
+            //    photo.removeAttribute("class");
+            //    var photoConteiner = $("." + UploadType.Photo.name);
+            //    photoConteiner.attr("data-id", documentId);
+            //    setStatuses(UploadType.Photo.name, data.filter(a => a.UploadType === UploadType.Photo.value)[0].DocumentStatus);
 
-        //    break;
+            //    break;
         default:
             break;
     }
@@ -270,11 +331,12 @@ function createDocumentsView(fullPath, documentId, docType, data) {
 }
 
 function setStatuses(uploadTypeNmae, documentStatus) {
+    debugger;
     if (documentStatus === 1) {
-        $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled approveSelected');
+        $(uploadTypeNmae[3].childNodes).addClass('disabled approveSelected');
     } else if (documentStatus === 2) {
-        $("." + uploadTypeNmae + " .rejectDriverDocument").addClass('disabled rejectSelected');
-        $("." + uploadTypeNmae + " .acceptDriverDocument").addClass('disabled');
+        $(uploadTypeNmae[5].childNodes).addClass('disabled rejectSelected');
+        $(uploadTypeNmae[3].childNodes).addClass('disabled');
     }
 }
 
