@@ -42,6 +42,7 @@
               });
         }
     });
+   
 
     var tableBusinessList = $('#tblBusinessList').dataTable({
         "processing": true, // control the processing indicator.
@@ -330,6 +331,7 @@
                                form.serialize(), function (data) {
                                    window.UnBlockUi();
                                    if (data.Success) {
+                                       tableBusinessList.fnDraw();
                                        for (let i = 0; i < data.Messages.length; i++) {
                                            window.toastr.success(data.Messages[i].Value);
                                        }
