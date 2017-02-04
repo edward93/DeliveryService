@@ -276,6 +276,7 @@
     <Compile Include="ViewModels\Business\BusinessDocumentModel.cs" />
     <Compile Include="ViewModels\Business\BusinessListItem.cs" />
     <Compile Include="ViewModels\Business\BusinessOrder.cs" />
+    <Compile Include="ViewModels\Business\BusinessProfile.cs" />
     <Compile Include="ViewModels\Business\PreviewBusinessModel.cs" />
     <Compile Include="ViewModels\Business\RegisterBusinessModel.cs" />
     <Compile Include="ViewModels\Drivers\DriverDetailsForOrder.cs" />
@@ -1079,6 +1080,7 @@
     <Content Include="Views\Partials\FileUpload\_Files.cshtml" />
     <Content Include="Views\BusinessOrder\Partials\_AddOrder.cshtml" />
     <Content Include="Views\BusinessOrder\Partials\_AcceptRejectDriver.cshtml" />
+    <Content Include="Views\BusinessProfile\Partials\_BusinessProfileModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

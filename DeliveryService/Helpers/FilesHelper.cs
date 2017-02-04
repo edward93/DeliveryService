@@ -315,6 +315,7 @@ namespace DeliveryService.Helpers
         public string DeleteUrl { get; set; }
         public string ThumbnailUrl { get; set; }
         public string DeleteType { get; set; }
+        public int DocumentId { get; set; }
     }
     public class JsonFiles
     {

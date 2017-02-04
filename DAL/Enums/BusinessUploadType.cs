@@ -9,6 +9,7 @@ namespace DAL.Enums
     public enum BusinessUploadType
     {
         Capucpermit = 0,
-        Commercialinsurancecertificate = 1
+        Commercialinsurancecertificate = 1,
+        BusinessProfile = 2
     }
 }

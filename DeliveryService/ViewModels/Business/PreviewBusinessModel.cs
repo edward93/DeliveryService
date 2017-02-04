@@ -63,6 +63,7 @@ namespace DeliveryService.ViewModels.Business
         public string PhoneNumber { get; set; }
         public string BusinessEmail { get; set; }
         public string ContactPersonPhoneNumber { get; set; }
-
+        public string BusinessLogo { get; set; }
+        public int BusinessLogoId { get; set; }
     }
 }

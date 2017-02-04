@@ -1,8 +1,9 @@
 ﻿
 function GetControlIDByFileTypeID(fileTypeId) {
     switch (fileTypeId) {
-        case 1: return "CAPUCPERMIT";
-        case 2: return "COMMERCIALINSURANCECERTIFICATE";
+        case 0: return "Capucpermit";
+        case 1: return "Commercialinsurancecertificate";
+        case 2: return "BusinessProfile";
     }
 }
 
@@ -31,15 +32,10 @@ $(function () {
     $(".fileinput-button i").remove();
 
     $("#uploadContent").show();
-   
+});
 
-    $(".datepicker").datepicker("option", "minDate");
-    //var minDate = $(".datepicker").datepicker("option", "minDate", new Date(2017, 1 - 1, 1));
-    $('.datepicker').pickadate({
-        min: new Date(2015, 3, 20),
-        max: new Date(2015, 7, 14)
-    });
-
+$(document).on("click", ".editProfileData", function () {
+    $("#businessProfileModal").modal("show");
 });
 
 $(document).on("click", ".vehicle-fileuploads-active", function () {
@@ -60,10 +56,12 @@ function InitVehicleFileupload(controlId) {
             $(".vehicle-fileuploads").removeClass("vehicle-fileuploads-active");
         },
         done: function (e, data) {
+            console.log(data);
             $("#" + controlId + "Doc").attr("src", data.result.Files[0].ThumbnailUrl.replace("~", ""));
             $("#" + controlId + "Uploader").hide();
             $("#" + controlId + "Content").show();
             $("#txt" + controlId).val(data.result.Files[0].Name);
+            $("#txt" + controlId).attr("data-fileid", data.result.Files[0].DocumentId);
             $("#txt" + controlId + "-error").hide();
             $(".vehicle-fileuploads").addClass("vehicle-fileuploads-active");
             $("#manageVehicleModal").attr("style", "display: block");
@@ -79,7 +77,7 @@ function InitVehicleFileupload(controlId) {
 
 function GetPartnerFiles() {
   
-    //window.BlockUi();
+    window.BlockUi();
     $.ajax({
         type: "POST",
         url: "/BusinessProfile/GetFileList",
@@ -89,28 +87,27 @@ function GetPartnerFiles() {
             console.log("Request: " + xmlHttpRequest.toString() + "\n\nStatus: " + textStatus + "\n\nError: " + errorThrown);
         },
         success: function (response) {
-            console.log(response);
-            /*  $(".partnerFiles .files-uploaders-profile").show();
+              $(".partnerFiles .files-uploaders-profile").show();
               $(".partnerFiles .fileupload-preview-profile").hide();
               $(".btn-save-exp-date").hide();
   
               if (response != "") {
                   for (var i = 0; i < response.length; i++) {
-  
-                      if (response[i].isFileExists) {
-                          $("#" + response[i].controlId + "Doc").attr("src", "/Documents/PartnerProfile/" + response[i].controlId + "/thumbs/" + response[i].fileName + ".80x80.jpg");
+                      var controlName = GetControlIDByFileTypeID(response[i].UploadType);
+                      if (response[i].IsFileExist) {
+                          $("#" + controlName + "Doc").attr("src", "/Documents/Business/" + controlName + "/thumbs/" + response[i].FileName + ".80x80.jpg");
+                          $("#txt" + controlName).val(response[i].FileName);
+                          $("#txt" + controlName).attr("data-fileid",response[i].DocumentId);
                       }
                       else {
-                          $("#" + response[i].controlId + "Doc").attr("src", "/Documents/defaultImages/document-default.png");
+                          $("#" + controlName + "Doc").attr("src", "/Documents/defaultImages/document-default.png");
                       }
-                      $("#" + response[i].controlId + "ExpDate").val(response[i].ExpDate);
-                      $("#" + response[i].controlId + "Uploader").hide();
-                      $("#" + response[i].controlId + "Content").show();
-  
-  
+                      $("#" + controlName + "ExpDate").val(response[i].ExpDate);
+                      $("#" + controlName + "Uploader").hide();
+                      $("#" + controlName + "Content").show();
                   }
               }
-              window.UnBlockUi();*/
+              window.UnBlockUi();
         }
     });
 }

@@ -9,7 +9,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <div class="ibox-tools">
-                        <a class="dropdown-toggle editMember" data-id="@Model.BusinessId" href="#">
+                        <a class="dropdown-toggle editProfileData" data-id="@Model.BusinessId" href="#">
                             <i class="fa fa-wrench"></i>
                         </a>
                     </div>
@@ -18,10 +18,10 @@
                     <a href="#">
                         <div class="col-sm-12 text-center">
                             <h1 style="margin-top: 0px;" id="fullName">
-                               @Html.DisplayFor(m => m.ContactPersonFirstName) @Html.DisplayFor(m => m.ContactPersonLastName) 
+                                @Html.DisplayFor(m => m.ContactPersonFirstName) @Html.DisplayFor(m => m.ContactPersonLastName)
                             </h1>
                             <div class="text-center" style="padding-top: 20px; padding-bottom: 20px">
-                                <img  src="~/Images/boldmindLogo.png" />
+                                <img src="~/Documents/Business/BusinessProfile/thumbs/@Html.DisplayFor(m => m.BusinessLogo).80x80.jpg">
                             </div>
                             <h3>
                                 <strong>Owner</strong>
@@ -48,7 +48,7 @@
                             <strong id="partnerName">@Html.DisplayFor(m => m.BusinessName)</strong>
                         </h3>
                         <br />
-                        <address >
+                        <address>
                             <p><strong>Address:</strong><label id="businessAddress">@Html.DisplayFor(m => m.AddressForDisplay)</label> </p>
                             <p><strong>Phone:</strong><label id="businessPhone">@Html.DisplayFor(m => m.PhoneNumber)</label> </p>
                             <p><strong>Email:</strong><label id="businessEmail">@Html.DisplayFor(m => m.BusinessEmail)</label> </p>
@@ -129,7 +129,7 @@
                         <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
                         <div class="col-sm-10 col-xs-10 no-padding">
                             <input class="form-control no-padding exp-date-input datepicker"
-                                  id="CapucpermitDate" name="CapucpermitDate" type="text">
+                                   id="CapucpermitDate" name="CapucpermitDate" type="text">
                         </div>
                         <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CapucpermitDate">
                             <span class="fa fa-calendar"></span>
@@ -144,19 +144,20 @@
 <form id="pagefileupload" method="POST" enctype="multipart/form-data" class="hidden">
     @Html.Partial("~/Views/Partials/FileUpload/_Files.cshtml")
 </form>
+@Html.Partial("~/Views/BusinessProfile/Partials/_BusinessProfileModal.cshtml")
 
-<script src="~/Scripts/app/Business/businessProfile.js"></script>
-<link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Scripts/app/Business/businessProfile.js"></script>
+    <link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-@section Styles {
-    @Styles.Render("~/plugins/sweetAlertStyles")
-    @Styles.Render("~/plugins/toastrStyles")
-    @Styles.Render("~/plugins/dataPickerStyles")
-}
-@section Scripts {
-    @Scripts.Render("~/plugins/sweetAlert")
-    @Scripts.Render("~/plugins/toastr")
-    @Scripts.Render("~/plugins/dataPicker")
-}
+    @section Styles {
+        @Styles.Render("~/plugins/sweetAlertStyles")
+        @Styles.Render("~/plugins/toastrStyles")
+        @Styles.Render("~/plugins/dataPickerStyles")
+    }
+    @section Scripts {
+        @Scripts.Render("~/plugins/sweetAlert")
+        @Scripts.Render("~/plugins/toastr")
+        @Scripts.Render("~/plugins/dataPicker")
+    }
