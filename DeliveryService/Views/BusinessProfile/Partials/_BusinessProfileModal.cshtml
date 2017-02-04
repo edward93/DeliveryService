@@ -1,0 +1,52 @@
+﻿
+<div class="modal fade" id="businessProfileModal" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title" id="Heading">Add New Business</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form class="form-horizontal" id="submitBusinessForm">
+                            <div class="form-group">
+                                <label class="col-sm-3 col-md-3 control-label">Business Logo</label>
+                                <div class="col-sm-9 col-md-9">
+                                    <input type="text" data-filetypeid="2" id="txtBusinessProfile" name="txtBusinessProfile" class="doc-hidden-inputs" />
+                                    <div class="col-sm-12 controls text-center files-uploaders" id="BusinessProfileUploader">
+                                        <div id="BusinessProfileUpload" data-controlid="BusinessProfile" class="vehicle-fileuploads vehicle-fileuploads-active">
+                                            <br />
+                                            <span>
+                                                Drag & drop <br>or click here <br> to upload
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 controls fileupload-preview" id="BusinessProfileContent">
+                                        <div id="BusinessProfile" class="img-wrap preview">
+                                            <div onclick="ConfirmDeleteDocument('BusinessProfile');" class="close delete">&times;</div>
+                                            <img id="BusinessProfileDoc">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <ul class="list-inline pull-right">
+                    <li><button type="submit" class="btn btn-warning" data-dismiss="modal" id="cancelBussinessBtn">Cancel</button></li>
+                    <li><input type="button" class="btn btn-primary" value="Create" id="submitBussinessBtn" /></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<script>
+
+</script>

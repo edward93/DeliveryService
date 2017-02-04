@@ -38,6 +38,8 @@ namespace DeliveryService.Controllers.Business
             var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
             var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
             var address = business.Addresses.Count == 0 ? new Address() : business.Addresses.ToList()[0];
+            var businessUploads = (await _businessUploadService.Value.GetBusinessUploadsByBusinessIdAsync(business.Id)).
+                    FirstOrDefault(b => b.UploadType == BusinessUploadType.BusinessProfile);
 
             PreviewBusinessModel previewBusiness = new PreviewBusinessModel()
             {
@@ -56,10 +58,46 @@ namespace DeliveryService.Controllers.Business
                 AddressLine1 = address.AddressLine1,
                 City = address.City,
                 State = address.State,
-                Addressline2 = address.AddressLine2
+                Addressline2 = address.AddressLine2,
+                BusinessLogo = businessUploads != null ? businessUploads.FileName : "",
+                BusinessLogoId = businessUploads?.Id ?? 0
             };
 
             return View(previewBusiness);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetBusinessProfileImage()
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                User.Identity.GetUserId();
+                var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
+                var businessUploads = (await _businessUploadService.Value.GetBusinessUploadsByBusinessIdAsync(business.Id)).
+                    FirstOrDefault(b => b.UploadType == BusinessUploadType.BusinessProfile);
+
+                var businessProfile = new BusinessProfile
+                {
+                    FirstName = person.FirstName,
+                    LastName = person.LastName,
+                    Email = person.Email,
+                    MediaPath = businessUploads != null && System.IO.File.Exists(Request.PhysicalApplicationPath +
+                    "\\Documents\\userImages\\thumbs\\" + businessUploads.FileName + ".80x80.jpg") ? "/Documents/userImages/thumbs/" + businessUploads.FileName + ".80x80.jpg" : "/Documents/defaultImages/chmo.jpg"
+                };
+
+                serviceResult.Success = true;
+                serviceResult.Data = businessProfile;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Business Profile Data was getted successfully");
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Unhadled Error");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+            }
+            return Json(serviceResult);
         }
 
         [HttpPost]
@@ -88,7 +126,7 @@ namespace DeliveryService.Controllers.Business
                     {
                         await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(existingUpload.Id);
                     }
-                    await _businessUploadService.Value.CreateBusinessUploadAsync(new BusinessUpload
+                    var businessDocument = await _businessUploadService.Value.CreateBusinessUploadAsync(new BusinessUpload
                     {
                         Business = business,
                         Description = "",
@@ -101,6 +139,7 @@ namespace DeliveryService.Controllers.Business
                         UpdatedDt = DateTime.UtcNow,
                         CreatedDt = DateTime.UtcNow
                     });
+                    files.Files[0].DocumentId = businessDocument.Id;
                 }
 
                 bool isEmpty = !resultList.Any();
@@ -135,7 +174,7 @@ namespace DeliveryService.Controllers.Business
                 }
                 foreach (var file in result)
                 {
-                    file.IsFileExist = System.IO.File.Exists(Request.PhysicalApplicationPath + "\\Documents\\PartnerProfile\\" + Enum.GetName(typeof(UploadType), file.UploadType) + "\\thumbs\\" + file.FileName + ".80x80.jpg");
+                    file.IsFileExist = System.IO.File.Exists(Request.PhysicalApplicationPath + "\\Documents\\Business\\" + Enum.GetName(typeof(BusinessUploadType), file.UploadType) + "\\thumbs\\" + file.FileName + ".80x80.jpg");
                 }
 
                 return Json(result);
@@ -165,14 +204,11 @@ namespace DeliveryService.Controllers.Business
         {
             try
             {
-                FileUpload fileUpload = InitUploader(controlId);
-                fileUpload.FilesHelper.DeleteFile(file);
-
                 if (id != 0)
                 {
                     await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(id);
-                    /*var resultFile = await _vehicleFileService.GetVehicleFileById(id);
-                    await _businessUploadService.DeleteVehicleFile(id);*/
+                    FileUpload fileUpload = InitUploader(controlId);
+                    fileUpload.FilesHelper.DeleteFile(file);
                 }
 
                 return Json("OK", JsonRequestBehavior.AllowGet);

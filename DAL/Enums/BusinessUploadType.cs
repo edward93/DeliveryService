@@ -9,6 +9,7 @@ namespace DAL.Enums
     public enum BusinessUploadType
     {
         Logo = 0,
-        Other = 1
+        Commercialinsurancecertificate = 1,
+        BusinessProfile = 2
     }
 }
