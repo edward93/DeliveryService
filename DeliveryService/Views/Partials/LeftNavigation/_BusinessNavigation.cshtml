@@ -1,25 +1,25 @@
-﻿
+﻿@using Microsoft.AspNet.Identity
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
         <ul class="nav" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
                     <span>
-                        <img alt="image" class="img-circle" src="~/Images/dagmara.jpg" />
+                        <img id="navigation-business-logo" alt="image" class="img-circle" src="~/Images/boldmindLogo.png" />
                     </span>
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <span class="clear">
                             <span class="block m-t-xs">
-                                <strong class="font-bold">Dagmara Lacka</strong>
-                            </span> <span class="text-muted text-xs block">CEO & Co-Founder <b class="caret"></b></span>
+                                <strong class="font-bold" id="navigation-business-fullname"></strong>
+                            </span>
+                            <span id="navigation-business-username" class="text-muted text-xs block"><b class="caret"></b></span>
                         </span>
                     </a>
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                        <li><a href="@Url.Action("Profile", "AppViews")">Profile</a></li>
-                        <li><a href="@Url.Action("Contacts", "AppViews")">Contacts</a></li>
-                        <li><a href="@Url.Action("Inbox", "Mailbox")">Mailbox</a></li>
-                        <li class="divider"></li>
-                        <li><a href="@Url.Action("Login", "Pages")">Logout</a></li>
+                        <li><a href="@Url.Action("BusinessProfile", "BusinessProfile")">Profile</a></li>
+                        @*<li><a href="@Url.Action("Contacts", "AppViews")">Contacts</a></li>*@
+                        @*<li><a href="@Url.Action("Inbox", "Mailbox")">Mailbox</a></li>*@
+                        @*<li class="divider"></li>*@
                     </ul>
                 </div>
                 <div class="logo-element">
@@ -47,7 +47,7 @@
                     <span class="nav-label" data-i18n="nav.layouts">Orders</span>
                 </a>
             </li>
-            
+
             <li class="@Html.IsSelected(controller: "BusinessProfile")">
                 <a href="@Url.Action("BusinessProfile", "BusinessProfile")">
                     <i class="fa fa-user"></i>
@@ -58,3 +58,26 @@
         </ul>
     </div>
 </nav>
+
+<script>
+    var userId = "@User.Identity.GetUserId()";
+    $.post("/BusinessProfile/GetBusinessShortInfo/",
+        { userId: userId },
+        function (data) {
+            if (data.Success) {
+                var business = data.Data;
+
+                $("#navigation-business-fullname").html(business.BusinessName);
+                $("#navigation-business-username").html(business.BusinessContactPersonFullName+ "<b class='caret'></b>");
+                $("#navigation-business-logo").src = business.BusinessImageUrl;
+
+            } else {
+                for (let i = 0; i < data.Messages.length; i++) {
+                    window.toastr.error(data.Messages[i].Value);
+                }
+            }
+        }).always(function () {
+            window.UnBlockUi();
+        });
+
+</script>

@@ -251,7 +251,7 @@ namespace DeliveryService.API.Controllers
 
                         var driverDocument = await _driverUploadService.Value.CreateDriverUploadAsync(driverUpload);
 
-                        transaction.Rollback();
+                        transaction.Commit();
 
                         serviceResult.Data = driverDocument.Id;
                         serviceResult.Success = true;

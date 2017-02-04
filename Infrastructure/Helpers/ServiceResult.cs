@@ -20,11 +20,11 @@ namespace Infrastructure.Helpers
         public string DisplayMessage ()
         {
             return Messages.Aggregate("",
-                (current, keyValuePair) =>
+                (current, message) =>
                     current +
-                    (keyValuePair.Key == MessageType.Error
-                        ? "Error:"
-                        : keyValuePair.Key == MessageType.Info ? "Info:" : "Warning:" + $" {keyValuePair.Value}"));
+                    (message.Key == MessageType.Error
+                        ? $"Error: {message.Value}"
+                        : message.Key == MessageType.Info ? $"Info: {message.Value}" : $"Warning: {message.Value}"));
         }
     }
 }

@@ -22,11 +22,10 @@ namespace DeliveryService.Controllers.Business
 
         public async Task<ActionResult> DashBoard()
         {
-
-            ViewBag.EarningsToday = 0.00;
-            ViewBag.EarningsMonth = 0.00;
+            var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             ViewBag.OrdersToday = (await _orderService.Value.GetAllEntitiesAsync<Order>()).Where(o => o.CreatedDt == DateTime.Today).ToList().Count;
-            ViewBag.OrdersMonth = 1;
+            ViewBag.OrdersMonth = (await _orderService.Value.GetAllEntitiesAsync<Order>()).Where(o => o.CreatedDt >= firstDayOfMonth && o.CreatedDt <= lastDayOfMonth).ToList().Count;
 
             return View();
         }

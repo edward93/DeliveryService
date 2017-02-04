@@ -5,33 +5,11 @@
     <div class="col-lg-3">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <span class="label label-success pull-right">Today</span>
-                <h5>Income</h5>
-            </div>
-            <div class="ibox-content">
-                <h1 class="no-margins" id="earningsToday">@ViewBag.EarningsToday</h1>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="ibox float-e-margins">
-            <div class="ibox-title">
                 <span class="label label-info pull-right">Today</span>
                 <h5>Orders</h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">@ViewBag.OrdersToday</h1>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="ibox float-e-margins">
-            <div class="ibox-title">
-                <span class="label label-primary pull-right">Monthly</span>
-                <h5>Income</h5>
-            </div>
-            <div class="ibox-content">
-                <h1 class="no-margins" id="earningsMonth">@ViewBag.EarningsMonth</h1>
+                <a href="@Url.Action("BusinessOrders", "BusinessOrder")"><h1 class="no-margins">@ViewBag.OrdersToday</h1></a>
             </div>
         </div>
     </div>
@@ -42,7 +20,7 @@
                 <h5>Orders</h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">@ViewBag.OrdersMonth</h1>
+                <a href="@Url.Action("BusinessOrders", "BusinessOrder")"><h1 class="no-margins">@ViewBag.OrdersMonth</h1></a>
             </div>
         </div>
     </div>

@@ -10,6 +10,7 @@ using DAL.Enums;
 using DeliveryService.Helpers;
 using DeliveryService.ViewModels.Business;
 using Infrastructure.Config;
+using Infrastructure.Helpers;
 using Microsoft.AspNet.Identity;
 using ServiceLayer.Service;
 
@@ -180,6 +181,49 @@ namespace DeliveryService.Controllers.Business
             {
                 return Json("error");
             }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetBusinessShortInfo(string userId)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                var contPerson = await _personService.Value.GetPersonByUserIdAsync(userId);
+
+                if (contPerson == null) throw new Exception($"No person was found with user id {userId}.");
+                var business = await _businessService.Value.GetBusinessByPersonId(contPerson.Id);
+
+                if (business == null) throw new Exception($"No business was found for given contact person {contPerson.FirstName} {contPerson.LastName}");
+
+                var businessUploads =
+                    await _businessUploadService.Value.GetBusinessUploadByBusinessIdAndUploadTypeAsync(business.Id, BusinessUploadType.Logo);
+
+                var viewModel = new BusinessViewModel
+                {
+                    BusinessId = business.Id,
+                    BusinessContactPersonFullName = $"{contPerson.FirstName} {contPerson.LastName}",
+                    BusinessName = business.BusinessName,
+                    UserName = business.ContactPerson.User.UserName
+                };
+
+                if (businessUploads != null)
+                {
+                    viewModel.BusinessImageUrl = businessUploads.FileName;
+                }
+
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Business Information is successfully retrieved.");
+                serviceResult.Data = viewModel;
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while retrieving business information.");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+            }
+
+            return Json(serviceResult);
         }
     }
 }

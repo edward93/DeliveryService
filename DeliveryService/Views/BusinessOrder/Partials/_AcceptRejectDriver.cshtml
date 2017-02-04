@@ -185,7 +185,7 @@
                    window.toastr.error(data.Messages[i].Value);
                }
            }
-       }).allways(function() {
+       }).always(function() {
            window.UnBlockUi();
         });
     }
@@ -197,6 +197,7 @@
         map = new window.google.maps.Map(mapElement, mapOptions(center, zoom));
         showNearestDriver(center);
         getDriverDetails(data.DriverId);
+        $("#acceptRejectDriverModal").modal("show");
     }
 </script>
 

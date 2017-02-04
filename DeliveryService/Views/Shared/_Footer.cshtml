@@ -1,5 +1,10 @@
-﻿<div class="footer">
+﻿@using Roles = DAL.Constants.Roles
+<div class="footer">
     <div>
         <strong>Copyright</strong> Deliver Service &copy; @DateTime.Now.Date.Year
+        @if (User.IsInRole(Roles.Admin))
+        {
+            <div class="pull-right"><strong>Version </strong> - v<p class="pull-right">@ViewContext.Controller.GetType().Assembly.GetName().Version</p></div>
+        }
     </div>
 </div>

@@ -8,7 +8,7 @@ namespace DAL.Enums
 {
     public enum BusinessUploadType
     {
-        Capucpermit = 0,
-        Commercialinsurancecertificate = 1
+        Logo = 0,
+        Other = 1
     }
 }
