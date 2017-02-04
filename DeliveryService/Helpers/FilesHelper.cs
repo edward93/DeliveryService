@@ -131,7 +131,7 @@ namespace DeliveryService.Helpers
                 var headers = httpRequest.Headers;
 
                 var file = httpRequest.Files[inputTagName];
-                System.Diagnostics.Debug.WriteLine(file.FileName);
+                if (file != null) System.Diagnostics.Debug.WriteLine(file.FileName);
 
                 if (string.IsNullOrEmpty(headers["X-File-Name"]))
                 {

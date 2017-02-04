@@ -69,7 +69,8 @@
 
                 $("#navigation-business-fullname").html(business.BusinessName);
                 $("#navigation-business-username").html(business.BusinessContactPersonFullName+ "<b class='caret'></b>");
-                $("#navigation-business-logo").src = business.BusinessImageUrl;
+                $("#navigation-business-logo")
+                    .attr("src", "/Uploads/BusinessDocuments/Logo/" + business.BusinessImageUrl);
 
             } else {
                 for (let i = 0; i < data.Messages.length; i++) {

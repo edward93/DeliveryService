@@ -47,7 +47,7 @@ $(document).on("click", ".vehicle-fileuploads-active", function () {
 
 function InitVehicleFileupload(controlId) {
     $('#pagefileupload').fileupload({
-        url: "/BusinessProfile/Upload?controlID=" + controlId,
+        url: "/BusinessProfile/UploadBusinessDocument?uploadType=" + controlId,
         dataType: 'json',
         autoUpload: true,
         start: function () {

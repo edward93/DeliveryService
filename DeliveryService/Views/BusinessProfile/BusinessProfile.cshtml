@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Profile";
 }
+@using DAL.Enums
 @model DeliveryService.ViewModels.Business.PreviewBusinessModel
 
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -49,12 +50,12 @@
                         </h3>
                         <br />
                         <address>
-                            <p><strong>Address:</strong><label id="businessAddress">@Html.DisplayFor(m => m.AddressForDisplay)</label> </p>
-                            <p><strong>Phone:</strong><label id="businessPhone">@Html.DisplayFor(m => m.PhoneNumber)</label> </p>
-                            <p><strong>Email:</strong><label id="businessEmail">@Html.DisplayFor(m => m.BusinessEmail)</label> </p>
-                            <p><strong>Birth Date:</strong><label id="businessBirthDate">@Html.DisplayFor(m => m.DateOfBirth)</label> </p>
-                            <p><strong>Sex:</strong><label id="businessSex">@Html.DisplayFor(m => m.Sex)</label> </p>
-                            <p><strong>Contact Phone Number:</strong><label id="businessContactPhoneNumber">@Html.DisplayFor(m => m.ContactPersonPhoneNumber)</label> </p>
+                            <p><strong>Address: </strong><label id="businessAddress">@Html.DisplayFor(m => m.AddressForDisplay)</label> </p>
+                            <p><strong>Phone: </strong><label id="businessPhone">@Html.DisplayFor(m => m.PhoneNumber)</label> </p>
+                            <p><strong>Email: </strong><label id="businessEmail">@Html.DisplayFor(m => m.BusinessEmail)</label> </p>
+                            <p><strong>Birth Date: </strong><label id="businessBirthDate">@Model.DateOfBirth.ToShortDateString()</label> </p>
+                            <p><strong>Sex: </strong><label id="businessSex">@Html.DisplayFor(m => m.Sex)</label> </p>
+                            <p><strong>Contact Phone Number: </strong><label id="businessContactPhoneNumber">@Html.DisplayFor(m => m.ContactPersonPhoneNumber)</label> </p>
                         </address>
                     </div>
                     <div class="clearfix"></div>
@@ -74,7 +75,7 @@
                 </label>
                 <input type="text" data-filetypeid="1" id="txtCommercialinsurancecertificate" name="txtCommercialinsurancecertificate" class="doc-hidden-inputs" />
                 <div class="col-sm-12 controls text-center files-uploaders" id="CommercialinsurancecertificateUploader">
-                    <div id="CommercialinsurancecertificateUpload" data-controlid="Commercialinsurancecertificate" class="vehicle-fileuploads vehicle-fileuploads-active">
+                    <div id="CommercialinsurancecertificateUpload" data-controlid="@BusinessUploadType.Logo" class="vehicle-fileuploads vehicle-fileuploads-active">
                         <br />
                         <span>
                             Drag & drop <br>or click here <br> to upload
@@ -112,7 +113,7 @@
                 </label>
                 <input type="text" data-filetypeid="4" id="txtCapucpermit" name="txtCapucpermit" class="doc-hidden-inputs" />
                 <div class="col-sm-12 controls text-center files-uploaders" id="CapucpermitUploader">
-                    <div id="CapucpermitUpload" data-controlid="Capucpermit" class="vehicle-fileuploads vehicle-fileuploads-active">
+                    <div id="CapucpermitUpload" data-controlid="@BusinessUploadType.BusinessProfile" class="vehicle-fileuploads vehicle-fileuploads-active">
                         <br />
                         <span>
                             Drag & drop <br>or click here <br> to upload
