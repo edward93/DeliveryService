@@ -116,7 +116,7 @@ namespace DeliveryService.API.Controllers
 
                     if (order == null) throw new Exception($"No order found with id: {orderId}");
 
-                    if (order.OrderStatus != OrderStatus.Pending)
+                    if (order.OrderStatus != OrderStatus.DriverAcceptedByBusiness)
                         throw new Exception($"Driver cannot accept order which has {order.OrderStatus} status.");
 
                     await _orderService.Value.RejectOrderAsync(order, driver);
@@ -128,12 +128,12 @@ namespace DeliveryService.API.Controllers
                     var orders = await _orderHistoryService.Value.GetRejectedOrdersByDriverForCurrentDayAsync(driverId);
 
                     // TODO: test this method
-                    //if (orders.Count() >= 3)
-                    //{
-                    //    // Penalize driver for rejecting more then 3 times during last 24 hours.
-                    //    await
-                    //        _driverPenaltyService.Value.PenalizeDriverForRejectingMoreThenThreeTimesAsync(driver, order);
-                    //}
+                    if (orders.Count() >= 3)
+                    {
+                        // Penalize driver for rejecting more then 3 times during last 24 hours.
+                        await
+                            _driverPenaltyService.Value.PenalizeDriverForRejectingMoreThenThreeTimesAsync(driver, order);
+                    }
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info,

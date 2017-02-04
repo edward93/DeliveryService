@@ -25,11 +25,12 @@ namespace ServiceLayer.Repository
 
         public async Task<IEnumerable<OrderHistory>> GetRejectedOrdersByDriverForCurrentDayAsync(int driverId)
         {
+            var dayStart = DateTime.UtcNow.AddHours(-24);
             var orders =
                 await DbContext.OrderHistories.Where(
                     c =>
                         c.DriverId == driverId && c.Action == ActionType.DriverRejectedOrder && c.IsDeleted == false &&
-                        c.CreatedDt >= DateTime.UtcNow.AddHours(-24)).ToListAsync();
+                        c.CreatedDt >= dayStart).ToListAsync();
 
             return orders;
         }
