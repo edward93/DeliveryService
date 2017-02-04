@@ -1,7 +1,7 @@
 ﻿
 function GetControlIDByFileTypeID(fileTypeId) {
     switch (fileTypeId) {
-        case 0: return "Capucpermit";
+        case 0: return "Logo";
         case 1: return "Commercialinsurancecertificate";
         case 2: return "BusinessProfile";
     }
@@ -56,16 +56,31 @@ function InitVehicleFileupload(controlId) {
             $(".vehicle-fileuploads").removeClass("vehicle-fileuploads-active");
         },
         done: function (e, data) {
-            console.log(data);
-            $("#" + controlId + "Doc").attr("src", data.result.Files[0].ThumbnailUrl.replace("~", ""));
-            $("#" + controlId + "Uploader").hide();
-            $("#" + controlId + "Content").show();
-            $("#txt" + controlId).val(data.result.Files[0].Name);
-            $("#txt" + controlId).attr("data-fileid", data.result.Files[0].DocumentId);
-            $("#txt" + controlId + "-error").hide();
-            $(".vehicle-fileuploads").addClass("vehicle-fileuploads-active");
-            $("#manageVehicleModal").attr("style", "display: block");
-            window.UnBlockUi();
+            if (data.result.Success) {
+                var upload = data.result.Data;
+                var relFilePath = "/Uploads/BusinessDocuments/" +
+                    GetControlIDByFileTypeID(upload.DocumentType) +
+                    "/thumbs/" +
+                    upload.FileName;
+                $("#" + controlId + "Doc").attr("src", relFilePath);
+                $("#" + controlId + "Uploader").hide();
+                $("#" + controlId + "Content").show();
+                $("#txt" + controlId).val(upload.FileName);
+                $("#txt" + controlId).attr("data-fileid", upload.DocumentId);
+                $("#txt" + controlId + "-error").hide();
+                $(".vehicle-fileuploads").addClass("vehicle-fileuploads-active");
+                $("#manageVehicleModal").attr("style", "display: block");
+
+                if (upload.DocumentType === 2) {
+                    $("#contactPersonPhoto").attr("src", relFilePath);
+                }
+
+                if (upload.DocumentType === 0) {
+                    $("#navigation-business-logo").attr("src", relFilePath);
+                }
+                window.UnBlockUi();
+            }
+            
         },
         stop: function () {
             $(".vehicle-fileuploads").addClass("vehicle-fileuploads-active");
@@ -84,23 +99,27 @@ function GetPartnerFiles() {
         contentType: "application/json; charset=utf-8",
         error: function (xmlHttpRequest, textStatus, errorThrown) {
             window.UnBlockUi();
-            console.log("Request: " + xmlHttpRequest.toString() + "\n\nStatus: " + textStatus + "\n\nError: " + errorThrown);
         },
         success: function (response) {
               $(".partnerFiles .files-uploaders-profile").show();
               $(".partnerFiles .fileupload-preview-profile").hide();
               $(".btn-save-exp-date").hide();
   
-              if (response != "") {
+              if (response !== "") {
                   for (var i = 0; i < response.length; i++) {
                       var controlName = GetControlIDByFileTypeID(response[i].UploadType);
                       if (response[i].IsFileExist) {
-                          $("#" + controlName + "Doc").attr("src", "/Documents/Business/" + controlName + "/thumbs/" + response[i].FileName + ".80x80.jpg");
+                          $("#" + controlName + "Doc").attr("src", "/Uploads/BusinessDocuments/" + controlName + "/thumbs/" + response[i].FileName);
                           $("#txt" + controlName).val(response[i].FileName);
-                          $("#txt" + controlName).attr("data-fileid",response[i].DocumentId);
+                          $("#txt" + controlName).attr("data-fileid", response[i].DocumentId);
+                          if (controlName === 'BusinessProfile') {
+                              $("#contactPersonPhoto")
+                                  .attr("src",
+                                      "/Uploads/BusinessDocuments/" + controlName + "/thumbs/" + response[i].FileName);
+                          }
                       }
                       else {
-                          $("#" + controlName + "Doc").attr("src", "/Documents/defaultImages/document-default.png");
+                          $("#" + controlName + "Doc").attr("src", "/Images/boldmindLogo.pngfault.png");
                       }
                       $("#" + controlName + "ExpDate").val(response[i].ExpDate);
                       $("#" + controlName + "Uploader").hide();
@@ -157,6 +176,12 @@ function DeleteDocument(controlId) {
             $("#manageVehicleModal").attr("style", "display: block");
         },
         success: function (response) {
+            if (controlId === 'BusinessProfile') {
+                $("#contactPersonPhoto").attr("src", "/Images/boldmindLogo.png");
+            }
+            if (controlId === 'Logo') {
+                $("#navigation-business-logo").attr("src", "/Images/boldmindLogo.png");
+            }
             $("#" + controlId + "Doc").attr("src", "");
             $("#" + controlId + "Uploader").show();
             $("#" + controlId + "Content").hide();

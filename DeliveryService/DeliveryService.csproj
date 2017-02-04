@@ -262,6 +262,7 @@
     <Compile Include="Helpers\DataTableHelper\DataTable.cs" />
     <Compile Include="Helpers\DataTableHelper\Models\DataParam.cs" />
     <Compile Include="Helpers\DataTableHelper\Models\DataTableData.cs" />
+    <Compile Include="Helpers\FileDetails.cs" />
     <Compile Include="Helpers\FilesHelper.cs" />
     <Compile Include="Helpers\FileUpload.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />

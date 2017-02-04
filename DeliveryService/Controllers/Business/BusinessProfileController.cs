@@ -70,39 +70,39 @@ namespace DeliveryService.Controllers.Business
             return View(previewBusiness);
         }
 
-        [HttpPost]
-        public async Task<JsonResult> GetBusinessProfileImage()
-        {
-            var serviceResult = new ServiceResult();
-            try
-            {
-                User.Identity.GetUserId();
-                var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
-                var businessUploads = (await _businessUploadService.Value.GetBusinessUploadsByBusinessIdAsync(business.Id)).
-                    FirstOrDefault(b => b.UploadType == BusinessUploadType.BusinessProfile);
+        //[HttpPost]
+        //public async Task<JsonResult> GetBusinessProfileImage()
+        //{
+        //    var serviceResult = new ServiceResult();
+        //    try
+        //    {
+        //        User.Identity.GetUserId();
+        //        var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+        //        var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
+        //        var businessUploads = (await _businessUploadService.Value.GetBusinessUploadsByBusinessIdAsync(business.Id)).
+        //            FirstOrDefault(b => b.UploadType == BusinessUploadType.BusinessProfile);
 
-                var businessProfile = new BusinessProfile
-                {
-                    FirstName = person.FirstName,
-                    LastName = person.LastName,
-                    Email = person.Email,
-                    MediaPath = businessUploads != null && System.IO.File.Exists(Request.PhysicalApplicationPath +
-                    "\\Documents\\userImages\\thumbs\\" + businessUploads.FileName + ".80x80.jpg") ? "/Documents/userImages/thumbs/" + businessUploads.FileName + ".80x80.jpg" : "/Documents/defaultImages/chmo.jpg"
-                };
+        //        var businessProfile = new BusinessProfile
+        //        {
+        //            FirstName = person.FirstName,
+        //            LastName = person.LastName,
+        //            Email = person.Email,
+        //            MediaPath = businessUploads != null && System.IO.File.Exists(Request.PhysicalApplicationPath +
+        //            "\\Documents\\userImages\\thumbs\\" + businessUploads.FileName + ".80x80.jpg") ? "/Documents/userImages/thumbs/" + businessUploads.FileName + ".80x80.jpg" : "/Documents/defaultImages/chmo.jpg"
+        //        };
 
-                serviceResult.Success = true;
-                serviceResult.Data = businessProfile;
-                serviceResult.Messages.AddMessage(MessageType.Info, "Business Profile Data was getted successfully");
-            }
-            catch (Exception ex)
-            {
-                serviceResult.Success = false;
-                serviceResult.Messages.AddMessage(MessageType.Error, "Unhadled Error");
-                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
-            }
-            return Json(serviceResult);
-        }
+        //        serviceResult.Success = true;
+        //        serviceResult.Data = businessProfile;
+        //        serviceResult.Messages.AddMessage(MessageType.Info, "Business Profile Data was getted successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        serviceResult.Success = false;
+        //        serviceResult.Messages.AddMessage(MessageType.Error, "Unhadled Error");
+        //        serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+        //    }
+        //    return Json(serviceResult);
+        //}
 
         [HttpPost]
         public async Task<ActionResult> UploadBusinessDocument(BusinessUploadType uploadType)
@@ -121,7 +121,7 @@ namespace DeliveryService.Controllers.Business
 
                     var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
 
-                    var result = PrepareFile(file, uploadType);
+                    var fileDetails = PrepareFile(file, uploadType);
 
                     var existingUpload =
                           await
@@ -140,7 +140,7 @@ namespace DeliveryService.Controllers.Business
                         Description = desc,
                         DocumentStatus = DocumentStatus.WaitingForApproval,
                         ExpireDate = expireDate,
-                        FileName = result.Item2,
+                        FileName = fileDetails.FileName,
                         UploadType = uploadType,
                         CreatedBy = business.ContactPerson.Id,
                         UpdatedBy = business.ContactPerson.Id,
@@ -149,20 +149,23 @@ namespace DeliveryService.Controllers.Business
                     });
 
                     // Save file
-                    file.SaveAs(result.Item1);
-                    // TODO: Save as thumbnail
-                    //var thumbfullPath = Path.Combine(pathOnServer, "thumbs");
-                    //string fileThumb = currentFileName + ".80x80.jpg";
-                    //var thumbfullPath2 = Path.Combine(thumbfullPath, fileThumb);
-                    //using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(fullPath)))
-                    //{
-                    //    var thumbnail = new WebImage(stream).Resize(200, 200);
-                    //    thumbnail.Save(thumbfullPath2, "jpg");
-                    //}
+                    file.SaveAs(fileDetails.FilePath);
+
+                    // Save as thumbnail
+                    var thumbnail = new WebImage(fileDetails.FilePath).Resize(200, 200);
+                    thumbnail.Save(fileDetails.ThumbPath, "png");
 
                     transactoin.Commit();
                     serviceResult.Success = true;
-                    serviceResult.Data = businessDocument;
+                    serviceResult.Data = new
+                    {
+                        ThumbPath = fileDetails.ThumbPath,
+                        FilePath = fileDetails.FilePath,
+                        FileName = fileDetails.FileName,
+                        DocumentId = businessDocument.Id,
+                        BusinessId = businessDocument.BusinessId,
+                        DocumentType = businessDocument.UploadType
+                    };
                     serviceResult.Messages.AddMessage(MessageType.Info, "File was successfully uploaded.");
                 }
                 catch (Exception ex)
@@ -177,72 +180,35 @@ namespace DeliveryService.Controllers.Business
             return Json(serviceResult);
         }
 
-        private Tuple<string, string, bool> PrepareFile(HttpPostedFileBase file, BusinessUploadType type)
+        private FileDetails PrepareFile(HttpPostedFileBase file, BusinessUploadType type)
         {
+            // Name of the file
             var fileName = $"{Path.GetFileName(file.FileName)}_{DateTime.UtcNow.Timestamp()}{Path.GetExtension(file.FileName)}";
+            // Relative path
             string filePath = $"{Config.UploadsFolderPath}/BusinessDocuments/{type}/";
+            // Relative thumb path
             string thumbFilePath = $"{Config.UploadsFolderPath}/BusinessDocuments/{type}/thumbs/";
+
+            // Absolute path
             var path = Server.MapPath(filePath);
+            // Absolute thumb path
             var thumbPath = Server.MapPath(thumbFilePath);
+
+            // Create dirs
             Directory.CreateDirectory(path);
             Directory.CreateDirectory(thumbPath);
 
-            if (!Utilities.HasImageExtension(fileName)) return Tuple.Create("", "", false);
-            return Tuple.Create(Path.Combine(path, fileName), fileName, true);
+            if (!Utilities.HasImageExtension(fileName)) return null;
+
+            return new FileDetails
+            {
+                FileName = fileName,
+                FilePath = Path.Combine(path, fileName),
+                ThumbName = fileName,
+                ThumbPath = Path.Combine(thumbPath, fileName)
+            };
         }
 
-        //[HttpPost]
-        //public async Task<JsonResult> Upload()
-        //{
-        //    try
-        //    {
-        //        string controlId = Request.Params["controlID"];
-        //        var resultList = new List<ViewDataUploadFilesResult>();
-        //        var currentContext = HttpContext;
-        //        FileUpload fileUpload = InitUploader(controlId);
-        //        fileUpload.FilesHelper.UploadAndShowResults(currentContext, resultList);
-        //        JsonFiles files = new JsonFiles(resultList);
-        //        if (files.Files.Length > 0)
-        //        {
-        //            var file = files.Files[0];
-        //            var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-        //            var business = await _businessService.Value.GetBusinessByPersonId(person.Id);
-        //            var documentType = (BusinessUploadType)Enum.Parse(typeof(BusinessUploadType), controlId);
-        //            var existingUpload =
-        //                  await
-        //                      _businessUploadService.Value.GetBusinessUploadByBusinessIdAndUploadTypeAsync(business.Id,
-        //                          documentType);
-
-        //            if (existingUpload != null)
-        //            {
-        //                await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(existingUpload.Id);
-        //            }
-        //            var businessDocument = await _businessUploadService.Value.CreateBusinessUploadAsync(new BusinessUpload
-        //            {
-        //                Business = business,
-        //                Description = "",
-        //                DocumentStatus = DocumentStatus.WaitingForApproval,
-        //                ExpireDate = DateTime.Now,
-        //                FileName = file.Name,
-        //                UploadType = (BusinessUploadType)Enum.Parse(typeof(BusinessUploadType), controlId),
-        //                CreatedBy = business.ContactPerson.Id,
-        //                UpdatedBy = business.ContactPerson.Id,
-        //                UpdatedDt = DateTime.UtcNow,
-        //                CreatedDt = DateTime.UtcNow
-        //            });
-        //            files.Files[0].DocumentId = businessDocument.Id;
-        //        }
-
-        //        bool isEmpty = !resultList.Any();
-        //        if (isEmpty)
-        //            return Json("Error ");
-        //        return Json(files);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json("error");
-        //    }
-        //}
 
         public async Task<JsonResult> GetFileList()
         {
@@ -265,7 +231,10 @@ namespace DeliveryService.Controllers.Business
                 }
                 foreach (var file in result)
                 {
-                    file.IsFileExist = System.IO.File.Exists(Request.PhysicalApplicationPath + "\\Documents\\Business\\" + Enum.GetName(typeof(BusinessUploadType), file.UploadType) + "\\thumbs\\" + file.FileName + ".80x80.jpg");
+                    file.IsFileExist = System.IO.File.Exists(
+                        Path.Combine(
+                            Server.MapPath($"{Config.UploadsFolderPath}/BusinessDocuments/{Enum.GetName(typeof(BusinessUploadType), file.UploadType)}/"),
+                            file.FileName));
                 }
 
                 return Json(result);
@@ -276,38 +245,56 @@ namespace DeliveryService.Controllers.Business
             }
         }
 
-        //private FileUpload InitUploader(string controlId)
-        //{
-        //    FileUploadConfig uploaderConfig = new FileUploadConfig()
-        //    {
-        //        TempPath = "~/BusinessDocs/",
-        //        ServerMapPath = Config.UploadsFolderPath + "/Business/" + controlId,
-        //        UrlBase = Config.UploadsFolderPath + "/Business/" + controlId,
-        //        DeleteUrl = "/BusinessProfile/DeleteFile/?file=",
-        //        DeleteType = "GET",
-        //    };
-
-        //    return new FileUpload(uploaderConfig);
-        //}
-
         [HttpPost]
         public async Task<JsonResult> DeleteFile(string controlId, string file, int id)
         {
-            try
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
             {
-                if (id != 0)
+                try
                 {
-                    await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(id);
-                    //FileUpload fileUpload = InitUploader(controlId);
-                    //fileUpload.FilesHelper.DeleteFile(file);
-                }
+                    if (id != 0)
+                    {
+                        var docToRemove = await _businessService.Value.GetByIdAsync<BusinessUpload>(id);
+                        await _businessUploadService.Value.RemoveEntityAsync<BusinessUpload>(id);
+                        var filePath =
+                            Path.Combine(
+                                Server.MapPath(
+                                    $"{Config.UploadsFolderPath}/BusinessDocuments/{Enum.GetName(typeof(BusinessUploadType), docToRemove.UploadType)}"),
+                                docToRemove.FileName);
+                        var thumbPath =
+                            Path.Combine(
+                                Server.MapPath(
+                                    $"{Config.UploadsFolderPath}/BusinessDocuments/{Enum.GetName(typeof(BusinessUploadType), docToRemove.UploadType)}/thumbs"),
+                                docToRemove.FileName);
 
-                return Json("OK", JsonRequestBehavior.AllowGet);
+                        // Remove file 
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+
+                        // Remove thumbnail 
+                        if (System.IO.File.Exists(thumbPath))
+                        {
+                            System.IO.File.Delete(thumbPath);
+                        }
+                    }
+
+                    transaction.Commit();
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "File was successfully removed.");
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while removing file.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                return Json("error");
-            }
+
+            return Json(serviceResult);
         }
 
         [HttpPost]

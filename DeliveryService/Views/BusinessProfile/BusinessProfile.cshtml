@@ -22,7 +22,7 @@
                                 @Html.DisplayFor(m => m.ContactPersonFirstName) @Html.DisplayFor(m => m.ContactPersonLastName)
                             </h1>
                             <div class="text-center" style="padding-top: 20px; padding-bottom: 20px">
-                                <img src="~/Documents/Business/BusinessProfile/thumbs/@Html.DisplayFor(m => m.BusinessLogo).80x80.jpg">
+                                <img id="contactPersonPhoto" src="~/Images/boldmindLogo.png" width="80" class="img">
                             </div>
                             <h3>
                                 <strong>Owner</strong>
@@ -66,38 +66,38 @@
 
     <div class="row contact-box">
         <div class="col-lg-6">
-            <div class="col-sm-12 no-padding ">
+            <div class="col-sm-12 no-padding">
                 <label class="col-sm-12 control-label">
                     <span title="" data-toggle="tooltip" class="label-tooltip"
-                          data-original-title="Upload  Commercial insurance Certificate">
+                          data-original-title="Upload Business Logo">
                         Business Logo
                     </span>
                 </label>
-                <input type="text" data-filetypeid="1" id="txtCommercialinsurancecertificate" name="txtCommercialinsurancecertificate" class="doc-hidden-inputs" />
-                <div class="col-sm-12 controls text-center files-uploaders" id="CommercialinsurancecertificateUploader">
-                    <div id="CommercialinsurancecertificateUpload" data-controlid="@BusinessUploadType.Logo" class="vehicle-fileuploads vehicle-fileuploads-active">
+                <input type="text" data-filetypeid="0" id="txtLogo" name="txtLogo" class="doc-hidden-inputs" />
+                <div class="col-sm-12 controls text-center files-uploaders" id="LogoUploader">
+                    <div id="LogoUpload" data-controlid="@BusinessUploadType.Logo" class="vehicle-fileuploads vehicle-fileuploads-active">
                         <br />
                         <span>
                             Drag & drop <br>or click here <br> to upload
                         </span>
                     </div>
                 </div>
-                <div class="col-sm-12 controls fileupload-preview" id="CommercialinsurancecertificateContent">
-                    <div id="Commercialinsurancecertificate" class="img-wrap preview">
-                        <div onclick="ConfirmDeleteDocument('Commercialinsurancecertificate');" class="close delete">&times;</div>
-                        <img id="CommercialinsurancecertificateDoc">
+                <div class="col-sm-12 controls fileupload-preview" id="LogoContent">
+                    <div id="Logo" class="img-wrap preview">
+                        <div onclick="ConfirmDeleteDocument('Logo');" class="close delete">&times;</div>
+                        <img id="LogoDoc">
                     </div>
                     <div class="file-exp-date">
                         <label class="lbl-exp-date">Expire date</label>
                         <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
                         <div class="col-sm-10 col-xs-10 no-padding">
                             <input class="form-control no-padding exp-date-input datepicker"
-                                   id="CommercialinsurancecertificateDate" name="CommercialinsurancecertificateDate" type="text">
+                                   id="LogoDate" name="LogoDate" type="text">
                         </div>
-                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CommercialinsurancecertificateDate">
+                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="LogoDate">
                             <span class="fa fa-calendar"></span>
                         </label>
-                        <button class="btn btn-outline btn-primary dim save-date" id="CommercialinsurancecertificateExpDate" type="button"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-outline btn-primary dim save-date" id="LogoExpDate" type="button"><i class="fa fa-check"></i></button>
                     </div>
                 </div>
             </div>
@@ -107,35 +107,35 @@
             <div class="col-sm-12 no-padding">
                 <label class="col-sm-12 control-label">
                     <span title="" data-toggle="tooltip" class="label-tooltip"
-                          data-original-title="Upload Ca Puc Permit ">
+                          data-original-title="Upload Contact person Picture">
                         Contact Person Picture
                     </span>
                 </label>
-                <input type="text" data-filetypeid="4" id="txtCapucpermit" name="txtCapucpermit" class="doc-hidden-inputs" />
-                <div class="col-sm-12 controls text-center files-uploaders" id="CapucpermitUploader">
-                    <div id="CapucpermitUpload" data-controlid="@BusinessUploadType.BusinessProfile" class="vehicle-fileuploads vehicle-fileuploads-active">
+                <input type="text" data-filetypeid="2" id="txtBusinessProfile" name="txtBusinessProfile" class="doc-hidden-inputs" />
+                <div class="col-sm-12 controls text-center files-uploaders" id="BusinessProfileUploader">
+                    <div id="BusinessProfileUpload" data-controlid="@BusinessUploadType.BusinessProfile" class="vehicle-fileuploads vehicle-fileuploads-active">
                         <br />
                         <span>
                             Drag & drop <br>or click here <br> to upload
                         </span>
                     </div>
                 </div>
-                <div class="col-sm-12 controls fileupload-preview" id="CapucpermitContent">
-                    <div id="Capucpermit" class="img-wrap preview">
-                        <div onclick="ConfirmDeleteDocument('Capucpermit');" class="close delete">&times;</div>
-                        <img id="CapucpermitDoc">
+                <div class="col-sm-12 controls fileupload-preview" id="BusinessProfileContent">
+                    <div id="BusinessProfile" class="img-wrap preview">
+                        <div onclick="ConfirmDeleteDocument('BusinessProfile');" class="close delete">&times;</div>
+                        <img id="BusinessProfileDoc">
                     </div>
                     <div class="file-exp-date">
                         <label class="lbl-exp-date">Expire date</label>
                         <label class="lbl-exp-date-error" style="display: none;">Expire date can not be less than the current date</label>
                         <div class="col-sm-10 col-xs-10 no-padding">
                             <input class="form-control no-padding exp-date-input datepicker"
-                                   id="CapucpermitDate" name="CapucpermitDate" type="text">
+                                   id="BusinessProfileDate" name="BusinessProfileDate" type="text">
                         </div>
-                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="CapucpermitDate">
+                        <label class="col-sm-2 col-xs-2 btn btn-success datepicker-button " for="BusinessProfileDate">
                             <span class="fa fa-calendar"></span>
                         </label>
-                        <button class="btn btn-outline btn-primary dim save-date" id="CapucpermitExpDate" type="button"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-outline btn-primary dim save-date" id="BusinessProfileExpDate" type="button"><i class="fa fa-check"></i></button>
                     </div>
                 </div>
             </div>
