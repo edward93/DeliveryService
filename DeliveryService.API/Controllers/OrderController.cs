@@ -94,7 +94,6 @@ namespace DeliveryService.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = Roles.Driver)]
-
         public async Task<IHttpActionResult> RejectOrder(int driverId, int orderId)
         {
             var serviceResult = new ServiceResult();

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Context;
 using DAL.Entities;
+using DAL.Enums;
 
 namespace ServiceLayer.Repository
 {
@@ -40,6 +41,14 @@ namespace ServiceLayer.Repository
         public Task ApproveDriver(int driverId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> GetOnlineDriversCountAsync()
+        {
+            return
+                await 
+                    DbContext.Drivers
+                        .CountAsync(c => c.IsDeleted == false && c.Approved && c.Status == DriverStatus.Online);
         }
     }
 }

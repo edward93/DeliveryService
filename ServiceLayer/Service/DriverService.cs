@@ -75,6 +75,11 @@ namespace ServiceLayer.Service
             await ChangeDriverStateAsync(driverId, false, currentPersonId);
         }
 
+        public async Task<int> GetOnlineDriversCountAsync()
+        {
+            return await _driverRepository.GetOnlineDriversCountAsync();
+        }
+
         private async Task ChangeDriverStateAsync(int driverId, bool approved, int currentPersonId)
         {
             var driver = await GetByIdAsync<Driver>(driverId);

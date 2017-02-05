@@ -17,5 +17,6 @@ namespace ServiceLayer.Service
         Task ChangeDriverStatusAsync(int driverId, DriverStatus newStatus);
         Task ApproveDriverAsync(int driverId, int currentPersonId);
         Task RejectDriverAsync(int driverId, int currentPersonId);
+        Task<int> GetOnlineDriversCountAsync();
     }
 }
