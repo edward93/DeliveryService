@@ -172,7 +172,7 @@ namespace DeliveryService.Controllers.Business
 
                         await hubConnection.Start();
                         var orderDetails = new OrderDetails(order);
-                        
+
                         var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", orderDetails, model.DriverId);
 
                         if (!sigResult.Success) throw new Exception(sigResult.DisplayMessage());
@@ -234,7 +234,10 @@ namespace DeliveryService.Controllers.Business
 
         public async Task<ActionResult> GetBusinessOrdesList(int draw, int start, int length)
         {
-            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>()).Select(o => new BusinessOrder(o)).ToList();
+            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>())
+                .Where(b => b.BusinessId == ViewBag.BusinessId)
+                .OrderBy(b => b.CreatedDt)
+                .Select(o => new BusinessOrder(o)).ToList();
 
             var param = new DataParam
             {

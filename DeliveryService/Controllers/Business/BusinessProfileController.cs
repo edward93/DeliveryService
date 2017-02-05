@@ -148,12 +148,15 @@ namespace DeliveryService.Controllers.Business
                         CreatedDt = DateTime.UtcNow
                     });
 
+                    var extension = Path.GetExtension(fileDetails.FilePath);
+                    extension = extension?.Substring(1);
+
                     // Save file
                     file.SaveAs(fileDetails.FilePath);
 
                     // Save as thumbnail
                     var thumbnail = new WebImage(fileDetails.FilePath).Resize(200, 200);
-                    thumbnail.Save(fileDetails.ThumbPath, "png");
+                    thumbnail.Save(fileDetails.ThumbPath, extension);
 
                     transactoin.Commit();
                     serviceResult.Success = true;
