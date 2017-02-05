@@ -122,11 +122,21 @@ $(document).ready(function () {
         $('#vehicleType-selectized').removeClass('invalid');
     }
 
-
-
-
     $(document).on('click', ".btnPreviewOrderDetails", function () {
-        $("#previewOrderDetailsModal").modal("show");
+        var orderId = $(this).attr('data-id');
+        window.BlockUi();
+        $.post("/BusinessOrder/GetOrderDetails",
+            {
+                orderId: orderId
+            },
+            function (data) {
+                window.UnBlockUi();
+                initPreviewOrderModal(data);
+                $("#previewOrderDetailsModal").modal("show");
+            });
+            
+       
+        
     });
 
     $("#addOrderBtn").on("click",
@@ -297,6 +307,30 @@ $(document).ready(function () {
         map = new window.google.maps.Map(mapElement, getMapStart());
         directionsDisplay.setMap(null);
     }
+
+    var lblCustomerName = $("#lblCustomerName");
+    var lblCustomerPhone = $("#lblCustomerPhone");
+    var lblTimeToReachPickUpLocation = $("#lblTimeToReachPickUpLocation");
+    var lblTimeToReachDropOffLocation = $("#lblTimeToReachDropOffLocation");
+    var lblPickUpLocation = $("#lblPickUpLocation");
+    var lblDropOffLocation = $("#lblDropOffLocation");
+    var lblOrderNumber = $("#lblOrderNumber");
+
+    function initPreviewOrderModal(data) {
+        data = data.Data;
+        lblCustomerName.text(data.CustomerName);
+        lblCustomerPhone.text(data.CustomerPhone);
+        lblTimeToReachPickUpLocation.text(data.TimeToReachPickUpLocation);
+        lblTimeToReachDropOffLocation.text(data.TimeToReachDropOffLocation);
+        lblPickUpLocation.text(data.PickUpLocation);
+        lblDropOffLocation.text(data.DropOffLocation);
+        lblOrderNumber.text(data.OrderNumber);
+    }
+
+    $('#myModal').on('hidden.bs.modal',
+        function() {
+            // do something…
+        });
 
     function getRoute() {
         var mapOptions = getMapStart();

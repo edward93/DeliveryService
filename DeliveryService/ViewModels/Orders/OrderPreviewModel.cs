@@ -40,8 +40,6 @@ namespace DeliveryService.ViewModels.Orders
         public int TimeToReachPickUpLocation { get; set; }
         public int TimeToReachDropOffLocation { get; set; }
         public OrderStatus OrderStatus { get; set; }
-        public VehicleType VehicleType { get; set; }
-
 
         public string PickUpLocation { get; set; }
         public string PickUpName { get; set; }

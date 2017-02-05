@@ -197,7 +197,7 @@ namespace DeliveryService.Controllers.Business
             return Json(serviceResult);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<JsonResult> GetOrderDetails(int orderId)
         {
             var serviceResult = new ServiceResult();
