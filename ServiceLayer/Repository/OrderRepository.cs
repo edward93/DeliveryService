@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Linq;
 using System.Threading.Tasks;
 using DAL.Context;
 using DAL.Entities;
@@ -92,6 +95,12 @@ namespace ServiceLayer.Repository
 
             await ChangeOrderStatus(order, OrderStatus.Delivered, driver.Person);
 
+        }
+
+        public async Task<IEnumerable<Order>> GetBusinessOrdersAsync(int businessId, OrderStatus? status)
+        {
+            return status != null ? await DbContext.Orders.Where(c => c.IsDeleted == false && c.BusinessId == businessId && c.OrderStatus == status.Value).ToListAsync()
+                : await DbContext.Orders.Where(c => c.IsDeleted == false && c.BusinessId == businessId).ToListAsync();
         }
     }
 }

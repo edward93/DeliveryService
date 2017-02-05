@@ -7,6 +7,7 @@ using System.Web;
 using DAL.Annotation;
 using DAL.Entities;
 using DAL.Enums;
+using Infrastructure.Helpers;
 
 namespace DeliveryService.ViewModels.Business
 {
@@ -20,7 +21,7 @@ namespace DeliveryService.ViewModels.Business
             OrderNumber = order.OrderNumber;
             TimeToReachDropOffLocation = order.TimeToReachDropOffLocation;
             TimeToReachPickUpLocation = order.TimeToReachPickUpLocation;
-            OrderStatus = order.OrderStatus.ToString();
+            OrderStatus = EnumHelpers<OrderStatus>.GetDisplayValue(order.OrderStatus);
             VehicleType = order.VehicleType.ToString();
         }
 

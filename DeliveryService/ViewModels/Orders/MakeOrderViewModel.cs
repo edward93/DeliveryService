@@ -11,13 +11,12 @@ namespace DeliveryService.ViewModels.Orders
     {
         public string CustomerName { get; set; }
         public string CustomerPhone { get; set; }
-        public string OrderNumber { get; set; }
         [Required]
         public int TimeToReachPickUpLocation { get; set; }
         [Required]
         public int TimeToReachDropOffLocation { get; set; }
         public OrderStatus OrderStatus { get; set; }
-        public VehicleType VehicleType { get; set; }
+        public VehicleType? VehicleType { get; set; }
 
         public string PickUpLocation { get; set; }
         public string PickUpName { get; set; }
@@ -67,6 +66,7 @@ namespace DeliveryService.ViewModels.Orders
 
         public Order GetOrder(DAL.Entities.Business business)
         {
+            var guiid = Guid.NewGuid().ToString("N");
             return new Order
             {
                 BusinessId = business.Id,
@@ -75,9 +75,9 @@ namespace DeliveryService.ViewModels.Orders
                 CustomerName = CustomerName,
                 CustomerPhone = CustomerPhone,
                 IsDeleted = false,
-                OrderNumber = OrderNumber,
+                OrderNumber = $"{guiid.Substring(0,3)}-{guiid.Substring(3, 3)}-{guiid.Substring(6, 3)}",
                 OrderStatus = OrderStatus.Pending,
-                VehicleType = VehicleType,
+                VehicleType = VehicleType ?? DAL.Enums.VehicleType.Other,
                 UpdatedBy = business.ContactPerson.Id,
                 UpdatedDt = DateTime.UtcNow,
                 TimeToReachDropOffLocation = TimeToReachDropOffLocation,

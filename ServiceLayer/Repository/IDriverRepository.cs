@@ -12,5 +12,6 @@ namespace ServiceLayer.Repository
         Task<Driver> CreateDriverAsync(Driver driver);
         Task<Driver> GetDriverByPersonId(string personId);
         Task ApproveDriver(int driverId);
+        Task<int> GetOnlineDriversCountAsync();
     }
 }

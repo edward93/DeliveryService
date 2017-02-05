@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Entities;
 using DAL.Enums;
@@ -291,6 +292,11 @@ namespace ServiceLayer.Service
             };
 
             await _orderHistoryService.Value.CreateNewRecordAsync(orderHistory);
+        }
+
+        public async Task<IEnumerable<Order>> GetBusinessOrdersAsync(int businessId, OrderStatus? status)
+        {
+            return await _orderRepository.GetBusinessOrdersAsync(businessId, status);
         }
     }
 }

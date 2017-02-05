@@ -20,7 +20,19 @@
                 <h5>Orders</h5>
             </div>
             <div class="ibox-content">
-                <a href="@Url.Action("BusinessOrders", "BusinessOrder")"><h1 class="no-margins">@ViewBag.OrdersMonth</h1></a>
+                <a href="@Url.Action("BusinessOrders", "BusinessOrder")">
+                    <h1 class="no-margins">@ViewBag.OrdersMonth</h1></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-info pull-right">Total</span>
+                <h5>Online Drivers</h5>
+            </div>
+            <div class="ibox-content">
+                <a href="@Url.Action("BusinessOrders", "BusinessOrder")"><h1 class="no-margins">@ViewBag.OnlineDriversCount</h1></a>
             </div>
         </div>
     </div>

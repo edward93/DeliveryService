@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DAL.Entities;
 using DAL.Enums;
 
@@ -17,5 +18,6 @@ namespace ServiceLayer.Repository
         Task OrderPickedUpAsync(Order order, Driver driver);
         Task OrderDelivieredAsync(Order order, Driver driver);
         Task OrderNotDeliveredAsync(Order order, Driver driver, string reason);
+        Task <IEnumerable<Order>> GetBusinessOrdersAsync(int businessId, OrderStatus? status);
     }
 }

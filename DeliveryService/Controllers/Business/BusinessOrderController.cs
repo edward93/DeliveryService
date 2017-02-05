@@ -88,6 +88,7 @@ namespace DeliveryService.Controllers.Business
                     await _orderService.Value.CreateOrderAsync(order);
 
                     // TODO: Move this method into worker process
+                    // Find driver regargless of it's vehicle type
                     var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
                     if (driverLocation != null)
                     {
@@ -112,7 +113,7 @@ namespace DeliveryService.Controllers.Business
                     }
                     else
                     {
-                        // TODO: Show business that 
+                        // TODO: Show business that no driver was found
                     }
 
                     serviceResult.Success = true;
@@ -255,19 +256,19 @@ namespace DeliveryService.Controllers.Business
 
         public async Task<ActionResult> GetBusinessOrdesList(int draw, int start, int length)
         {
-            var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-            var businessId = (await _businessService.Value.GetBusinessByPersonId(person.Id)).Id;
+            var currentBusiness =
+                await
+                    _businessService.Value.GetBusinessByPersonId(
+                        (await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId())).Id);
 
-            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>())
-                .Where(b => b.BusinessId == businessId)
-                .OrderBy(b => b.CreatedDt)
+            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>(c => c.BusinessId == currentBusiness.Id, c => c.OrderBy(x => x.CreatedDt)))
                 .Select(o => new BusinessOrder(o)).ToList();
 
             var param = new DataParam
             {
                 Search = Request.QueryString["search[value]"],
                 SortColumn = Request.QueryString["order[0][column]"] == null ? -1 : int.Parse(Request.QueryString["order[0][column]"]),
-                SortDirection = Request.QueryString["order[0][dir]"] ?? "asc",
+                SortDirection = Request.QueryString["order[0][dir]"] ?? "desc",
                 Start = start,
                 Draw = draw,
                 Length = length

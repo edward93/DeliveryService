@@ -22,7 +22,7 @@ $(document).ready(function () {
         },
         "columns": [
             { "data": "CustomerName", "orderable": true },
-            { "data": "CustomerPhone", "orderable": false },
+            { "data": "CustomerPhone", "orderable": true },
             { "data": "OrderNumber", "orderable": true },
             { "data": "TimeToReachPickUpLocation", "orderable": true },
             { "data": "TimeToReachDropOffLocation", "orderable": true },
@@ -37,7 +37,7 @@ $(document).ready(function () {
                 }
             }
         ],
-        "order": [[0, "asc"]]
+        "order": [[0, "desc"]]
     });
 
 
