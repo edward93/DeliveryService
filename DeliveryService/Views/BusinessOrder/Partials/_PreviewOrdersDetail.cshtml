@@ -1,0 +1,84 @@
+﻿<div class="modal fade" id="previewOrderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title" id="Heading">Preview Order Details</h4>
+            </div>
+
+            <div class="modal-body">
+                <form class="form-horizontal" id="submitOrderForm">
+                    <div class="form-group">
+                        <label for="customerName" class="col-sm-3 col-md-3 control-label">Customer Name</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label id="customerName" class="form-control" name="CustomerName"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone" class="col-sm-3 col-md-3 control-label">Customer Phone</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label type="number" class="form-control" id="customerPhone" name="CustomerPhone" placeholder="Customer Phone Number"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeToReachPickUpLocation" class="col-sm-3 col-md-3 control-label">Time To Reach PickUp Location</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label type="text" class="form-control" id="timeToReachPickUpLocation" name="TimeToReachPickUpLocation" placeholder="Time To Reach PickUp Location"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeToReachDropOffLocation" class="col-sm-3 col-md-3 control-label">Time To Reach DropOff Location</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label type="text" class="form-control" id="timeToReachDropOffLocation" name="TimeToReachDropOffLocation" placeholder="Time To Reach DropOff Location"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pickUpLocation" class="col-sm-3 col-md-3 control-label">Pick Up Location</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label type="text" class="form-control location" id="pickUpLocation" name="PickUpLocation" placeholder="Pick Up Location"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dropOffLocation" class="col-sm-3 col-md-3 control-label">Drop Off Location</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label type="text" class="form-control location" id="dropOffLocation" name="DropOffLocation" placeholder="Drop Off Location"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderNumber" class="col-sm-3 col-md-3 control-label">Order Number</label>
+                        <div class="col-sm-9 col-md-9">
+                            <label type="text" class="form-control" id="orderNumber" name="OrderNumber" placeholder="Unique Order number"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <div id="map_canvas" style="width: 100%; height: 300px"></div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="txtPickUpName" name="PickUpName" value="PickUpName" />
+                    <input type="hidden" id="txtLatitudePickUp" name="PickUpLatitude" />
+                    <input type="hidden" id="txtLongitudePickUp" name="PickUpLongitude" />
+
+                    <input type="hidden" id="txtDropOffName" name="DropOffName" value="DropOffName" />
+                    <input type="hidden" id="txtLatitudeDropOff" name="DropOffLatitude" />
+                    <input type="hidden" id="txtLongitudeDropOff" name="DropOffLongitude" />
+                </form>
+
+                <div class="modal-footer ">
+                    <ul class="list-inline pull-right">
+                        <li><button type="submit" class="btn btn-warning" data-dismiss="modal">Close</button></li>
+                        <li><button type="button" class="btn btn-primary" id="addOrderBtn">Make Order</button></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+
+<input type="hidden" id="txtLatitude" value="51.5076514" />
+<input type="hidden" id="txtLongitude" value="-0.1256326" />

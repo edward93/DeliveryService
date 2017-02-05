@@ -196,6 +196,27 @@ namespace DeliveryService.Controllers.Business
             return Json(serviceResult);
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetOrderDetails(int orderId)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                var orderPreview = new OrderPreviewModel(await _orderService.Value.GetByIdAsync<Order>(orderId));
+
+                serviceResult.Success = true;
+                serviceResult.Data = orderPreview;
+                serviceResult.Messages.AddMessage(MessageType.Info, "Order details was getted successfully");
+            }
+            catch (Exception e)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+            }
+
+            return Json(serviceResult);
+        }
+
         [HttpPost]
         public async Task<ActionResult> CancelDriver(AcceptRejectDriverViewModel model)
         {

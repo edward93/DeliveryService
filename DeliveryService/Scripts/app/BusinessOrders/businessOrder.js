@@ -11,9 +11,9 @@ $(document).ready(function () {
         "info": true,   // control table information display field
         "stateSave": false,  //restore table state on page reload,
         "responsive": true,
-         "columnDefs": [
-            { responsivePriority: 1, targets: 0 },
-            { responsivePriority: 2, targets: -2 }
+        "columnDefs": [
+           { responsivePriority: 1, targets: 0 },
+           { responsivePriority: 2, targets: -2 }
         ],
         "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
         "ajax": {
@@ -31,7 +31,7 @@ $(document).ready(function () {
             {
                 mRender: function (data, type, row) {
 
-                    return '<button class="btn btn-primary btn-xs" data-title="Preview" data-id="' +
+                    return '<button class="btn btn-primary btn-xs btnPreviewOrderDetails" data-title="Preview" data-id="' +
                         row.Id +
                         '" id="btnPreviewOrder"><span class="fa fa-eye" title="Preview"></span></button>';
                 }
@@ -40,7 +40,7 @@ $(document).ready(function () {
         "order": [[0, "asc"]]
     });
 
-   
+
     var customerName = $("#customerName");
     var customerPhone = $("#customerPhone");
     var timeToReachPickUpLocation = $("#timeToReachPickUpLocation");
@@ -121,6 +121,13 @@ $(document).ready(function () {
         $('#vehicleType-selectized').removeClass('valid');
         $('#vehicleType-selectized').removeClass('invalid');
     }
+
+
+
+
+    $(document).on('click', ".btnPreviewOrderDetails", function () {
+        $("#previewOrderDetailsModal").modal("show");
+    });
 
     $("#addOrderBtn").on("click",
         function (e) {

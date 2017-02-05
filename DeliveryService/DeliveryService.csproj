@@ -283,6 +283,7 @@
     <Compile Include="ViewModels\Business\RegisterBusinessModel.cs" />
     <Compile Include="ViewModels\Drivers\DriverDetailsForOrder.cs" />
     <Compile Include="ViewModels\Orders\MakeOrderViewModel.cs" />
+    <Compile Include="ViewModels\Orders\OrderPreviewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -1083,6 +1084,7 @@
     <Content Include="Views\BusinessOrder\Partials\_AddOrder.cshtml" />
     <Content Include="Views\BusinessOrder\Partials\_AcceptRejectDriver.cshtml" />
     <Content Include="Views\BusinessProfile\Partials\_BusinessProfileModal.cshtml" />
+    <Content Include="Views\BusinessOrder\Partials\_PreviewOrdersDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
