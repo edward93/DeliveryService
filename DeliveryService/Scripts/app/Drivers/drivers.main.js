@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     var driverId;
     $('#tblDriversList').DataTable({
+        responsive: true,
         dom: '<"html5buttons"B>lTfgitp',
         buttons: [
             { extend: 'copy' },

@@ -10,7 +10,12 @@ $(document).ready(function () {
         "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
         "info": true,   // control table information display field
         "stateSave": false,  //restore table state on page reload,
-        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]], // use the first inner array as the page length values and the second inner array as the displayed options
+        "responsive": true,
+         "columnDefs": [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 2, targets: -2 }
+        ],
+        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
         "ajax": {
             "url": "/BusinessOrder/GetBusinessOrdesList",
             "type": "GET"
