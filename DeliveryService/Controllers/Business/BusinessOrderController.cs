@@ -234,8 +234,11 @@ namespace DeliveryService.Controllers.Business
 
         public async Task<ActionResult> GetBusinessOrdesList(int draw, int start, int length)
         {
+            var person = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+            var businessId = (await _businessService.Value.GetBusinessByPersonId(person.Id)).Id;
+
             var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>())
-                .Where(b => b.BusinessId == ViewBag.BusinessId)
+                .Where(b => b.BusinessId == businessId)
                 .OrderBy(b => b.CreatedDt)
                 .Select(o => new BusinessOrder(o)).ToList();
 
