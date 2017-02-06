@@ -85,6 +85,7 @@ namespace DeliveryService.Controllers
                         serviceResult.Messages.AddMessage(MessageType.Info, "The document was approved");
                         
                         transaction.Commit();
+                        await ChangeDriverStatus(document.DriverId);
                     }
                     else
                     {
@@ -106,6 +107,45 @@ namespace DeliveryService.Controllers
             }
 
             return Json(serviceResult);
+        }
+
+        private async Task ChangeDriverStatus(int driverId)
+        {
+            var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+            var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
+
+            var driverVehicleType = driver.VehicleType;
+            int counter = 0;
+            foreach (var doc in driverDocuments)
+            {
+                if (doc.DocumentStatus == DocumentStatus.Approved)
+                {
+                    counter++;
+                }
+            }
+            if (driverVehicleType == VehicleType.Van || driverVehicleType == VehicleType.Car ||
+            driverVehicleType == VehicleType.Motorbike)
+            {
+                if (counter >= 4)
+                {
+                    await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                }
+                else
+                {
+                    await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                }
+            }
+            else
+            {
+                if (counter >= 2)
+                {
+                    await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                }
+                else
+                {
+                    await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                }
+            }
         }
 
         [System.Web.Mvc.HttpPost]
@@ -143,6 +183,8 @@ namespace DeliveryService.Controllers
 
                             scope.Complete();
                             transaction.Commit();
+
+                            await ChangeDriverStatus(document.DriverId);
                         }
                         else
                         {

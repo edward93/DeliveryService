@@ -123,18 +123,22 @@ namespace DeliveryService.API.Controllers
 
 
                     var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
-                    int counter = 0;
                     foreach (var document in driverDocuments)
                     {
-                        if (document.DocumentStatus == DocumentStatus.Approved)
+                        if (driverDetails.VehicleType != VehicleType.Van && driverDetails.VehicleType != VehicleType.Car &&
+                            driverDetails.VehicleType != VehicleType.Motorbike)
                         {
-                            counter++;
+                            if (document.UploadType == UploadType.Insurance || document.UploadType == UploadType.License)
+                                await _driverUploadService.Value.RemoveEntityAsync<DriverUpload>(document.Id);
                         }
                     }
+
+                    int driverDocumentsCount = (await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id)).Count();
+
                     if (driverDetails.VehicleType == VehicleType.Van || driverDetails.VehicleType == VehicleType.Car ||
                         driverDetails.VehicleType == VehicleType.Motorbike)
                     {
-                        if (counter == 4)
+                        if (driverDocumentsCount >= 4)
                         {
                             await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
                         }
@@ -145,7 +149,7 @@ namespace DeliveryService.API.Controllers
                     }
                     else
                     {
-                        if (counter > 2)
+                        if (driverDocumentsCount >= 2)
                         {
                             await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
                         }
@@ -182,13 +186,33 @@ namespace DeliveryService.API.Controllers
             try
             {
                 var driver = await _driverService.Value.GetDriverByPersonAsync(User.Identity.GetUserId());
-                if (driver != null)
+                var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
+                var driverDocList = new List<DriverDocumentModel>();
+                var driverVehicleType = driver.VehicleType;
+                foreach (var document in driverDocuments)
                 {
-                    var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
-                    var driverDocList = new List<DriverDocumentModel>();
-                    foreach (var document in driverDocuments)
+                    if (driverVehicleType != VehicleType.Van && driverVehicleType != VehicleType.Car &&
+                        driverVehicleType != VehicleType.Motorbike)
                     {
-                        driverDocList.Add(new DriverDocumentModel()
+                        if (document.UploadType == UploadType.Passport ||
+                            document.UploadType == UploadType.ProofOfAddress
+                            || document.UploadType == UploadType.Photo)
+                        {
+                            driverDocList.Add(new DriverDocumentModel
+                            {
+                                DocumentType = document.UploadType,
+                                FileName = document.FileName,
+                                Description = document.Description,
+                                DocumentStatus = document.DocumentStatus,
+                                ExpireDate = document.ExpireDate,
+                                RejectionComment = document.RejectionComment,
+                                DocumentId = document.Id
+                            });
+                        }
+                    }
+                    else
+                    {
+                        driverDocList.Add(new DriverDocumentModel
                         {
                             DocumentType = document.UploadType,
                             FileName = document.FileName,
@@ -199,31 +223,28 @@ namespace DeliveryService.API.Controllers
                             DocumentId = document.Id
                         });
                     }
-                    var driverDetails = new DriverDetails()
-                    {
-                        FirstName = driver.Person.FirstName,
-                        LastName = driver.Person.LastName,
-                        Email = driver.Person.Email,
-                        DateOfBirth = driver.Person.DateOfBirth,
-                        Phone = driver.Person.Phone,
-                        Sex = driver.Person.Sex,
-                        Addresses = driver.Addresses.ToList(),
-                        DriverDocuments = driverDocList,
-                        DriverId = driver.Id,
-                        VehicleType = driver.VehicleType,
-                        VehicleRegistrationNumber = driver.VehicleRegistrationNumber,
-                        Approved = driver.Approved,
-                        RatingAverageScore = (double)driver.Rating.AverageScore
-                    };
+                }
 
-                    result.Success = true;
-                    result.Data = driverDetails;
-                }
-                else
+                var driverDetails = new DriverDetails
                 {
-                    result.Success = false;
-                    result.Messages.AddMessage(MessageType.Error, "Driver was not found");
-                }
+                    FirstName = driver.Person.FirstName,
+                    LastName = driver.Person.LastName,
+                    Email = driver.Person.Email,
+                    DateOfBirth = driver.Person.DateOfBirth,
+                    Phone = driver.Person.Phone,
+                    Sex = driver.Person.Sex,
+                    Addresses = driver.Addresses.ToList(),
+                    DriverDocuments = driverDocList,
+                    DriverId = driver.Id,
+                    VehicleType = driver.VehicleType,
+                    VehicleRegistrationNumber = driver.VehicleRegistrationNumber,
+                    Approved = driver.Approved,
+                    RatingAverageScore = (double)driver.Rating.AverageScore
+                };
+
+                result.Success = true;
+                result.Data = driverDetails;
+
             }
             catch (Exception exception)
             {

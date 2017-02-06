@@ -20,7 +20,6 @@ namespace DeliveryService.ViewModels.Orders
             TimeToReachDropOffLocation = order.TimeToReachDropOffLocation;
             TimeToReachPickUpLocation = order.TimeToReachPickUpLocation;
             OrderStatus = order.OrderStatus;
-            VehicleType = order.VehicleType;
 
             PickUpLatitude = order.PickUpLocation.Lat;
             PickUpLongitude = order.PickUpLocation.Long;

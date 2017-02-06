@@ -84,51 +84,45 @@ namespace DeliveryService.API.Controllers
                     var userId = User.Identity.GetUserId();
                     var driver = await _driverService.Value.GetDriverByPersonAsync(userId);
                     var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
-
-                    var driverVehicleType = driver.VehicleType;
+                    
 
                     var driverDocumentWithState = new DriverDocumentsWithState();
                     var driverDocList = new List<DriverDocumentModel>();
-                    int counter = 0;
+                    var driverVehicleType = driver.VehicleType;
+                    
                     foreach (var document in driverDocuments)
                     {
-                        if (document.DocumentStatus == DocumentStatus.Approved)
+                        if (driverVehicleType != VehicleType.Van && driverVehicleType != VehicleType.Car &&
+                            driverVehicleType != VehicleType.Motorbike)
                         {
-                            counter++;
-                        }
-                        driverDocList.Add(new DriverDocumentModel()
-                        {
-                            DocumentType = document.UploadType,
-                            FileName = document.FileName,
-                            Description = document.Description,
-                            DocumentStatus = document.DocumentStatus,
-                            ExpireDate = document.ExpireDate,
-                            RejectionComment = document.RejectionComment,
-                            DocumentId = document.Id
-                        });
-                    }
-
-                    if (driverVehicleType == VehicleType.Van || driverVehicleType == VehicleType.Car ||
-                        driverVehicleType == VehicleType.Motorbike)
-                    {
-                        if (counter == 4)
-                        {
-                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
+                            if (document.UploadType == UploadType.Passport ||
+                                document.UploadType == UploadType.ProofOfAddress
+                                || document.UploadType == UploadType.Photo)
+                            {
+                                driverDocList.Add(new DriverDocumentModel
+                                {
+                                    DocumentType = document.UploadType,
+                                    FileName = document.FileName,
+                                    Description = document.Description,
+                                    DocumentStatus = document.DocumentStatus,
+                                    ExpireDate = document.ExpireDate,
+                                    RejectionComment = document.RejectionComment,
+                                    DocumentId = document.Id
+                                });
+                            }
                         }
                         else
                         {
-                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
-                        }
-                    }
-                    else
-                    {
-                        if (counter > 2)
-                        {
-                            await _driverService.Value.ApproveDriverAsync(driver.Id, driver.Id);
-                        }
-                        else
-                        {
-                            await _driverService.Value.RejectDriverAsync(driver.Id, driver.Id);
+                            driverDocList.Add(new DriverDocumentModel
+                            {
+                                DocumentType = document.UploadType,
+                                FileName = document.FileName,
+                                Description = document.Description,
+                                DocumentStatus = document.DocumentStatus,
+                                ExpireDate = document.ExpireDate,
+                                RejectionComment = document.RejectionComment,
+                                DocumentId = document.Id
+                            });
                         }
                     }
 

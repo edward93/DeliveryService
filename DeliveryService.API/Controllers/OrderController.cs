@@ -64,8 +64,8 @@ namespace DeliveryService.API.Controllers
 
                     var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
 
-                    if (order.VehicleType != driver.VehicleType)
-                        throw new Exception("The requested vehicle type doesn't match with the driver's vehicle.");
+                  /*  if (order.VehicleType != driver.VehicleType)
+                        throw new Exception("The requested vehicle type doesn't match with the driver's vehicle.");*/
 
                     //var business = await _businessService.Value.GetByIdAsync<Business>(order.BusinessId);
 
