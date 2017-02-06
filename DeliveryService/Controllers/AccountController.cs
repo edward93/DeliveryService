@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using DeliveryService.Models;
 using Infrastructure.Config;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace DeliveryService.Controllers
 {
@@ -50,11 +51,16 @@ namespace DeliveryService.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    if (User.IsInRole(Roles.Admin))
+                    var user = await UserManager.FindByEmailAsync(model.Email);
+                    if (user.Claims.Any(c => c.ClaimValue == Roles.Admin))
+                    {
                         return RedirectToAction("Index", "DashBoard");
-                    else if (User.IsInRole(Roles.Business))
+
+                    }
+                    else if (user.Claims.Any(c => c.ClaimValue == Roles.Business))
                     {
                         return RedirectToAction("DashBoard", "BusinessDashboard");
+
                     }
                     else
                     {
