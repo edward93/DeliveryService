@@ -49,12 +49,24 @@
                         </h3>
                         <br />
                         <address>
-                            <p><strong>Address: </strong><label id="businessAddress">@Html.DisplayFor(m => m.AddressForDisplay)</label> </p>
-                            <p><strong>Phone: </strong><label id="businessPhone">@Html.DisplayFor(m => m.PhoneNumber)</label> </p>
-                            <p><strong>Email: </strong><label id="businessEmail">@Html.DisplayFor(m => m.BusinessEmail)</label> </p>
-                            <p><strong>Birth Date: </strong><label id="businessBirthDate">@Model.DateOfBirth.ToShortDateString()</label> </p>
-                            <p><strong>Sex: </strong><label id="businessSex">@Html.DisplayFor(m => m.Sex)</label> </p>
-                            <p><strong>Contact Phone Number: </strong><label id="businessContactPhoneNumber">@Html.DisplayFor(m => m.ContactPersonPhoneNumber)</label> </p>
+                            <div class="row">
+                                <strong class="col-xm-6 col-md-6">Address </strong><span class="col-xm-6 col-md-6">@Html.DisplayFor(m => m.AddressForDisplay)</span>
+                            </div>
+                            <div class="row">
+                                <strong class="col-xm-6 col-md-6">Phone </strong><span class="col-xm-6 col-md-6">@($"{Convert.ToDecimal(Model.Phone):(+44 ###) ###-####}")</span>
+                            </div>
+                            <div class="row">
+                                <strong class="col-xm-6 col-md-6">Email </strong><span class="col-xm-6 col-md-6">@Html.DisplayFor(m => m.BusinessEmail)</span>
+                            </div>
+                            <div class="row">
+                                <strong class="col-xm-6 col-md-6">Date of Birth </strong><span class="col-xm-6 col-md-6">@Model.DateOfBirth.ToString("MMMM dd yyyy")</span>
+                            </div>
+                            <div class="row">
+                                <strong class="col-xm-6 col-md-6">Sex </strong><span class="col-xm-6 col-md-6">@Html.DisplayFor(m => m.Sex)</span>
+                            </div>
+                            <div class="row">
+                                <strong class="col-xm-6 col-md-6">Contact Phone Number </strong><span class="col-xm-6 col-md-6">@($"{Convert.ToDecimal(Model.ContactPersonPhoneNumber):(+44 ###) ###-####}")</span>
+                            </div>
                         </address>
                     </div>
                     <div class="clearfix"></div>
@@ -122,18 +134,18 @@
 </form>
 @Html.Partial("~/Views/BusinessProfile/Partials/_BusinessProfileModal.cshtml")
 
-    <script src="~/Scripts/app/Business/businessProfile.js"></script>
-    <link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Scripts/app/Business/businessProfile.js"></script>
+<link href="~/Style/BusinessProfile/businessProfile.css" rel="stylesheet" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    @section Styles {
-        @Styles.Render("~/plugins/sweetAlertStyles")
-        @Styles.Render("~/plugins/toastrStyles")
-        @Styles.Render("~/plugins/dataPickerStyles")
-    }
-    @section Scripts {
-        @Scripts.Render("~/plugins/sweetAlert")
-        @Scripts.Render("~/plugins/toastr")
-        @Scripts.Render("~/plugins/dataPicker")
-    }
+@section Styles {
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    @Styles.Render("~/plugins/toastrStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+@section Scripts {
+    @Scripts.Render("~/plugins/sweetAlert")
+    @Scripts.Render("~/plugins/toastr")
+    @Scripts.Render("~/plugins/dataPicker")
+}
