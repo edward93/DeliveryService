@@ -28,7 +28,6 @@ namespace DeliveryService.Helpers.DataTableHelper
             var search = _params.Search;
             var sortColumn = -1;
             var sortDirection = "asc";
-            _params.Length = _data.Count;
 
             if (_params.SortColumn != null)
             {
