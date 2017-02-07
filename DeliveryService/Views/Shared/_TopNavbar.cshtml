@@ -107,7 +107,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="@Html.IsSelected("Logout")">
+            <li class="@Html.IsSelected("Logout")" style="padding-top: 15px;">
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "" }))
                 {
                     <a href="javascript:document.getElementById('logoutForm').submit()">
