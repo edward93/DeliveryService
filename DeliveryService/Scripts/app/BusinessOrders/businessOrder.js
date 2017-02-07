@@ -1,6 +1,10 @@
 ﻿
 $(document).ready(function () {
 
+    if (window.location.href.indexOf("BusinessOrders#addOrder") !== -1) {
+        $("#addOrderModal").modal("show");
+        }
+
     $(".location").keypress(function () {
         getRoute();
     });

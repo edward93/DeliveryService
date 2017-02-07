@@ -6,13 +6,13 @@
         <ul class="nav navbar-top-links navbar-right">
             @if (User.IsInRole("Business"))
             {
-                <li class="dropdown topMenu">
+                <li class="dropdown topMenu" style="padding: 10px;">
                     <button type="button" id="btnTopMakeOrder" style="color: black" class="btn btn-warning active">
-                        <strong class="font-bold">MAKE ORDER</strong>
+                        <strong class="font-bold">CREATE NEW ORDER</strong>
                     </button>
                 </li>
             }
-            <li class="dropdown">
+            <li class="dropdown" style="display: none;">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                     <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
                 </a>
@@ -65,7 +65,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="dropdown">
+            <li class="dropdown" style="display: none;">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                     <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
                 </a>
@@ -129,10 +129,7 @@
 <script>
 
     $(document).on('click', "#btnTopMakeOrder", function () {
-        var location = window.location.href;
-        if (location.indexOf("BusinessOrders") !== -1) {
-           // $("#btnTopMakeOrder").hide();
-        }
+        window.location.href = "/BusinessOrder/BusinessOrders#addOrder";
     });
 
     if (window.location.href.indexOf("BusinessOrders") !== -1) {
