@@ -6,7 +6,7 @@ $(document).ready(function () {
     }
 
     $(".location").keypress(function () {
-        getRoute();
+        //getRoute();
     });
 
     var tableDriversList = $('#tblDriversList').dataTable({
@@ -373,12 +373,22 @@ $(document).ready(function () {
         }, function (response, status) {
             if (status === window.google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status === "OK") {
 
-
                 var distanceToShow = response.rows[0].elements[0].distance.text;
                 var durationToShow = response.rows[0].elements[0].duration.text;
 
                 var distance = response.rows[0].elements[0].distance.value;
                 var duration = response.rows[0].elements[0].duration.value;
+
+                if ($("#pickUpLocation").val() &&
+                    $("#dropOffLocation").val() &&
+                    ($("#addOrderModal").data('bs.modal') || {}).isShown) {
+                    var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
+                    $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
+
+                    $("#durationWarning").show();
+                }
+
+
 
                 $("#distance").html(distanceToShow);
                 $("#duration").html(durationToShow);
@@ -418,6 +428,11 @@ $(document).ready(function () {
         }
         getLongLatPickUp();
     });
+
+    // TODO fix map
+    var autocomplete = new window.google.maps.places.Autocomplete(document.getElementById('pickUpLocation'));
+
+
 
     $('#pickUpLocation').keyup(function (e) {
         var code = e.which; // recommended to use e.which, it's normalized across browsers
@@ -461,7 +476,6 @@ $(document).ready(function () {
                 var longitude = results[0].geometry.location.lng();
                 $("#txtLatitudePickUp").val(latitude);
                 $("#txtLongitudePickUp").val(longitude);
-                calculateEstimatedTime();
             }
         });
     }
@@ -477,13 +491,17 @@ $(document).ready(function () {
                 var longitude = results[0].geometry.location.lng();
                 $("#txtLatitudeDropOff").val(latitude);
                 $("#txtLongitudeDropOff").val(longitude);
-                calculateEstimatedTime();
             }
         });
     }
 
     $("#addOrderModal").on("shown.bs.modal",
         function () {
+            //autocomplete.addListener('place_changed',
+            //        function () {
+            //            debugger;
+            //            getRoute();
+            //        });
             $("#durationWarning").hide();
             var mapOptions = getMapStart();
             var sourceSearchBox = new window.google.maps.places.SearchBox($('#pickUpLocation')[0]);
@@ -517,7 +535,7 @@ $(document).ready(function () {
 
     $('#addOrderModal')
         .on('hidden.bs.modal',
-            function() {
+            function () {
                 $("#durationWarning").hide();
             });
 
@@ -587,42 +605,42 @@ $(document).ready(function () {
         });
     }
 
-    function calculateEstimatedTime() {
-        if ($("#txtLatitudePickUp").val() &&
-            $("#txtLongitudePickUp").val() &&
-            $("#txtLatitudeDropOff").val() &&
-            $("#txtLongitudeDropOff").val() && 
-            ($("#addOrderModal").data('bs.modal') || {}).isShown) {
-            var pickUpLocation = new window.google.maps.LatLng($("#txtLatitudePickUp").val(), $("#txtLongitudePickUp").val());
-            var dropOffLocation = new window.google.maps.LatLng($("#txtLatitudeDropOff").val(), $("#txtLongitudeDropOff").val());
+    //function calculateEstimatedTime() {
+    //    if ($("#txtLatitudePickUp").val() &&
+    //        $("#txtLongitudePickUp").val() &&
+    //        $("#txtLatitudeDropOff").val() &&
+    //        $("#txtLongitudeDropOff").val() && 
+    //        ($("#addOrderModal").data('bs.modal') || {}).isShown) {
+    //        var pickUpLocation = new window.google.maps.LatLng($("#txtLatitudePickUp").val(), $("#txtLongitudePickUp").val());
+    //        var dropOffLocation = new window.google.maps.LatLng($("#txtLatitudeDropOff").val(), $("#txtLongitudeDropOff").val());
 
-            var service = new window.google.maps.DistanceMatrixService();
+    //        var service = new window.google.maps.DistanceMatrixService();
 
-            service.getDistanceMatrix(
-                {
-                    origins: [pickUpLocation],
-                    destinations: [dropOffLocation],
-                    travelMode: 'DRIVING',
-                    //transitOptions: TransitOptions,
-                    //drivingOptions: DrivingOptions,
-                    unitSystem: window.google.maps.UnitSystem.IMPERIAL,
-                    //avoidHighways: Boolean,
-                    avoidTolls: true
-                }, mapCallback);
-        }
-    }
+    //        service.getDistanceMatrix(
+    //            {
+    //                origins: [pickUpLocation],
+    //                destinations: [dropOffLocation],
+    //                travelMode: 'DRIVING',
+    //                //transitOptions: TransitOptions,
+    //                //drivingOptions: DrivingOptions,
+    //                unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+    //                //avoidHighways: Boolean,
+    //                avoidTolls: true
+    //            }, mapCallback);
+    //    }
+    //}
 
-    function mapCallback(response, status) {
-        if (status === 'OK') {
-            var durationText = response.rows[0].elements[0].duration.Text;
-            var duration = response.rows[0].elements[0].duration.value;
-            var distanceText = response.rows[0].elements[0].distance.text;
-            var distance = response.rows[0].elements[0].distance.value;
+    //function mapCallback(response, status) {
+    //    if (status === window.google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status === "OK") {
+    //        //var durationText = response.rows[0].elements[0].duration.text;
+    //        var duration = response.rows[0].elements[0].duration.value;
+    //        var distanceText = response.rows[0].elements[0].distance.text;
+    //        var distance = response.rows[0].elements[0].distance.value;
 
-            var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
-            $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
+    //        var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
+    //        $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
 
-            $("#durationWarning").show();
-        }
-    }
+    //        $("#durationWarning").show();
+    //    }
+    //}
 });

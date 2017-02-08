@@ -24,8 +24,16 @@ namespace SignalRSelfHost
         }
         static void Main(string[] args)
         {
-            StartServer();
+            try
+            {
+                StartServer();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
+
         public static void StartServer()
         {
             string url = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}";
