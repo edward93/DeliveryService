@@ -331,7 +331,6 @@ function createDocumentsView(fullPath, documentId, docType, data) {
 }
 
 function setStatuses(uploadTypeNmae, documentStatus) {
-    debugger;
     if (documentStatus === 1) {
         $(uploadTypeNmae[3].childNodes).addClass('disabled approveSelected');
     } else if (documentStatus === 2) {

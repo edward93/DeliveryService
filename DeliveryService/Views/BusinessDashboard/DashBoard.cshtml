@@ -21,7 +21,8 @@
             </div>
             <div class="ibox-content">
                 <a href="@Url.Action("BusinessOrders", "BusinessOrder")">
-                    <h1 class="no-margins">@ViewBag.OrdersMonth</h1></a>
+                    <h1 class="no-margins">@ViewBag.OrdersMonth</h1>
+                </a>
             </div>
         </div>
     </div>
@@ -29,10 +30,10 @@
         <div class="ibox float-e-margins">
             <div class="ibox-title">
                 <span class="label label-info pull-right">Total</span>
-                <h5>Online Drivers</h5>
+                <h5>Available Drivers</h5>
             </div>
             <div class="ibox-content">
-                <a href="@Url.Action("BusinessOrders", "BusinessOrder")"><h1 class="no-margins">@ViewBag.OnlineDriversCount</h1></a>
+                <a><h1 class="no-margins">@ViewBag.OnlineDriversCount</h1></a>
             </div>
         </div>
     </div>
@@ -51,23 +52,23 @@
                     <div class="mCustomScrollbar panel-body table-responsive">
                         <ul class="list-wrapper">
                             @*@foreach (var item in ViewBag.TodoList)
-                            {
-                                <li>
-                                    <div class="menu-icon">
-                                        <a href="@item.Link">
-                                            <img src="@item.Image">
-                                        </a>
-                                    </div>
-                                    <div class="menu-text @item.ItemColor">
-                                        @item.Text
-                                    </div>
-                                    <div class="menu-text">
-                                        <div class="menu-info">
-                                            <a href="@item.Link">@item.ItemName</a>
+                                {
+                                    <li>
+                                        <div class="menu-icon">
+                                            <a href="@item.Link">
+                                                <img src="@item.Image">
+                                            </a>
                                         </div>
-                                    </div>
-                                </li>
-                            }*@
+                                        <div class="menu-text @item.ItemColor">
+                                            @item.Text
+                                        </div>
+                                        <div class="menu-text">
+                                            <div class="menu-info">
+                                                <a href="@item.Link">@item.ItemName</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }*@
                         </ul>
                     </div>
                 </div>

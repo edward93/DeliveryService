@@ -26,7 +26,7 @@
                 <div class="ibox-title">
                     <div class="ibox-tools" style="margin-top: -5px">
                         <a id="btnMakeNewOrder" class="btn btn-primary btn-sm">
-                            <i class="fa fa-plus"></i> Add Order
+                            <i class="fa fa-plus"></i> New Order
                         </a>
                         <ul class="dropdown-menu dropdown-user">
                             <li>
@@ -65,7 +65,7 @@
                                 <th class="text-right" data-sort-ignore="true">Action</th>
                             </tr>
                         </tfoot>
-                      
+
                     </table>
                 </div>
             </div>
@@ -90,7 +90,7 @@
 }
 
 <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
-<script src="http://localhost:8000/signalr/hubs"></script>
+<script src="http://104.199.24.198:8000/signalr/hubs"></script>
 <script>
     function showNearestDriverOnMap(data) {
         var driverLoc = {
@@ -101,7 +101,7 @@
     }
 </script>
 <script>
-    $.connection.hub.url = "http://localhost:8000/signalr";
+    $.connection.hub.url = "http://104.199.24.198:8000/signalr";
     $.connection.hub.qs = "ClientBusinessId=-@Html.Raw(ViewBag.BusinessId)";
 
     // Declare a proxy to reference the hub.

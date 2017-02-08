@@ -7,9 +7,13 @@
             @if (User.IsInRole("Business"))
             {
                 <li class="dropdown topMenu" style="padding: 10px;">
-                    <button type="button" id="btnTopMakeOrder" style="color: black" class="btn btn-warning active">
+                    @*<button type="button" id="btnTopMakeOrder" style="color: black" class="btn btn-warning active">
                         <strong class="font-bold">CREATE NEW ORDER</strong>
-                    </button>
+                    </button>*@
+                    <a id="btnTopMakeOrder" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus"></i> New Order
+                    </a>
+
                 </li>
             }
             <li class="dropdown" style="display: none;">

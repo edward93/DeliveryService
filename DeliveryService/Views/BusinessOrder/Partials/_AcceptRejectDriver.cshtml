@@ -6,7 +6,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title" id="Heading">Nearest Drivers Found For Order</h4>
+                <h4 class="modal-title" id="Heading">Nearest Riders Found For Order</h4>
             </div>
 
             <div class="modal-body">
@@ -21,8 +21,8 @@
                 <input type="text" id="nearestDriverOrderId" value="" hidden />
                 <input type="text" id="nearestDriverId" value="" hidden />
                 <div class="modal-footer ">
-                    <button type="button" class="btn btn-danger" id="cancelDriver">Reject Driver</button>
-                    <button type="button" class="btn btn-primary" id="acceptDriver">Accept Driver</button>
+                    <button type="button" class="btn btn-danger" id="cancelDriver">Reject Rider</button>
+                    <button type="button" class="btn btn-primary" id="acceptDriver">Accept Rider</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -176,10 +176,10 @@
        function (data) {
            if (data.Success) {
                var driver = data.Data;
-               $(".driver-information .name").html("<h3> Driver Full Name: " + driver.FullName + "</h3>");
-               $(".driver-information .vehicle-type").html("<h3> Driver Vehicle Type: " + driver.VehicleType + "</h3>");
-               $(".driver-information .rating").html("<h3> Driver Rating: " + driver.RatingAverageScore + "</h3>");
-               $(".driver-information .vehicle-reg-number").html("<h3> Driver Vehicle Registration Number: " + driver.VehicleRegNumber + "</h3>");
+               $(".driver-information .name").html("<h3> Rider Full Name: " + driver.FullName + "</h3>");
+               $(".driver-information .vehicle-type").html("<h3> Rider Vehicle Type: " + driver.VehicleType + "</h3>");
+               $(".driver-information .rating").html("<h3> Rider Rating: " + driver.RatingAverageScore + "</h3>");
+               $(".driver-information .vehicle-reg-number").html("<h3> Rider Vehicle Registration Number: " + driver.VehicleRegNumber + "</h3>");
            } else {
                for (let i = 0; i < data.Messages.length; i++) {
                    window.toastr.error(data.Messages[i].Value);
