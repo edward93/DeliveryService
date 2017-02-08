@@ -261,7 +261,7 @@ namespace DeliveryService.Controllers.Business
                     _businessService.Value.GetBusinessByPersonId(
                         (await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId())).Id);
 
-            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>(c => c.BusinessId == currentBusiness.Id, c => c.OrderBy(x => x.CreatedDt)))
+            var orders = (await _orderService.Value.GetAllEntitiesAsync<Order>(c => c.BusinessId == currentBusiness.Id, c => c.OrderByDescending(x => x.CreatedDt)))
                 .Select(o => new BusinessOrder(o)).ToList();
 
             var param = new DataParam
