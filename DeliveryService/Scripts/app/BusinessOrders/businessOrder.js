@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     if (window.location.href.indexOf("BusinessOrders#addOrder") !== -1) {
         $("#addOrderModal").modal("show");
-        }
+    }
 
     $(".location").keypress(function () {
         getRoute();
@@ -138,9 +138,9 @@ $(document).ready(function () {
                 initPreviewOrderModal(data);
                 $("#previewOrderDetailsModal").modal("show");
             });
-            
-       
-        
+
+
+
     });
 
     $("#addOrderBtn").on("click",
@@ -167,8 +167,13 @@ $(document).ready(function () {
     function addOrder(form) {
         getLongLatPickUp();
         getLongLatDropOff();
+
+        var disabled = form.find(':input:disabled').removeAttr('disabled');
+        var data = form.serialize();
+        disabled.attr('disabled', 'disabled');
+
         $.post("/BusinessOrder/AddNewOrder",
-            form.serialize(), function (data) {
+            data, function (data) {
                 window.UnBlockUi();
                 tableDriversList.fnDraw();
                 if (data.Success) {
@@ -331,11 +336,6 @@ $(document).ready(function () {
         lblOrderNumber.text(data.OrderNumber);
     }
 
-    $('#myModal').on('hidden.bs.modal',
-        function() {
-            // do something…
-        });
-
     function getRoute() {
         var mapOptions = getMapStart();
         map = new window.google.maps.Map(document.getElementById('map_canvas'), mapOptions);
@@ -451,37 +451,40 @@ $(document).ready(function () {
     });
 
     function getLongLatPickUp() {
-        var geocoder = new google.maps.Geocoder();
+        var geocoder = new window.google.maps.Geocoder();
         var address = $("#pickUpLocation").val();
 
         geocoder.geocode({ 'address': address }, function (results, status) {
 
-            if (status === google.maps.GeocoderStatus.OK) {
+            if (status === window.google.maps.GeocoderStatus.OK) {
                 var latitude = results[0].geometry.location.lat();
                 var longitude = results[0].geometry.location.lng();
                 $("#txtLatitudePickUp").val(latitude);
                 $("#txtLongitudePickUp").val(longitude);
+                calculateEstimatedTime();
             }
         });
     }
 
     function getLongLatDropOff() {
-        var geocoder = new google.maps.Geocoder();
-        var address = "new york";
+        var geocoder = new window.google.maps.Geocoder();
+        var address = $("#dropOffLocation").val();
 
         geocoder.geocode({ 'address': address }, function (results, status) {
 
-            if (status === google.maps.GeocoderStatus.OK) {
+            if (status === window.google.maps.GeocoderStatus.OK) {
                 var latitude = results[0].geometry.location.lat();
                 var longitude = results[0].geometry.location.lng();
                 $("#txtLatitudeDropOff").val(latitude);
                 $("#txtLongitudeDropOff").val(longitude);
+                calculateEstimatedTime();
             }
         });
     }
 
     $("#addOrderModal").on("shown.bs.modal",
         function () {
+            $("#durationWarning").hide();
             var mapOptions = getMapStart();
             var sourceSearchBox = new window.google.maps.places.SearchBox($('#pickUpLocation')[0]);
             sourceSearchBox.addListener('places_changed', function () {
@@ -511,6 +514,12 @@ $(document).ready(function () {
 
             var map = new window.google.maps.Map(document.getElementById("map_canvas"), mapOptions);
         });
+
+    $('#addOrderModal')
+        .on('hidden.bs.modal',
+            function() {
+                $("#durationWarning").hide();
+            });
 
     $(".btnPreviewOrder").on("click",
         function (e) {
@@ -576,5 +585,44 @@ $(document).ready(function () {
             $("#order_" + ordersId).remove();
             swal("Deleted!", "Your order has been deleted.", "success");
         });
+    }
+
+    function calculateEstimatedTime() {
+        if ($("#txtLatitudePickUp").val() &&
+            $("#txtLongitudePickUp").val() &&
+            $("#txtLatitudeDropOff").val() &&
+            $("#txtLongitudeDropOff").val() && 
+            ($("#addOrderModal").data('bs.modal') || {}).isShown) {
+            var pickUpLocation = new window.google.maps.LatLng($("#txtLatitudePickUp").val(), $("#txtLongitudePickUp").val());
+            var dropOffLocation = new window.google.maps.LatLng($("#txtLatitudeDropOff").val(), $("#txtLongitudeDropOff").val());
+
+            var service = new window.google.maps.DistanceMatrixService();
+
+            service.getDistanceMatrix(
+                {
+                    origins: [pickUpLocation],
+                    destinations: [dropOffLocation],
+                    travelMode: 'DRIVING',
+                    //transitOptions: TransitOptions,
+                    //drivingOptions: DrivingOptions,
+                    unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+                    //avoidHighways: Boolean,
+                    avoidTolls: true
+                }, mapCallback);
+        }
+    }
+
+    function mapCallback(response, status) {
+        if (status === 'OK') {
+            var durationText = response.rows[0].elements[0].duration.Text;
+            var duration = response.rows[0].elements[0].duration.value;
+            var distanceText = response.rows[0].elements[0].distance.text;
+            var distance = response.rows[0].elements[0].distance.value;
+
+            var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
+            $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
+
+            $("#durationWarning").show();
+        }
     }
 });

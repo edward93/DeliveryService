@@ -26,20 +26,6 @@
                             <span class="message-icon glyphicon"></span>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="timeToReachPickUpLocation" class="col-sm-3 col-md-3 control-label">Time To Reach PickUp Location</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="timeToReachPickUpLocation" name="TimeToReachPickUpLocation" placeholder="Time To Reach PickUp Location">
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="timeToReachDropOffLocation" class="col-sm-3 col-md-3 control-label">Time To Reach DropOff Location</label>
-                        <div class="col-sm-9 col-md-9">
-                            <input type="text" class="form-control" id="timeToReachDropOffLocation" name="TimeToReachDropOffLocation" placeholder="Time To Reach DropOff Location">
-                            <span class="message-icon glyphicon"></span>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <label for="pickUpLocation" class="col-sm-3 col-md-3 control-label">Pick Up Location</label>
@@ -65,6 +51,20 @@
                         </div>
                     </div>
                     -->
+                    <div class="form-group">
+                        <label for="timeToReachPickUpLocation" class="col-sm-3 col-md-3 control-label">Time To Reach PickUp Location</label>
+                        <div class="col-sm-9 col-md-9">
+                            <input type="text" class="form-control" id="timeToReachPickUpLocation" name="TimeToReachPickUpLocation" placeholder="Time To Reach PickUp Location">
+                            <span class="message-icon glyphicon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeToReachDropOffLocation" class="col-sm-3 col-md-3 control-label">Time To Reach DropOff Location *</label>
+                        <div class="col-sm-9 col-md-9">
+                            <input type="text" class="form-control" id="timeToReachDropOffLocation" name="TimeToReachDropOffLocation" placeholder="Time To Reach DropOff Location" disabled>
+                            <span class="message-icon glyphicon"></span>
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <div class="">
@@ -80,7 +80,9 @@
                     <input type="hidden" id="txtLatitudeDropOff" name="DropOffLatitude" />
                     <input type="hidden" id="txtLongitudeDropOff" name="DropOffLongitude" />
                 </form>
-
+                <div id="durationWarning" class="alert alert-warning" role="alert" style="display: none;">
+                    <strong>Warning!</strong> * Times are estimated by google maps service, they might not be accurate all the time.
+                </div>
                 <div class="modal-footer ">
                     <ul class="list-inline pull-right">
                         <li><button type="submit" class="btn btn-warning" data-dismiss="modal">Close</button></li>
