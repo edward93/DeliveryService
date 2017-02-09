@@ -155,6 +155,9 @@ namespace DeliveryService.Controllers.Business
 
                     if (order == null) throw new Exception($"Couldn't find an order with id: {model.OrderId}.");
 
+                    if (order.OrderStatus != OrderStatus.Pending)
+                        throw new Exception($"You cannot accept rider for this order.");
+
                     // Calculate order initial price
                     order.OrderPrice = await _orderService.Value.CalculateOrderPriceAsync(order, driver);
 
@@ -238,6 +241,9 @@ namespace DeliveryService.Controllers.Business
                     var order = await _orderService.Value.GetByIdAsync<Order>(model.OrderId);
 
                     if (order == null) throw new Exception($"Couldn't find an order with id: {model.OrderId}.");
+
+                    if (order.OrderStatus != OrderStatus.Pending)
+                        throw new Exception($"You cannot accept rider for this order.");
 
                     await _orderService.Value.CancelDriverForOrderAsync(model.OrderId, model.DriverId);
 
