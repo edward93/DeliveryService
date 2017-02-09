@@ -32,8 +32,8 @@ namespace DeliveryService.API.Controllers
             IDriverService driverService,
             IBusinessService businessService,
             IOrderHistoryService orderHistoryService,
-            IDriverPenaltyService driverPenaltyService, 
-            IDriverFeeService driverFeeService, 
+            IDriverPenaltyService driverPenaltyService,
+            IDriverFeeService driverFeeService,
             IBusinessPenaltyService businessPenaltyService) : base(config, context)
         {
             _driverFeeService = new Lazy<IDriverFeeService>(() => driverFeeService);
@@ -64,8 +64,8 @@ namespace DeliveryService.API.Controllers
 
                     var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
 
-                  /*  if (order.VehicleType != driver.VehicleType)
-                        throw new Exception("The requested vehicle type doesn't match with the driver's vehicle.");*/
+                    /*  if (order.VehicleType != driver.VehicleType)
+                          throw new Exception("The requested vehicle type doesn't match with the driver's vehicle.");*/
 
                     //var business = await _businessService.Value.GetByIdAsync<Business>(order.BusinessId);
 
@@ -121,7 +121,8 @@ namespace DeliveryService.API.Controllers
                     await _orderService.Value.RejectOrderAsync(order, driver);
 
                     // TODO: Update client app with signalR!
-                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Busy);
+                    //  await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Busy);
+                    //  Discusss
 
                     // Calculate rejection penalty if ther is one
                     var orders = await _orderHistoryService.Value.GetRejectedOrdersByDriverForCurrentDayAsync(driverId);
