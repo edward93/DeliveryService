@@ -402,69 +402,6 @@ $(document).ready(function () {
         });
     }
 
-    function getAddress() {
-        var lat = parseFloat(document.getElementById("txtLatitude").value);
-        var lng = parseFloat(document.getElementById("txtLongitude").value);
-        var latlng = new window.google.maps.LatLng(lat, lng);
-        var geocoder = geocoder = new window.google.maps.Geocoder();
-        geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-            if (status === window.google.maps.GeocoderStatus.OK) {
-                if (results[1]) {
-                    if (rideType === "pick")
-                        $("#pickUpLocation").val(results[1].formatted_address);
-                    else
-                        $("#dropOffLocation").val(results[1].formatted_address);
-                    getRoute();
-                }
-            }
-        });
-    }
-
-    $('#pickUpLocation').blur(function () {
-        if ($('#pickUpLocation').val() === "") {
-            clearMap();
-        } else {
-            getRoute();
-        }
-        getLongLatPickUp();
-    });
-
-    // TODO fix map
-    var autocomplete = new window.google.maps.places.Autocomplete(document.getElementById('pickUpLocation'));
-
-
-
-    $('#pickUpLocation').keyup(function (e) {
-        var code = e.which; // recommended to use e.which, it's normalized across browsers
-        if (code === 13) {
-            if ($('#pickUpLocation').val() === "") {
-                clearMap();
-            } else {
-                getRoute();
-            }
-        }
-    });
-
-    $('#dropOffLocation').blur(function () {
-        if ($('#dropOffLocation').val() === "") {
-            clearMap();
-        } else {
-            getRoute();
-        }
-        getLongLatDropOff();
-    });
-
-    $('#dropOffLocation').keyup(function (e) {
-        var code = e.which; // recommended to use e.which, it's normalized across browsers
-        if (code === 13) {
-            if ($('#dropOffLocation').val() === "") {
-                clearMap();
-            } else {
-                getRoute();
-            }
-        }
-    });
-
     function getLongLatPickUp() {
         var geocoder = new window.google.maps.Geocoder();
         var address = $("#pickUpLocation").val();
@@ -497,11 +434,6 @@ $(document).ready(function () {
 
     $("#addOrderModal").on("shown.bs.modal",
         function () {
-            //autocomplete.addListener('place_changed',
-            //        function () {
-            //            debugger;
-            //            getRoute();
-            //        });
             $("#durationWarning").hide();
             var mapOptions = getMapStart();
             var sourceSearchBox = new window.google.maps.places.SearchBox($('#pickUpLocation')[0]);
@@ -531,6 +463,30 @@ $(document).ready(function () {
             });
 
             var map = new window.google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+            var pickUpAutocomplete = new window.google.maps.places.Autocomplete(document.getElementById('pickUpLocation'));
+            var dropOffAutocomplete = new window.google.maps.places.Autocomplete(document.getElementById('dropOffLocation'));
+
+            pickUpAutocomplete.addListener('place_changed',
+                    function () {
+                        getLongLatPickUp();
+                        var place = pickUpAutocomplete.getPlace();
+                        if (!place.geometry) {
+                            clearMap();
+                        }
+                        getRoute();
+                    });
+
+            dropOffAutocomplete.addListener('place_changed',
+                    function () {
+                        getLongLatDropOff();
+                        var place = dropOffAutocomplete.getPlace();
+                        if (!place.geometry) {
+                            clearMap();
+                        }
+                        getRoute();
+                    });
+
         });
 
     $('#addOrderModal')
@@ -605,42 +561,4 @@ $(document).ready(function () {
         });
     }
 
-    //function calculateEstimatedTime() {
-    //    if ($("#txtLatitudePickUp").val() &&
-    //        $("#txtLongitudePickUp").val() &&
-    //        $("#txtLatitudeDropOff").val() &&
-    //        $("#txtLongitudeDropOff").val() && 
-    //        ($("#addOrderModal").data('bs.modal') || {}).isShown) {
-    //        var pickUpLocation = new window.google.maps.LatLng($("#txtLatitudePickUp").val(), $("#txtLongitudePickUp").val());
-    //        var dropOffLocation = new window.google.maps.LatLng($("#txtLatitudeDropOff").val(), $("#txtLongitudeDropOff").val());
-
-    //        var service = new window.google.maps.DistanceMatrixService();
-
-    //        service.getDistanceMatrix(
-    //            {
-    //                origins: [pickUpLocation],
-    //                destinations: [dropOffLocation],
-    //                travelMode: 'DRIVING',
-    //                //transitOptions: TransitOptions,
-    //                //drivingOptions: DrivingOptions,
-    //                unitSystem: window.google.maps.UnitSystem.IMPERIAL,
-    //                //avoidHighways: Boolean,
-    //                avoidTolls: true
-    //            }, mapCallback);
-    //    }
-    //}
-
-    //function mapCallback(response, status) {
-    //    if (status === window.google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status === "OK") {
-    //        //var durationText = response.rows[0].elements[0].duration.text;
-    //        var duration = response.rows[0].elements[0].duration.value;
-    //        var distanceText = response.rows[0].elements[0].distance.text;
-    //        var distance = response.rows[0].elements[0].distance.value;
-
-    //        var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
-    //        $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
-
-    //        $("#durationWarning").show();
-    //    }
-    //}
 });
