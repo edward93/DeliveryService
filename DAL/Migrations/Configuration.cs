@@ -111,6 +111,15 @@ namespace DAL.Migrations
                 PaymentType = PaymentType.DriverWaitingForBusinessPerMinute,
                 UpdatedBy = 0,
                 UpdatedDt = DateTime.UtcNow
+            }, new Rate
+            {
+                Amount = 1,
+                CreatedDt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedBy = 0,
+                PaymentType = PaymentType.BusinessRejectsDriver,
+                UpdatedBy = 0,
+                UpdatedDt = DateTime.UtcNow
             }
             });
             context.SaveChanges();

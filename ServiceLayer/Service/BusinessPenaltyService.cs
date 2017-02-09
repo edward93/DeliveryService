@@ -43,5 +43,28 @@ namespace ServiceLayer.Service
 
             await _businessPenaltyRepository.CreateEntityAsync(penalty);
         }
+
+        public async Task PenelizeBusinessForRejectionAsync(Driver driver, Order order)
+        {
+            var feeAmount =
+                await _rateService.Value.GetPaymentByPaymentTypeAsync(PaymentType.BusinessRejectsDriver);
+
+            var penalty = new BusinessPenalty
+            {
+                Amount = feeAmount,
+                CreatedBy = driver.Id,
+                CreatedDt = DateTime.UtcNow,
+                Date = DateTime.UtcNow,
+                Description = $"Business rejected rider suggested by the system.",
+                IsDeleted = false,
+                PenaltyType = PenaltyType.BusinessRejectedDriver,
+                UpdatedBy = order.Business.ContactPerson.Id,
+                UpdatedDt = DateTime.UtcNow,
+                AssociatedOrderId = order.Id,
+                BusinessId = order.Business.Id
+            };
+
+            await _businessPenaltyRepository.CreateEntityAsync(penalty);
+        }
     }
 }

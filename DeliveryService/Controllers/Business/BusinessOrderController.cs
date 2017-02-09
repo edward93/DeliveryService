@@ -33,6 +33,7 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IBusinessPenaltyService> _businessPenaltyService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
         private DataTable<BusinessOrder> _ordersDataTable;
         private readonly string _signalRConnection;
@@ -43,8 +44,10 @@ namespace DeliveryService.Controllers.Business
             IPersonService personService,
             IBusinessService businessService,
             IDriverService driverService,
-            IDriverLocationService driverLocationService) : base(config, context)
+            IDriverLocationService driverLocationService, 
+            IBusinessPenaltyService businessPenaltyService) : base(config, context)
         {
+            _businessPenaltyService = new Lazy<IBusinessPenaltyService>(() => businessPenaltyService);
             _signalRConnection = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}/";
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
             _driverService = new Lazy<IDriverService>(() => driverService);
@@ -237,6 +240,8 @@ namespace DeliveryService.Controllers.Business
                     if (order == null) throw new Exception($"Couldn't find an order with id: {model.OrderId}.");
 
                     await _orderService.Value.CancelDriverForOrderAsync(model.OrderId, model.DriverId);
+
+                    await _businessPenaltyService.Value.PenelizeBusinessForRejectionAsync(driver, order);
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Driver was canceled for this order by the business.");

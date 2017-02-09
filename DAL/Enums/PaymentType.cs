@@ -10,6 +10,7 @@
         BikeOrScooterExtraMileage,
         CarOrVanExtraMileage,
         DriverWaitingForBusinessPerMinute,
+        BusinessRejectsDriver,
         Other
     }
 }

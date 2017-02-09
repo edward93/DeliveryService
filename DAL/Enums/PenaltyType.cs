@@ -5,6 +5,7 @@
         DriverThirdRejection = 0,
         DriverArrivalDelay,
         DriverIsWaitingForBusiness,
+        BusinessRejectedDriver,
         Other
     }
 }
