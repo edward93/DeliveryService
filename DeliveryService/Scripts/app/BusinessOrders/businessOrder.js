@@ -5,11 +5,13 @@ $(document).ready(function () {
         $("#addOrderModal").modal("show");
     }
 
+    window.history.pushState("object or string", "Title", "/BusinessOrder/BusinessOrders");
+
     $(".location").keypress(function () {
         //getRoute();
     });
 
-    var tableDriversList = $('#tblDriversList').dataTable({
+    var tableDriversList = $('#tblBusinessOrderList').dataTable({
         "processing": true, // control the processing indicator.
         "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
         "info": true,   // control table information display field
@@ -19,7 +21,7 @@ $(document).ready(function () {
            { responsivePriority: 1, targets: 0 },
            { responsivePriority: 2, targets: -2 }
         ],
-        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
+        "lengthMenu": [[10, 20, 50], [10, 20, 50]],    // use the first inner array as the page length values and the second inner array as the displayed options
         "ajax": {
             "url": "/BusinessOrder/GetBusinessOrdesList",
             "type": "GET"
@@ -31,11 +33,11 @@ $(document).ready(function () {
             { "data": "TimeToReachPickUpLocation", "orderable": true },
             { "data": "TimeToReachDropOffLocation", "orderable": true },
             { "data": "OrderStatus", "orderable": true },
-            { "data": "VehicleType", "orderable": true },
+           // { "data": "VehicleType", "orderable": true },
             {
                 mRender: function (data, type, row) {
 
-                    return '<button class="btn btn-primary btn-xs btnPreviewOrderDetails" data-title="Preview" data-id="' +
+                    return '<button class="btn btn-primary btn-xs btnPreviewOrderDetails" style="margin-left:30%;" data-title="Preview" data-id="' +
                         row.Id +
                         '" id="btnPreviewOrder"><span class="fa fa-eye" title="Preview"></span></button>';
                 }

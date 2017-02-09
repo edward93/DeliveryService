@@ -17,9 +17,9 @@
                 <div class="contact-box" style="height: 295px;">
                     <a href="#">
                         <div class="col-sm-12 text-center">
-                            <h1 style="margin-top: 0px;" id="fullName">
-                                @Html.DisplayFor(m => m.ContactPersonFirstName) @Html.DisplayFor(m => m.ContactPersonLastName)
-                            </h1>
+                            <h3 style="margin-top: 0px;" id="fullName">
+                                <strong> @Html.DisplayFor(m => m.ContactPersonFirstName) @Html.DisplayFor(m => m.ContactPersonLastName)</strong>
+                            </h3>
                             <div class="text-center" style="padding-top: 20px; padding-bottom: 20px">
                                 <img id="contactPersonPhoto" src="~/Images/boldmindLogo.png" width="80" class="img">
                             </div>
@@ -75,9 +75,9 @@
         </div>
     </div>
 
-    <div class="row contact-box">
+    <div class="row contact-box" style="margin-left: 0px; width: 100%">
         <div class="col-lg-6">
-            <div class="col-sm-12 no-padding">
+            <div class="col-sm-4 no-padding" style="margin-left: 15%">
                 <label class="col-sm-12 control-label">
                     <span title="" data-toggle="tooltip" class="label-tooltip"
                           data-original-title="Upload Business Logo">

@@ -163,15 +163,17 @@ namespace SignalRSelfHost.AddRiderHub
             var serviceResult = new ServiceResult();
             try
             {
-                var connectionId = Connections.GetConnections(-dirverDetails.BusinessId).FirstOrDefault();
+                var connections = Connections.GetConnections(-dirverDetails.BusinessId);
+                foreach (var connectionId in connections)
+                {
+                    if (connectionId == null) throw new Exception($"No client with {dirverDetails.BusinessId} business id was found.");
 
-                if(connectionId == null) throw new Exception($"No client with {dirverDetails.BusinessId} business id was found.");
+                    Clients.Client(connectionId).NotifyBusinessAboutDriver(dirverDetails);
 
-                Clients.Client(connectionId).NotifyBusinessAboutDriver(dirverDetails);
-
-                serviceResult.Success = true;
-                serviceResult.Messages.AddMessage(MessageType.Info, "Business was successfully notified");
-                Console.WriteLine(serviceResult.DisplayMessage());
+                    serviceResult.Success = true;
+                    serviceResult.Messages.AddMessage(MessageType.Info, "Business was successfully notified");
+                    Console.WriteLine(serviceResult.DisplayMessage());
+                }
             }
             catch (Exception ex)
             {
