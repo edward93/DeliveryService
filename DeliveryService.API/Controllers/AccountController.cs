@@ -338,7 +338,10 @@ namespace DeliveryService.API.Controllers
 
                 if (!result.Succeeded)
                 {
-                    return GetErrorResult(result);
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Email address is already being used");
+                    //return GetErrorResult(result);
+                    return Json(serviceResult);
                 }
                 // Get the newly created user
                 var currentUser = await UserManager.FindByEmailAsync(user.Email);
