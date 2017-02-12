@@ -304,6 +304,7 @@
     <Content Include="Content\landing\header_two.jpg" />
     <Content Include="Content\landing\word_map.png" />
     <Content Include="Content\mapIcons\rider-icon.png" />
+    <Content Include="Content\mapIcons\rider-icon2.png" />
     <Content Include="Content\mapIcons\RiderIcon.png" />
     <Content Include="Content\patterns\1.png" />
     <Content Include="Content\patterns\2.png" />
