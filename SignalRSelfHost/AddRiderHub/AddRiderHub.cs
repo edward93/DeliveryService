@@ -23,7 +23,7 @@ namespace SignalRSelfHost.AddRiderHub
             _orderService = new Lazy<IOrderService>(() => orderService);
         }
 
-        
+
         public override Task OnConnected()
         {
             Console.WriteLine($"{nameof(OnConnected)} has started.");
@@ -204,6 +204,7 @@ namespace SignalRSelfHost.AddRiderHub
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was sucessfully sent to driver");
                     Console.WriteLine(serviceResult.DisplayMessage());
+                    CloseAllBusinessPopUps(orderDetails.BusinessId);
 
                 }
                 else
@@ -211,6 +212,7 @@ namespace SignalRSelfHost.AddRiderHub
                     serviceResult.Success = false;
                     serviceResult.Messages.AddMessage(MessageType.Warning, "Driver was not found in hub");
                     Console.WriteLine(serviceResult.DisplayMessage());
+                    CloseAllBusinessPopUps(orderDetails.BusinessId);
                 }
             }
             catch (Exception e)
@@ -224,6 +226,22 @@ namespace SignalRSelfHost.AddRiderHub
 
             Console.WriteLine($"{nameof(NotifyDriverAboutOrder)} finished.");
             return serviceResult;
+        }
+
+        private void CloseAllBusinessPopUps(int businessId)
+        {
+            var serviceResult = new ServiceResult();
+            var connections = Connections.GetConnections(-businessId);
+            foreach (var connectionId in connections)
+            {
+                if (connectionId == null) throw new Exception($"No client with {businessId} business id was found.");
+
+                Clients.Client(connectionId).CloseDriverAcceptModal();
+
+                serviceResult.Success = true;
+                serviceResult.Messages.AddMessage(MessageType.Info, "All PopUps was closed successfully");
+                Console.WriteLine(serviceResult.DisplayMessage());
+            }
         }
 
     }

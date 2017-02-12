@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using DAL.Context;
 using DAL.Entities;
@@ -17,10 +15,12 @@ namespace DeliveryService.Controllers
     public class DashBoardController : BaseController
     {
         private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IBusinessService> _businessService;
         // GET: DashBoard
-        public DashBoardController(IConfig config, IDriverService driverService, IDbContext context) : base(config, context)
+        public DashBoardController(IConfig config, IDriverService driverService, IBusinessService businessService, IDbContext context) : base(config, context)
         {
             _driverService = new Lazy<IDriverService>(() => driverService);
+            _businessService = new Lazy<IBusinessService>(() => businessService);
         }
 
         public async Task<ActionResult> Index()
@@ -30,21 +30,23 @@ namespace DeliveryService.Controllers
 
         private async Task<AdminDashBoardModel> GetSuperAdminDashboardModel()
         {
-            var model = new AdminDashBoardModel();
+            var model = new AdminDashBoardModel
+            {
+                AllMembersCount = 0,
+                TodayMembersCount = 0,
+                AllDriversCount = (await _driverService.Value.GetAllEntitiesAsync<Driver>()).Count(),
+                TodayDriversCount = 0,
+                ActivePartnersCount =
+                    (await _businessService.Value.GetAllEntitiesAsync<DAL.Entities.Business>()).Count(),
+                InactivePartnersCount = 0,
+                TodayAmount = 0,
+                AllAmount = 0,
+                TodayEarned = 0,
+                AllEarned = 0,
+                TodayAddRiderFee = 0,
+                AllAddRiderFee = 0
+            };
 
-            var driversList = await _driverService.Value.GetAllEntitiesAsync<Driver>();
-            model.AllMembersCount = 0;
-            model.TodayMembersCount = 0;
-            model.AllDriversCount = driversList.ToList().Count;
-            model.TodayDriversCount = 0;
-            model.ActivePartnersCount = 0;
-            model.InactivePartnersCount = 0;
-            model.TodayAmount = 0;
-            model.AllAmount = 0;
-            model.TodayEarned = 0;
-            model.AllEarned = 0;
-            model.TodayAddRiderFee = 0;
-            model.AllAddRiderFee = 0;
 
             return model;
         }

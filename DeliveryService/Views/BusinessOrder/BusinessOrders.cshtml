@@ -111,6 +111,11 @@
     hub.client.notifyBusinessAboutDriver = function (data) {
         showNearestDriverOnMap(data);
     };
+
+    hub.client.closeDriverAcceptModal = function() {
+        $("#acceptRejectDriverModal").modal('hide');
+    };
+
     // Start the connection.
     $.connection.hub.start().done(function () {
     });

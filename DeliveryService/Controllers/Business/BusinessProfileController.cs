@@ -244,7 +244,7 @@ namespace DeliveryService.Controllers.Business
             }
             catch (Exception ex)
             {
-                return Json("error");
+                return Json(ex.Message);
             }
         }
 

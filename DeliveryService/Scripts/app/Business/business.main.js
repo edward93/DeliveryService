@@ -92,7 +92,8 @@
             Password: {
                 required: true,
                 minlength: 6,
-                maxlength: 20
+                maxlength: 20,
+                pwcheck : "ssss"
             },
             ConfirmPassword: {
                 equalTo: "#password"
@@ -156,6 +157,14 @@
         }
     });
 
+    $.validator.addMethod("pwcheck", function (value) {
+        return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
+            &&
+            /[a-z]/.test(value) // has a lowercase letter
+            &&
+            /\d/.test(value); // has a digit
+    },"password must contain digit and letters");
+
     $('#step1').show();
 
     $("#addNewBusinessBtn").on("click",
@@ -194,7 +203,7 @@
        });
 
     function clearModal() {
-        var passport = document.getElementById("Passport");
+      /*  var passport = document.getElementById("Passport");
         passport.setAttribute("src", "Images/passport.png");
         passport.setAttribute("class", "no-img");
         var license = document.getElementById("License");
@@ -206,7 +215,15 @@
         $('#step2').hide();
         $('#step1').show();
         $('#collapse').hide();
-        $('#BusinessEmail').hide();
+        $('#BusinessEmail').hide();*/
+
+
+        $('#collapse').attr("style", "");
+        $('#collapse').show();
+        $(".wizard-inner").hide();
+        $('#step1').hide();
+        $('#step2').show();
+        $('#BusinessEmail').show();
     };
     $(document).on('click', '.btnPreviewBusiness', function (e) {
         var businessIdForPreview = $(this).attr('data-id');
@@ -303,6 +320,8 @@
     }
 
     function addBusiness(form) {
+        window.BlockUi();
+        $("#addNewBusinessModal").modal('toggle');
         $.post("/Business/RegisterBusiness",
                                form.serialize(), function (data) {
                                    window.UnBlockUi();
@@ -316,7 +335,6 @@
                                            window.toastr.error(data.Messages[i].Value);
                                        }
                                    }
-                                   $("#addNewBusinessModal").modal('toggle');
                                });
     }
 
@@ -369,7 +387,7 @@
         },
             function () {
                 window.UnBlockUi();
-                $("#business_" + businessId).remove();
+                tableBusinessList.fnDraw();
                 swal("Deleted!", "Your business has been deleted.", "success");
             });
     }

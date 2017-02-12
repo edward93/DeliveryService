@@ -149,16 +149,21 @@ namespace DeliveryService.Controllers
                 {
                     if (!ModelState.IsValid)
                     {
-                        throw new Exception(ModelState.ToString());
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
+                        return Json(serviceResult);
+                        //throw new Exception(ModelState.ToString());
                     }
 
                     var user = new User { UserName = registerBusiness.BusinessEmail, Email = registerBusiness.BusinessEmail };
-
                     var result = await UserManager.CreateAsync(user, registerBusiness.Password);
 
                     if (!result.Succeeded)
                     {
-                        throw new Exception("Error while creating User!");
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Error, "Email already exist");
+                        return Json(serviceResult);
+                        //throw new Exception("Error while creating User!");
                     }
 
                     // Get the newly created user
@@ -226,8 +231,21 @@ namespace DeliveryService.Controllers
         [HttpPost]
         public async Task<JsonResult> DeleteBusiness(int businessId)
         {
-            var result = await _businessService.Value.RemoveEntityAsync<DAL.Entities.Business>(businessId);
-            return Json(result);
+            var serviceResult = new ServiceResult();
+            try
+            {
+                await _businessService.Value.RemoveEntityAsync<DAL.Entities.Business>(businessId);
+                serviceResult.Messages.AddMessage(MessageType.Info, "Business was deleted successfully");
+                serviceResult.Success = true;
+            }
+            catch (Exception e)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Problem occured");
+                serviceResult.Messages.AddMessage(MessageType.Error, e.Message);
+            }
+
+            return Json(serviceResult);
         }
 
     }
