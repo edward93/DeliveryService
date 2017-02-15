@@ -1,6 +1,7 @@
 ﻿using DAL.Entities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace DeliveryService.Models.ViewModels
             NotDeliveredReason = order.NotDeliveredReason;
             BusinessId = order.BusinessId;
             BusinessName = order.Business.BusinessName;
+            ServerCurrentTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
         }
         public int Id { get; set; }
         public string CustomerName { get; set; }
@@ -55,5 +57,6 @@ namespace DeliveryService.Models.ViewModels
 
         public decimal OrderPrice { get; set; }
         public string NotDeliveredReason { get; set; }
+        public string ServerCurrentTime { get; set; }
     }
 }

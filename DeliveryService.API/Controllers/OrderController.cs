@@ -92,6 +92,45 @@ namespace DeliveryService.API.Controllers
             return Json(serviceResult);
         }
 
+
+        [HttpPost]
+        //[Authorize(Roles = Roles.Driver)]
+        public async Task<IHttpActionResult> GetOrderDetails(int orderId, int driverId)
+        {
+            var serviceResult = new ServiceResult();
+            try
+            {
+                // Get driver
+                var driver = await _driverService.Value.GetByIdAsync<Driver>(driverId);
+
+                if (driver == null)
+                    throw new Exception(string.Format(Config.Messages["DriverIdNotFound"], driverId));
+
+                if (!driver.Approved)
+                    throw new Exception(Config.Messages["NonApprovedDriver"]);
+
+                // Get order
+                var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+
+                if (order == null) throw new Exception($"No order found with id: {orderId}");
+
+                serviceResult.Success = true;
+                serviceResult.Data = new OrderDetails(order);
+                serviceResult.Messages.AddMessage(MessageType.Info, "Order Details for reocver state was provided successfully");
+
+            }
+            catch (Exception ex)
+            {
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while getting order details.");
+                serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+            }
+
+
+            return Json(serviceResult);
+        }
+
+
         [HttpPost]
         [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> RejectOrder(int driverId, int orderId)
@@ -374,6 +413,8 @@ namespace DeliveryService.API.Controllers
 
                     await _orderService.Value.OrderDeliveredAsync(driver, order);
 
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Online);
+
                     // TODO: calculate penalties and fees and create transactions
 
                     serviceResult.Success = true;
@@ -426,6 +467,7 @@ namespace DeliveryService.API.Controllers
 
 
                     await _orderService.Value.OrderNotDeliveredAsync(driver, order, reason);
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Online);
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, string.Format(Config.Messages["NotDeliveredSuccess"], reason));

@@ -34,13 +34,16 @@ namespace SignalRSelfHost.AddRiderHub
                 if (Context.Headers["DriverId"] != null)
                 {
                     int driverId;
-
                     int.TryParse(Context.Headers["DriverId"], out driverId);
+
+                    if (Connections.GetConnections(driverId).Contains(Context.ConnectionId))
+                    {
+                        Connections.Remove(driverId, Context.ConnectionId);
+                        Console.WriteLine($"Driver {driverId} reconnected.");
+                    }
 
                     Connections.Add(driverId, Context.ConnectionId);
                     Console.WriteLine($"Driver {driverId} connected.");
-
-
                 }
                 else if (Context.Headers["BusinessId"] != null)
                 {
