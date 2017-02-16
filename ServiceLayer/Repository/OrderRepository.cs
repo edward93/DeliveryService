@@ -93,7 +93,7 @@ namespace ServiceLayer.Repository
         {
             order.NotDeliveredReason = reason;
 
-            await ChangeOrderStatus(order, OrderStatus.Delivered, driver.Person);
+            await ChangeOrderStatus(order, OrderStatus.NotDelivered, driver.Person);
 
         }
 

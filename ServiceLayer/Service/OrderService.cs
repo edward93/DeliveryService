@@ -277,7 +277,7 @@ namespace ServiceLayer.Service
 
             var orderHistory = new OrderHistory
             {
-                Action = ActionType.DriverPickedUpTheOrder,
+                Action = ActionType.OrderNotDelivered,
                 CreatedBy = driver.Id,
                 CreatedDt = DateTime.UtcNow,
                 IsDeleted = false,

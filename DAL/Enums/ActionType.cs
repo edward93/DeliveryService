@@ -12,6 +12,7 @@
         DriverPickedUpTheOrder,
         DriverArrived,
         OrderDelivered,
+        OrderNotDelivered,
         Other
     }
 }
