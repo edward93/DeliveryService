@@ -94,7 +94,7 @@ namespace DeliveryService.API.Controllers
 
 
         [HttpPost]
-        //[Authorize(Roles = Roles.Driver)]
+        [Authorize(Roles = Roles.Driver)]
         public async Task<IHttpActionResult> GetOrderDetails(int orderId, int driverId)
         {
             var serviceResult = new ServiceResult();
