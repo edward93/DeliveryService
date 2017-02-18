@@ -10,5 +10,6 @@ namespace Infrastructure.Config
         string DistanceMatrixApiUrl { get; }
         string SignalRServerUrl { get; }
         string SignalRServerPort { get; }
+        string GoogleMapsApiKey { get; }
     }
 }

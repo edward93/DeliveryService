@@ -75,7 +75,7 @@ namespace DeliveryService.Controllers.Business
             {
                 try
                 {
-                    if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
+                    if (!ModelState.IsValid) throw new Exception(ModelState.GetModelStateErrorsAsString());
                     var contPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                     var currBusiness = await _businessService.Value.GetBusinessByPersonId(contPerson.Id);
 
@@ -116,7 +116,7 @@ namespace DeliveryService.Controllers.Business
                     }
                     else
                     {
-                        // TODO: Show business that no driver was found
+                        serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please retry a bit later.");
                     }
 
                     serviceResult.Success = true;
@@ -143,7 +143,7 @@ namespace DeliveryService.Controllers.Business
             {
                 try
                 {
-                    if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
+                    if (!ModelState.IsValid) throw new Exception(ModelState.GetModelStateErrorsAsString());
 
                     var driver = await _driverService.Value.GetByIdAsync<Driver>(model.DriverId);
 

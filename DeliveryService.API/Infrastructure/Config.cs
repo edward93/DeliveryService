@@ -14,5 +14,7 @@ namespace DeliveryService.API.Infrastructure
         public string DistanceMatrixApiUrl => WebConfigurationManager.AppSettings["GoogleMapsDistanseMatrixApiUrl"];
         public string SignalRServerUrl => WebConfigurationManager.AppSettings["SignalRServerUrl"];
         public string SignalRServerPort => WebConfigurationManager.AppSettings["SignalRServerPort"];
+        public string GoogleMapsApiKey => WebConfigurationManager.AppSettings["GoogleMapsApiKey"];
+
     }
 }

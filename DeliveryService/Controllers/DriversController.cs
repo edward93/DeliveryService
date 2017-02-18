@@ -159,11 +159,12 @@ namespace DeliveryService.Controllers
                 {
                     if (!ModelState.IsValid)
                     {
-                        scope.Dispose();
-                        transaction.Rollback();
-                        serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error, "Validation Errors");
-                        serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
+                        throw new Exception(ModelState.GetModelStateErrorsAsString());
+                        //scope.Dispose();
+                        //transaction.Rollback();
+                        //serviceResult.Success = false;
+                        //serviceResult.Messages.AddMessage(MessageType.Error, "Validation Errors");
+                        //serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
                     }
                     else
                     {

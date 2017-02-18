@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
 using DAL.Context;
 using Infrastructure.Config;
@@ -42,6 +44,13 @@ namespace DeliveryService.API.Controllers
         {
             Config = config;
             Context = context;
+        }
+
+
+        public string GetModelStateErrorsAsString(System.Web.Http.ModelBinding.ModelStateDictionary modelState)
+        {
+            return modelState.Values.Aggregate(string.Empty,
+                (current, state) => current + string.Join(Environment.NewLine, state.Errors.Select(c => c.ErrorMessage).ToList()));
         }
     }
 }

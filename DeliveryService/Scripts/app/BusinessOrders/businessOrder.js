@@ -112,6 +112,10 @@ $(document).ready(function () {
         validator.element(this);
     });
 
+    //$("input").on("change", function(e) {
+    //    validator.element(this);
+    //});
+
     function clearOrdersModal() {
         customerName.val("");
         customerPhone.val("");
@@ -170,9 +174,7 @@ $(document).ready(function () {
         getLongLatPickUp();
         getLongLatDropOff();
 
-        var disabled = form.find(':input:disabled').removeAttr('disabled');
         var data = form.serialize();
-        disabled.attr('disabled', 'disabled');
 
         $.post("/BusinessOrder/AddNewOrder",
             data, function (data) {
@@ -180,6 +182,9 @@ $(document).ready(function () {
                 tableDriversList.fnDraw();
                 if (data.Success) {
                     for (let i = 0; i < data.Messages.length; i++) {
+                        if (data.Messages[i].Key === 1) {
+                            window.toastr.warning(data.Messages[i].Value);
+                        }
                         window.toastr.success(data.Messages[i].Value);
                     }
                 } else {
@@ -386,6 +391,10 @@ $(document).ready(function () {
                     ($("#addOrderModal").data('bs.modal') || {}).isShown) {
                     var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
                     $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
+                    var form = $("#submitOrderForm");
+                    //form.validate();
+                    //form.valid();
+                    validator.form();
 
                     $("#durationWarning").show();
                 }

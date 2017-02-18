@@ -1,11 +1,35 @@
 ﻿using Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using DAL.Enums;
 
 namespace Infrastructure.Helpers
 {
     public static class Utilities
     {
+        public static IEnumerable<Message<MessageType, string>> GetModelStateErrors(ModelStateDictionary modelState)
+        {
+            var result = new List<Message<MessageType, string>>();
+            foreach (var state in modelState.Values)
+            {
+                foreach (var modelError in state.Errors)
+                {
+                    result.AddMessage(MessageType.Error, modelError.ErrorMessage);
+                }
+            }
+
+            return result;
+        }
+
+        public static string GetModelStateErrorsAsString(this ModelStateDictionary modelState)
+        {
+            return modelState.Values.Aggregate(string.Empty,
+                (current, state) => current + string.Join(Environment.NewLine, state.Errors.Select(c => c.ErrorMessage).ToList()));
+        }
+
+
         private static IEnumerable<SelectizeItem<TKeyValue>> ToSelectizeItemsList<T, TKeyValue>() where T : struct, IConvertible
         {
             if (typeof(T).IsEnum)

@@ -149,10 +149,10 @@ namespace DeliveryService.Controllers
                 {
                     if (!ModelState.IsValid)
                     {
-                        serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
-                        return Json(serviceResult);
-                        //throw new Exception(ModelState.ToString());
+                        throw new Exception(ModelState.GetModelStateErrorsAsString());
+                        //serviceResult.Success = false;
+                        //serviceResult.Messages.AddMessage(MessageType.Error, ModelState.ToString());
+                        //return Json(serviceResult);
                     }
 
                     var user = new User { UserName = registerBusiness.BusinessEmail, Email = registerBusiness.BusinessEmail };

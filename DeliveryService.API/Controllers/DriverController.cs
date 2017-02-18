@@ -322,7 +322,7 @@ namespace DeliveryService.API.Controllers
             var serviceResult = new ServiceResult();
             try
             {
-                if (!ModelState.IsValid) throw new Exception(ModelState.ToString());
+                if (!ModelState.IsValid) throw new Exception(GetModelStateErrorsAsString(ModelState));
 
                 var driver = await _driverService.Value.GetByIdAsync<Driver>(model.DriverId);
                 if (driver != null)

@@ -13,5 +13,7 @@ namespace SignalRSelfHost.Infrastructure
 
         public string SignalRServerUrl => ConfigurationManager.AppSettings["SignalRServerUrl"];
         public string SignalRServerPort => ConfigurationManager.AppSettings["SignalRServerPort"];
+        public string GoogleMapsApiKey => ConfigurationManager.AppSettings["GoogleMapsApiKey"];
+
     }
 }

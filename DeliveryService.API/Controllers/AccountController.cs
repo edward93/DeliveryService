@@ -330,10 +330,10 @@ namespace DeliveryService.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    throw new Exception(GetModelStateErrorsAsString(ModelState));
                 }
 
-                var user = new User() {UserName = model.Email, Email = model.Email};
+                var user = new User {UserName = model.Email, Email = model.Email};
                 IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
