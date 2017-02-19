@@ -36,10 +36,9 @@ namespace SignalRSelfHost.AddRiderHub
                     int driverId;
                     int.TryParse(Context.Headers["DriverId"], out driverId);
 
-                    if (Connections.GetConnections(driverId).Contains(Context.ConnectionId))
+                    if (Connections.HasKey(driverId))
                     {
-                        Connections.Remove(driverId, Context.ConnectionId);
-                        Console.WriteLine($"Driver {driverId} reconnected.");
+                        Connections.RemoveMapping(driverId);
                     }
 
                     Connections.Add(driverId, Context.ConnectionId);
@@ -123,6 +122,11 @@ namespace SignalRSelfHost.AddRiderHub
                     int driverId;
 
                     int.TryParse(Context.Headers["DriverId"], out driverId);
+
+                    if (Connections.HasKey(driverId))
+                    {
+                        Connections.RemoveMapping(driverId);
+                    }
 
                     if (!Connections.GetConnections(driverId).Contains(Context.ConnectionId))
                     {

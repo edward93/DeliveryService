@@ -28,6 +28,13 @@ namespace SignalRSelfHost.AddRiderHub
             }
         }
 
+        public bool HasKey(T key)
+        {
+            lock (_connections)
+            {
+                return _connections.Any(c => c.Key.Equals(key));
+            }
+        }
         public IEnumerable<string> GetConnections(T key)
         {
             lock (_connections)
@@ -42,6 +49,13 @@ namespace SignalRSelfHost.AddRiderHub
             return Enumerable.Empty<string>();
         }
 
+        public void RemoveMapping(T key)
+        {
+            lock (_connections)
+            {
+                _connections.Remove(key);
+            }
+        }
         public void Remove(T key, string connectionId)
         {
             lock (_connections)
