@@ -20,6 +20,7 @@ $(document).ready(function () {
         "columnDefs": [
            { responsivePriority: 1, targets: 0 },
            { responsivePriority: 2, targets: -2 }
+           //{className: "dt-center", targets: "_all"}
         ],
         "lengthMenu": [[10, 20, 50], [10, 20, 50]],    // use the first inner array as the page length values and the second inner array as the displayed options
         "ajax": {
@@ -33,13 +34,22 @@ $(document).ready(function () {
             { "data": "TimeToReachPickUpLocation", "orderable": true },
             { "data": "TimeToReachDropOffLocation", "orderable": true },
             { "data": "OrderStatus", "orderable": true },
-           // { "data": "VehicleType", "orderable": true },
             {
                 mRender: function (data, type, row) {
-
-                    return '<button class="btn btn-primary btn-xs btnPreviewOrderDetails" style="margin-left:30%;" data-title="Preview" data-id="' +
+                    var retryBtnHtml =
+                        '<button class="btn btn-success btn-xs btnRetry" style="" data-title="Retry" data-id="' +
+                            row.Id +
+                            '" id="btnRetry"><span class="fa fa-repeat" title="Retry"></span></button>';
+                    var previewBtnHtml = '<button class="btn btn-primary btn-xs btnPreviewOrderDetails" style="" data-title="Preview" data-id="' +
                         row.Id +
                         '" id="btnPreviewOrder"><span class="fa fa-eye" title="Preview"></span></button>';
+
+                    if (row.OrderStatus === 'Pending') {
+                        return previewBtnHtml + retryBtnHtml;
+
+                    } else {
+                        return previewBtnHtml;
+                    }
                 }
             }
         ],
@@ -112,10 +122,6 @@ $(document).ready(function () {
         validator.element(this);
     });
 
-    //$("input").on("change", function(e) {
-    //    validator.element(this);
-    //});
-
     function clearOrdersModal() {
         customerName.val("");
         customerPhone.val("");
@@ -148,6 +154,41 @@ $(document).ready(function () {
 
 
     });
+
+    $(document)
+        .on("click", ".btnRetry",
+            function (e) {
+                var orderId = $(this).attr('data-id');
+
+                e.preventDefault();
+                window.BlockUi();
+                $.post("/BusinessOrder/RetryOrder",
+                    {
+                        orderId: orderId
+                    },
+                    function (data) {
+                        window.UnBlockUi();
+                        
+                        if (data.Success) {
+                            for (let i = 0; i < data.Messages.length; i++) {
+                                if (data.Messages[i].Key === 1) {
+                                    window.toastr.warning(data.Messages[i].Value);
+                                } else {
+                                    window.toastr.success(data.Messages[i].Value);
+                                }
+                            }
+                        } else {
+                            for (let i = 0; i < data.Messages.length; i++) {
+                                if (data.Messages[i].Key === 1) {
+                                    window.toastr.warning(data.Messages[i].Value);
+                                } else {
+                                    window.toastr.error(data.Messages[i].Value);
+                                }
+                            }
+                        }
+                    });
+
+            });
 
     $("#addOrderBtn").on("click",
         function (e) {
@@ -184,12 +225,17 @@ $(document).ready(function () {
                     for (let i = 0; i < data.Messages.length; i++) {
                         if (data.Messages[i].Key === 1) {
                             window.toastr.warning(data.Messages[i].Value);
+                        } else {
+                            window.toastr.success(data.Messages[i].Value);
                         }
-                        window.toastr.success(data.Messages[i].Value);
                     }
                 } else {
                     for (let i = 0; i < data.Messages.length; i++) {
-                        window.toastr.error(data.Messages[i].Value);
+                        if (data.Messages[i].Key === 1) {
+                            window.toastr.warning(data.Messages[i].Value);
+                        } else {
+                            window.toastr.error(data.Messages[i].Value);
+                        }
                     }
                 }
             });

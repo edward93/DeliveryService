@@ -67,6 +67,66 @@ namespace DeliveryService.Controllers.Business
             return View();
         }
 
+        public async Task<ActionResult> RetryOrder(int orderId)
+        {
+            var serviceResult = new ServiceResult();
+            using (var transaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
+                    if (order == null) throw new Exception($"No order found with Id:{orderId}");
+
+                    if (order.OrderStatus != OrderStatus.Pending)
+                        throw new Exception(
+                            $"You cannot retry orders with other status than {EnumHelpers<OrderStatus>.GetDisplayValue(OrderStatus.Pending)}");
+
+                    var contPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                    var currBusiness = await _businessService.Value.GetBusinessByPersonId(contPerson.Id);
+
+                    var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
+                    if (driverLocation != null)
+                    {
+                        var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
+                        // Send this information to business via SignalR
+                        using (var hubConnection = new HubConnection(_signalRConnection)
+                        {
+                            TraceLevel = TraceLevels.All,
+                            TraceWriter = Console.Out
+                        })
+                        {
+                            var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                            hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+
+                            await hubConnection.Start();
+                            var driverDetails = new DriverDetails(order, nearDriver);
+                            var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
+
+                            if (!result.Success)
+                                throw new Exception($"Error while notifying business about nearest driver.");
+                        }
+
+                        serviceResult.Success = true;
+                        serviceResult.Messages.AddMessage(MessageType.Info, "Driver found for given order.");
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        serviceResult.Success = false;
+                        serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    serviceResult.Success = false;
+                    serviceResult.Messages.AddMessage(MessageType.Error, "Error while finding nearest driver.");
+                    serviceResult.Messages.AddMessage(MessageType.Error, ex.Message);
+                }
+            }
+
+            return Json(serviceResult);
+        }
         [HttpPost]
         public async Task<ActionResult> AddNewOrder(MakeOrderViewModel model)
         {
@@ -116,7 +176,7 @@ namespace DeliveryService.Controllers.Business
                     }
                     else
                     {
-                        serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please retry a bit later.");
+                        serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
                     }
 
                     serviceResult.Success = true;
