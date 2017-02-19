@@ -16,6 +16,8 @@ namespace DeliveryService.Models.ViewModels
             OrderId = order.Id;
             DriverLong = driver.DriverLocation.Long;
             DriverLat = driver.DriverLocation.Lat;
+            OrderPickUpLong = order.PickUpLocation.Long;
+            OrderPickUpLat = order.PickUpLocation.Lat;
             Rating = driver.Rating.AverageScore;
             BusinessId = order.BusinessId;
         }
@@ -27,6 +29,10 @@ namespace DeliveryService.Models.ViewModels
         public decimal DriverLong { get; set; }
         [Precision(10, 6)]
         public decimal DriverLat { get; set; }
+        [Precision(10, 6)]
+        public decimal OrderPickUpLong { get; set; }
+        [Precision(10, 6)]
+        public decimal OrderPickUpLat { get; set; }
         public decimal Rating { get; set; }
     }
 }

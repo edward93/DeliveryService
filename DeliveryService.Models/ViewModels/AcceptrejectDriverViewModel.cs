@@ -8,5 +8,6 @@ namespace DeliveryService.Models.ViewModels
         public int OrderId { get; set; }
         [Required]
         public int DriverId { get; set; }
+        public int Duration { get; set; }
     }
 }

@@ -438,8 +438,6 @@ $(document).ready(function () {
                     var estimatedTimePlus10Mins = Math.round(duration / 60) + 10;
                     $("#timeToReachDropOffLocation").val(estimatedTimePlus10Mins);
                     var form = $("#submitOrderForm");
-                    //form.validate();
-                    //form.valid();
                     validator.form();
 
                     $("#durationWarning").show();

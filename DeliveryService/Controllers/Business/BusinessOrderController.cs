@@ -239,6 +239,8 @@ namespace DeliveryService.Controllers.Business
 
                         await hubConnection.Start();
                         var orderDetails = new OrderDetails(order);
+                        orderDetails.Duration = model.Duration;
+                        orderDetails.DurationMins = model.Duration/60;
 
                         var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", orderDetails, model.DriverId);
 

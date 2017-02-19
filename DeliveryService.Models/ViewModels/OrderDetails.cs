@@ -58,5 +58,7 @@ namespace DeliveryService.Models.ViewModels
         public decimal OrderPrice { get; set; }
         public string NotDeliveredReason { get; set; }
         public string ServerCurrentTime { get; set; }
+        public int Duration { get; set; }
+        public int DurationMins { get; set; }
     }
 }

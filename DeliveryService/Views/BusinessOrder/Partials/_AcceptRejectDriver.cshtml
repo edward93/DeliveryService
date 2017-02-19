@@ -11,15 +11,20 @@
 
             <div class="modal-body">
                 <div id="nearestDriverMap" style="width: 100%; height: 300px"></div>
-                <div class="row driver-information">
+                <div class="driver-information"style="margin-top: 10px;">
                     <div class="profile-pic-wrapper"></div>
                     <div class="name"></div>
                     <div class="rating"></div>
                     <div class="vehicle-type"></div>
                     <div class="vehicle-reg-number"></div>
+                    <div class="time-to-reach-business"></div>
+                </div>
+                <div id="durationWarning2" class="alert alert-warning" role="alert" style="display: none;">
+                    <strong>Warning!</strong> * Times are estimated by google maps service, they might not be accurate all the time.
                 </div>
                 <input type="text" id="nearestDriverOrderId" value="" hidden />
                 <input type="text" id="nearestDriverId" value="" hidden />
+                <input type="text" id="durationFromRiderToBusiness" value="" hidden />
                 <div class="modal-footer ">
                     <button type="button" class="btn btn-danger" id="cancelDriver">Reject Rider</button>
                     <button type="button" class="btn btn-primary" id="acceptDriver">Accept Rider</button>
@@ -161,6 +166,33 @@
 
 </script>
 <script>
+    function calculateRiderToBusinessDuration(data) {
+        var source = new window.google.maps.LatLng(data.DriverLong, data.DriverLat);
+        var destination = new window.google.maps.LatLng(data.OrderPickUpLong, data.OrderPickUpLat);
+
+        var service = new window.google.maps.DistanceMatrixService();
+        service.getDistanceMatrix({
+            origins: [source],
+            destinations: [destination],
+            travelMode: window.google.maps.TravelMode.DRIVING,
+            unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+            avoidHighways: false,
+            avoidTolls: false
+        }, function (response, status) {
+            if (status === window.google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status === "OK") {
+
+                var durationToShow = response.rows[0].elements[0].duration.text;
+
+                // in seconds
+                var duration = response.rows[0].elements[0].duration.value;
+
+                $(".driver-information .time-to-reach-business").html("<p> <strong>Estimated time to reach pick up location: </strong>" + durationToShow + " * </p>");
+                $("#durationFromRiderToBusiness").val(duration);
+                $("#durationWarning2").show();
+            }
+        });
+    }
+
     function showNearestDriver(position) {
         var marker = new window.google.maps.Marker({
             position: new window.google.maps.LatLng(position.lat, position.lng),
@@ -172,21 +204,21 @@
     function getDriverDetails(driverId) {
         window.BlockUi();
         $.post("/BusinessOrder/GetDriverDetailsForOrder",
-                    { driverId: driverId },
-       function (data) {
-           if (data.Success) {
-               var driver = data.Data;
-               $(".driver-information .name").html("<h3> Rider Full Name: " + driver.FullName + "</h3>");
-               $(".driver-information .vehicle-type").html("<h3> Rider Vehicle Type: " + driver.VehicleType + "</h3>");
-               $(".driver-information .rating").html("<h3> Rider Rating: " + driver.RatingAverageScore + "</h3>");
-               $(".driver-information .vehicle-reg-number").html("<h3> Rider Vehicle Registration Number: " + driver.VehicleRegNumber + "</h3>");
-           } else {
-               for (let i = 0; i < data.Messages.length; i++) {
-                   window.toastr.error(data.Messages[i].Value);
-               }
-           }
-       }).always(function() {
-           window.UnBlockUi();
+            { driverId: driverId },
+            function (data) {
+                if (data.Success) {
+                    var driver = data.Data;
+                    $(".driver-information .name").html("<p> <strong>Rider Full Name: </strong>" + driver.FullName + "</p>");
+                    $(".driver-information .vehicle-type").html("<p> <strong>Rider Vehicle Type: </strong>" + driver.VehicleType + "</p>");
+                    $(".driver-information .rating").html("<p> <strong>Rider Rating: </strong>" + driver.RatingAverageScore + "</p>");
+                    $(".driver-information .vehicle-reg-number").html("<p> <strong>Rider Vehicle Registration Number: </strong>" + driver.VehicleRegNumber + "</p>");
+                } else {
+                    for (let i = 0; i < data.Messages.length; i++) {
+                        window.toastr.error(data.Messages[i].Value);
+                    }
+                }
+            }).always(function() {
+            window.UnBlockUi();
         });
     }
 
@@ -196,6 +228,7 @@
         $("#nearestDriverId").val(data.DriverId);
         map = new window.google.maps.Map(mapElement, mapOptions(center, zoom));
         showNearestDriver(center);
+        calculateRiderToBusinessDuration(data);
         getDriverDetails(data.DriverId);
         $("#acceptRejectDriverModal").modal("show");
     }
@@ -218,7 +251,8 @@
                 $.post("/BusinessOrder/CancelDriver",
                     {
                         orderId: $("#nearestDriverOrderId").val(),
-                        driverId: $("#nearestDriverId").val()
+                        driverId: $("#nearestDriverId").val(),
+                        Duration: $("#durationFromRiderToBusiness").val()
                     },
                     function (data) {
                         window.UnBlockUi();
@@ -240,12 +274,15 @@
                             }
                         }
                     }).always(function () {
-                        window.UnBlockUi();
-                    }).fail(function () {
-                        window.toastr.error("Internal Server Error.");
-                    });
+                    window.UnBlockUi();
+                }).fail(function () {
+                    window.toastr.error("Internal Server Error.");
+                });
                 modal.modal("hide");
             });
+
+    
+
 
     // Accept offered driver
     $("#acceptDriver")
@@ -256,7 +293,8 @@
                 $.post("/BusinessOrder/AcceptDriver",
                     {
                         orderId: $("#nearestDriverOrderId").val(),
-                        driverId: $("#nearestDriverId").val()
+                        driverId: $("#nearestDriverId").val(),
+                        Duration: $("#durationFromRiderToBusiness").val()
                     },
                     function (data) {
                         window.UnBlockUi();
@@ -278,10 +316,10 @@
                             }
                         }
                     }).always(function () {
-                        window.UnBlockUi();
-                    }).fail(function () {
-                        window.toastr.error("Internal Server Error.");
-                    });
+                    window.UnBlockUi();
+                }).fail(function () {
+                    window.toastr.error("Internal Server Error.");
+                });
                 modal.modal("hide");
             });
 </script>
