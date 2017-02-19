@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.Models.ViewModels;
 using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
@@ -78,6 +79,16 @@ namespace ServiceLayer.Service
         public async Task<int> GetOnlineDriversCountAsync()
         {
             return await _driverRepository.GetOnlineDriversCountAsync();
+        }
+
+        public async Task<IEnumerable<DriverDetailsWithLocation>> GetOnlineDriversAsync()
+        {
+            return await _driverRepository.GetOnlineDriversAsync();
+        }
+
+        public async Task<IEnumerable<DriverDetailsWithLocation>> GetBusinessDriversAsync(int businessId)
+        {
+            return await _driverRepository.GetBusinessDriversAsync(businessId);
         }
 
         private async Task ChangeDriverStateAsync(int driverId, bool approved, int currentPersonId)

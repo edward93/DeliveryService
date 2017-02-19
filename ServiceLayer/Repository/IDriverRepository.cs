@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DAL.Entities;
+using DeliveryService.Models.ViewModels;
 
 namespace ServiceLayer.Repository
 {
@@ -13,5 +14,7 @@ namespace ServiceLayer.Repository
         Task<Driver> GetDriverByPersonId(string personId);
         Task ApproveDriver(int driverId);
         Task<int> GetOnlineDriversCountAsync();
+        Task<IEnumerable<DriverDetailsWithLocation>> GetOnlineDriversAsync();
+        Task<IEnumerable<DriverDetailsWithLocation>> GetBusinessDriversAsync(int businessId);
     }
 }

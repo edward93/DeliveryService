@@ -19,5 +19,6 @@ namespace ServiceLayer.Repository
         Task OrderDelivieredAsync(Order order, Driver driver);
         Task OrderNotDeliveredAsync(Order order, Driver driver, string reason);
         Task <IEnumerable<Order>> GetBusinessOrdersAsync(int businessId, OrderStatus? status);
+        Task<IEnumerable<Order>> GetBusinessActiveOrdersAsync(int businessId);
     }
 }

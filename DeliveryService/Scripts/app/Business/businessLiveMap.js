@@ -2,12 +2,7 @@
 var map;
 var directionsService = new google.maps.DirectionsService();
 var mapElement = document.getElementById('businessLiveMap');
-
-//$(document).ready(function () {
-//    $(".location").keypress(function () {
-//        GetRoute();
-//    });
-//});
+var markers = [];
 
 function mapOptions(center, zoom) {
     return {
@@ -108,159 +103,124 @@ function mapOptions(center, zoom) {
     };
 }
 
-// TODO: This is for testing only
+// TODO: London coordinates. Replace with business location
 var center = {
-    lat: 40.1836745,
-    lng: 44.5208913
+    lat: 51.5076514,
+    lng: -0.1256326
 };
 
 var zoom = 14;
 
 map = new window.google.maps.Map(mapElement, mapOptions(center, zoom));
 
-//google.maps.event.addDomListener(window, 'load', function () {
-//    var sourceSearchBox = new google.maps.places.SearchBox(document.getElementById('txtSource'));
-//    sourceSearchBox.addListener('places_changed', function () {
-//        var places = sourceSearchBox.getPlaces();
-//        if (places.length == 0) {
-//            $("#txtSource").css({ "border": "1px solid red", "background": "#FFCECE" });
-//        }
-//        else {
-//            $("#txtSource").css({ "background": "", "border": "1px solid #D5D5D5" });
-            
-//        }
-//    });
-//    var destinationSearchBox = new google.maps.places.SearchBox(document.getElementById('txtDestination'));
-//    destinationSearchBox.addListener('places_changed', function () {
-//        var places = destinationSearchBox.getPlaces();
-//        if (places.length == 0) {
-//            $("#txtDestination").css({ "border": "1px solid red", "background": "#FFCECE" });
-//        }
-//        else {
-//            $("#txtDestination").css({ "background": "", "border": "1px solid #D5D5D5" });
-            
-//        }
-//    });
-//    directionsDisplay = new google.maps.DirectionsRenderer({
-//        'draggable': false
-//    });
+function recenterTheMap() {
+    var bounds = new window.google.maps.LatLngBounds();
+    if (markers.length > 0) {
+        for (var i = 0; i < markers.length; i++) {
+            bounds.extend(markers[i].getPosition());
+        }
+        bounds.extend(center);
+        map.fitBounds(bounds);
+    }
+}
 
-//    map = new google.maps.Map(mapElement, getMapStart());
-//});
+function getAndShowOnlineRdiers() {
+    $.post("/LiveMap/getOnlineRiders",
+                    function (data) {
+                        if (data.Success) {
+                            showOnlineRiders(data.Data);
+                            recenterTheMap();
+                        } else {
+                        }
+                    }).always(function () {
+                    }).fail(function () {
+                        window.toastr.error("Internal Server Error.");
+                    });
+}
 
-//function ClearMap() {
-//    map = new google.maps.Map(mapElement, getMapStart());
-//    directionsDisplay.setMap(null);
-//}
-
-//function GetRoute() {
-//    var mapOptions = getMapStart();
-//    map = new google.maps.Map(document.getElementById('dvMap'), mapOptions);
-//    directionsDisplay.setMap(map);
-
-//    source = $("#txtSource").val();
-//    destination = $("#txtDestination").val();
-//    if (destination === "" && source !== "") {
-//        destination = source;
-//    }
-//    else if (source === "" && destination !== "") {
-//        source = destination;
-//    }
-
-//    var request = {
-//        origin: source,
-//        destination: destination,
-//        travelMode: google.maps.TravelMode.DRIVING
-//    };
-//    directionsService.route(request, function (response, status) {
-//        if (status == google.maps.DirectionsStatus.OK) {
-//            directionsDisplay.setDirections(response);
-//        }
-//    });
-    
-//    var service = new google.maps.DistanceMatrixService();
-//    service.getDistanceMatrix({
-//        origins: [source],
-//        destinations: [destination],
-//        travelMode: google.maps.TravelMode.DRIVING,
-//        unitSystem: google.maps.UnitSystem.IMPERIAL,
-//        avoidHighways: false,
-//        avoidTolls: false
-//    }, function (response, status) {
-//        if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status == "OK") {
-
-//            var distanceToShow = response.rows[0].elements[0].distance.text;
-//            var durationToShow = response.rows[0].elements[0].duration.text;
-
-//            var distance = response.rows[0].elements[0].distance.value;
-//            var duration = response.rows[0].elements[0].duration.value;
-
-//            $("#distance").html(distanceToShow);
-//            $("#duration").html(durationToShow);
-
-//            $("#distance").data("value", distance);
-//            $("#duration").data("value", duration);
+function getAndShowBusinessRdiers() {
+    $.post("/LiveMap/getBusinessRiders",
+                    function (data) {
+                        if (data.Success) {
+                            showBusinessRiders(data.Data);
+                            recenterTheMap();
+                        } else {
+                        }
+                    }).always(function () {
+                    }).fail(function () {
+                        window.toastr.error("Internal Server Error.");
+                    });
+}
 
 
-//        } else {
-//            ClearMap();
-//        }
-//    });
+function createInfoWindow(driverDetail) {
+    return "<div class='info'>" +
+        "<p><strong>Rider Full Name: </strong>" + driverDetail.DriveFullName + "</p>" +
+        "<p><strong>Rider Status: </strong>" + driverDetail.DriverStatus + "</p>" +
+        "<p><strong>Vehicle Type: </strong>" + driverDetail.VehicleType + "</p>" +
+        "<p><strong>Rating: </strong>" + driverDetail.DriverRating + "</p>" +
+        "<p><strong>Order Id: </strong>" + driverDetail.OrderId + "</p>" +
+        "<p><strong>Order Status: </strong>" + driverDetail.OrderStatus + "</p>" +
+        "</div>";
+}
 
-//}
+function showOnlineRiders(driverDetails) {
+    driverDetails.forEach(function (details) {
+        var marker = new window.google.maps.Marker({
+            position: new window.google.maps.LatLng(details.DriverLat, details.DriverLong),
+            icon: icons["onlineRider"],
+            map: map
+        });
 
-//function GetAddress() {
-//    var lat = parseFloat(document.getElementById("txtLatitude").value);
-//    var lng = parseFloat(document.getElementById("txtLongitude").value);
-//    var latlng = new google.maps.LatLng(lat, lng);
-//    var geocoder = geocoder = new google.maps.Geocoder();
-//    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-//        if (status == google.maps.GeocoderStatus.OK) {
-//            if (results[1]) {
-//                if (rideType == "pick")
-//                    $("#txtSource").val(results[1].formatted_address);
-//                else
-//                    $("#txtDestination").val(results[1].formatted_address);
-//                GetRoute();
-//            }
-//        }
-//    });
-//}
+        markers.push(marker);
 
-//$('#txtSource').blur(function () {
-//    if ($('#txtSource').val() === "") {
-//        ClearMap();
-//    } else {
-//        GetRoute();
-//    }
-//});
+        var content = createInfoWindow(details);
 
-//$('#txtSource').keyup(function (e) {
-//    var code = e.which; // recommended to use e.which, it's normalized across browsers
-//    if (code === 13) {
-//        if ($('#txtSource').val() === "") {
-//            ClearMap();
-//        } else {
-//            GetRoute();
-//        }
-//    }
-//});
+        var infowindow = new window.google.maps.InfoWindow();
 
-//$('#txtDestination').blur(function () {
-//    if ($('#txtDestination').val() === "") {
-//        ClearMap();
-//    } else {
-//        GetRoute();
-//    }
-//});
+        window.google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+            return function () {
+                infowindow.setContent(content);
+                infowindow.open(map, marker);
+            };
+        })(marker, content, infowindow));
+    });
+}
 
-//$('#txtDestination').keyup(function (e) {
-//    var code = e.which; // recommended to use e.which, it's normalized across browsers
-//    if (code === 13) {
-//        if ($('#txtDestination').val() === "") {
-//            ClearMap();
-//        } else {
-//            GetRoute();
-//        }
-//    }
-//});
+function showBusinessRiders(driverDetails) {
+    driverDetails.forEach(function (details) {
+        var marker = new window.google.maps.Marker({
+            position: new window.google.maps.LatLng(details.DriverLat, details.DriverLong),
+            icon: icons["businessRider"],
+            map: map
+        });
+
+        markers.push(marker);
+
+        var content = createInfoWindow(details);
+
+        var infowindow = new window.google.maps.InfoWindow();
+
+        window.google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+            return function () {
+                infowindow.setContent(content);
+                infowindow.open(map, marker);
+            };
+        })(marker, content, infowindow));
+    });
+}
+
+function drawRidersOnMap() {
+    getAndShowOnlineRdiers();
+    getAndShowBusinessRdiers();
+}
+
+
+// Update map every 10 seconds
+setInterval(drawRidersOnMap, 10000);
+
+$("#refreshLiveMapBtn")
+    .on("click",
+        function(e) {
+            drawRidersOnMap();
+        });

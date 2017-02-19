@@ -102,5 +102,16 @@ namespace ServiceLayer.Repository
             return status != null ? await DbContext.Orders.Where(c => c.IsDeleted == false && c.BusinessId == businessId && c.OrderStatus == status.Value).ToListAsync()
                 : await DbContext.Orders.Where(c => c.IsDeleted == false && c.BusinessId == businessId).ToListAsync();
         }
+
+        public async Task<IEnumerable<Order>> GetBusinessActiveOrdersAsync(int businessId)
+        {
+            return await DbContext.Orders.Where(c => c.IsDeleted == false && c.BusinessId == businessId &&
+                                                     (c.OrderStatus != OrderStatus.Delivered ||
+                                                      c.OrderStatus != OrderStatus.NotDelivered || 
+                                                      c.OrderStatus != OrderStatus.Pending || 
+                                                      c.OrderStatus != OrderStatus.ReturnConfirmed ||
+                                                      c.OrderStatus != OrderStatus.ReturnCanceled ||
+                                                      c.OrderStatus != OrderStatus.RejectedByDriver)).ToListAsync();
+        }
     }
 }

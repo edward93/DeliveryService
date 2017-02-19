@@ -126,6 +126,10 @@
       <Project>{A7A03484-D2DE-45F9-9B47-603D1975B4B8}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DeliveryService.Models\DeliveryService.Models.csproj">
+      <Project>{B0ED943F-9333-4C81-9293-33AAF7761678}</Project>
+      <Name>DeliveryService.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

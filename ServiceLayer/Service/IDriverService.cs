@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Entities;
 using DAL.Enums;
+using DeliveryService.Models.ViewModels;
 
 namespace ServiceLayer.Service
 {
@@ -18,5 +19,7 @@ namespace ServiceLayer.Service
         Task ApproveDriverAsync(int driverId, int currentPersonId);
         Task RejectDriverAsync(int driverId, int currentPersonId);
         Task<int> GetOnlineDriversCountAsync();
+        Task<IEnumerable<DriverDetailsWithLocation>> GetOnlineDriversAsync();
+        Task<IEnumerable<DriverDetailsWithLocation>> GetBusinessDriversAsync(int businessId);
     }
 }

@@ -44,12 +44,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AcceptRejectDriverViewModel.cs" />
     <Compile Include="ViewModels\DriverDetails.cs" />
+    <Compile Include="ViewModels\DriverDetailsWithLocation.cs" />
     <Compile Include="ViewModels\OrderDetails.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{A7A03484-D2DE-45F9-9B47-603D1975B4B8}</Project>
       <Name>DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+      <Project>{D1D10BF2-D520-43DE-B4DB-C94436C67BA9}</Project>
+      <Name>Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

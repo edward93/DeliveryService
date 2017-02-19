@@ -7,13 +7,18 @@
             <div class="ibox-content p-xl">
                 <div class="wrapper wrapper-content animated fadeInRight">
                     <div class="row">
-                        <h3 class="dashboard-header-textes">
+                        <h2 class="dashboard-header-textes text-center">
                             Live Map
-                        </h3>
+                        </h2>
                         <div class="row" style="margin-top: 40px;">
                             <div class="col-md-12">
                                 <div id="businessLiveMap" style="width: 100%; height: 400px"></div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 40px;">
+                        <div class="text-center">
+                            <span >Refresh Map </span><button class="btn btn-default" id="refreshLiveMapBtn" title="Manually refresh the map"><span class="fa-repeat fa" title="Manually refresh the map"></span></button>
                         </div>
                     </div>
                 </div>
@@ -38,7 +43,6 @@
     @Scripts.Render("~/plugins/toastr")
     @Scripts.Render("~/plugins/sweetAlert")
 
-    <script src="~/Scripts/app/Business/businessLiveMap.js"></script>
 }
 <style>
     #dvMap {
@@ -51,3 +55,18 @@
         border-bottom: 1px solid #808080;
     }
 </style>
+<script>
+    var icons = {
+        onlineRider: {
+            url: "@Url.Content("~/Content/mapIcons/online-rider-icon.png")",
+            size: new google.maps.Size(70, 70)
+        },
+        businessRider: {
+            url: "@Url.Content("~/Content/mapIcons/business-rider-icon.png")",
+            size: new google.maps.Size(70, 70)
+        }
+    };
+
+    var businessAddress = '@ViewBag.BusinessAddress';
+</script>
+<script src="~/Scripts/app/Business/businessLiveMap.js"></script>
