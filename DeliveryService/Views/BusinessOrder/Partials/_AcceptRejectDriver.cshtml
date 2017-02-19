@@ -224,11 +224,19 @@
                         window.UnBlockUi();
                         if (data.Success) {
                             for (let i = 0; i < data.Messages.length; i++) {
-                                window.toastr.success(data.Messages[i].Value);
+                                if (data.Messages[i].Key === 1) {
+                                    window.toastr.warning(data.Messages[i].Value);
+                                } else {
+                                    window.toastr.success(data.Messages[i].Value);
+                                }
                             }
                         } else {
                             for (let i = 0; i < data.Messages.length; i++) {
-                                window.toastr.error(data.Messages[i].Value);
+                                if (data.Messages[i].Key === 1) {
+                                    window.toastr.warning(data.Messages[i].Value);
+                                } else {
+                                    window.toastr.error(data.Messages[i].Value);
+                                }
                             }
                         }
                     }).always(function () {
@@ -254,11 +262,19 @@
                         window.UnBlockUi();
                         if (data.Success) {
                             for (let i = 0; i < data.Messages.length; i++) {
-                                window.toastr.success(data.Messages[i].Value);
+                                if (data.Messages[i].Key === 1) {
+                                    window.toastr.warning(data.Messages[i].Value);
+                                } else {
+                                    window.toastr.success(data.Messages[i].Value);
+                                }
                             }
                         } else {
                             for (let i = 0; i < data.Messages.length; i++) {
-                                window.toastr.error(data.Messages[i].Value);
+                                if (data.Messages[i].Key === 1) {
+                                    window.toastr.warning(data.Messages[i].Value);
+                                } else {
+                                    window.toastr.error(data.Messages[i].Value);
+                                }
                             }
                         }
                     }).always(function () {
