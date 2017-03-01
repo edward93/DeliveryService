@@ -1,6 +1,7 @@
 ﻿using DAL.Context;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.Unity;
+using ServiceLayer.ApplicationService;
 using ServiceLayer.Repository;
 using ServiceLayer.Service;
 using SignalRSelfHost.Resolver;
@@ -39,6 +40,7 @@ namespace SignalRSelfHost.App_Start
             container.RegisterType<IOrderHistoryService, OrderHistoryService>();
             container.RegisterType<IOrderRepository, OrderRepository>();
             container.RegisterType<IOrderService, OrderService>();
+            container.RegisterType<IDriverApplicationService, DriverApplicationService>();
             container.RegisterType<AddRiderHub.AddRiderHub>(new InjectionFactory(CreateMyHub));
 
             return container;
@@ -46,7 +48,7 @@ namespace SignalRSelfHost.App_Start
 
         private static object CreateMyHub(IUnityContainer p)
         {
-            var myHub = new AddRiderHub.AddRiderHub(p.Resolve<IOrderService>());
+            var myHub = new AddRiderHub.AddRiderHub(p.Resolve<IOrderService>(), p.Resolve<IDriverService>());
 
             return myHub;
         }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DAL.Entities;
 using ServiceLayer.Repository;
 
@@ -23,7 +24,7 @@ namespace ServiceLayer.Service
             await _driverLocationRepository.UpdateDriverLocation(location);
         }
 
-        public async Task<DriverLocation> FindNearestDriverLocationAsync(Order order, int radiusMiles = 5)
+        public async Task<IEnumerable<DriverLocation>> FindNearestDriverLocationAsync(Order order, int radiusMiles = 5)
         {
             return await _driverLocationRepository.FindNearestDriverLocationAsync(order);
         }

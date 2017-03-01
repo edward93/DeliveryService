@@ -54,6 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationService\DriverApplicationService.cs" />
+    <Compile Include="ApplicationService\IDriverApplicationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AddressRepository.cs" />
     <Compile Include="Repository\BusinessPenaltyRepository.cs" />

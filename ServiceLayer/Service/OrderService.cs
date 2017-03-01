@@ -118,7 +118,7 @@ namespace ServiceLayer.Service
 
             var orderHistory = new OrderHistory
             {
-                Action = ActionType.DriverCanceledByBusiness,
+                Action = ActionType.DriverRejectedByBusiness,
                 CreatedBy = order.Business.ContactPerson.Id,
                 CreatedDt = DateTime.UtcNow,
                 DriverId = driverId,
