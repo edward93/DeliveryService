@@ -6,6 +6,7 @@ using ServiceLayer.Service;
 using Unity.WebApi;
 using DeliveryService.API.Infrastructure;
 using DAL.Context;
+using ServiceLayer.ApplicationService;
 
 namespace DeliveryService.API
 {
@@ -60,6 +61,7 @@ namespace DeliveryService.API
             container.RegisterType<IDriverPenaltyService, DriverPenaltyService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverFeeService, DriverFeeService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDiscountService, DiscountService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDriverApplicationService, DriverApplicationService>(new HierarchicalLifetimeManager());
 
 
         }

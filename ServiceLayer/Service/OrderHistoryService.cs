@@ -29,5 +29,10 @@ namespace ServiceLayer.Service
         {
             return await _repository.GetRecordByDriverIdOrderIdAndActionTypeAsync(driverId, orderId, actionType);
         }
+
+        public async Task<IEnumerable<int>> GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(int orderId)
+        {
+            return await _repository.GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(orderId);
+        }
     }
 }

@@ -9,6 +9,7 @@ using ServiceLayer.Repository;
 using ServiceLayer.Service;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using ServiceLayer.ApplicationService;
 
 namespace DeliveryService.App_Start
 {
@@ -81,6 +82,7 @@ namespace DeliveryService.App_Start
             container.RegisterType<IDriverPenaltyService, DriverPenaltyService>(new PerRequestLifetimeManager());
             container.RegisterType<IDriverFeeService, DriverFeeService>(new PerRequestLifetimeManager());
             container.RegisterType<IDiscountService, DiscountService>(new PerRequestLifetimeManager());
+            container.RegisterType<IDriverApplicationService, DriverApplicationService>(new PerRequestLifetimeManager());
         }
     }
 }

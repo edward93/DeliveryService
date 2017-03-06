@@ -21,6 +21,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNet.SignalR.Client.Hubs;
 using Newtonsoft.Json;
+using ServiceLayer.ApplicationService;
 using ServiceLayer.Service;
 using WebGrease.Css.Extensions;
 
@@ -30,11 +31,13 @@ namespace DeliveryService.Controllers.Business
     public class BusinessOrderController : BaseController
     {
         private readonly Lazy<IOrderService> _orderService;
+        private readonly Lazy<IOrderHistoryService> _orderHistoryService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IDriverService> _driverService;
         private readonly Lazy<IBusinessPenaltyService> _businessPenaltyService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
+        private readonly Lazy<IDriverApplicationService> _driverApplicationService;
         private DataTable<BusinessOrder> _ordersDataTable;
         private readonly string _signalRConnection;
 
@@ -45,8 +48,12 @@ namespace DeliveryService.Controllers.Business
             IBusinessService businessService,
             IDriverService driverService,
             IDriverLocationService driverLocationService, 
-            IBusinessPenaltyService businessPenaltyService) : base(config, context)
+            IBusinessPenaltyService businessPenaltyService, 
+            IOrderHistoryService orderHistoryService, 
+            IDriverApplicationService driverApplicationService) : base(config, context)
         {
+            _driverApplicationService = new Lazy<IDriverApplicationService>(() => driverApplicationService);
+            _orderHistoryService = new Lazy<IOrderHistoryService>(() => orderHistoryService);
             _businessPenaltyService = new Lazy<IBusinessPenaltyService>(() => businessPenaltyService);
             _signalRConnection = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}/";
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
@@ -84,11 +91,10 @@ namespace DeliveryService.Controllers.Business
                     var contPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                     var currBusiness = await _businessService.Value.GetBusinessByPersonId(contPerson.Id);
 
-                    var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
-                    if (driverLocation != null)
+                    // Get nearest driver
+                    var nearestDriver = await _driverApplicationService.Value.GetNearestDriverAsync(order);
+                    if (nearestDriver != null)
                     {
-                        var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
-                        // Send this information to business via SignalR
                         using (var hubConnection = new HubConnection(_signalRConnection)
                         {
                             TraceLevel = TraceLevels.All,
@@ -99,22 +105,47 @@ namespace DeliveryService.Controllers.Business
                             hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
 
                             await hubConnection.Start();
-                            var driverDetails = new DriverDetails(order, nearDriver);
+                            var driverDetails = new DriverDetails(order, nearestDriver);
                             var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
 
                             if (!result.Success)
                                 throw new Exception($"Error while notifying business about nearest driver.");
                         }
-
-                        serviceResult.Success = true;
-                        serviceResult.Messages.AddMessage(MessageType.Info, "Driver found for given order.");
-                        transaction.Commit();
                     }
                     else
                     {
                         serviceResult.Success = false;
                         serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
                     }
+
+                    // TODO: After proper testing remove this code
+                    //var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
+                    //if (driverLocation != null)
+                    //{
+                    //    var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
+                    //    // Send this information to business via SignalR
+                    //    using (var hubConnection = new HubConnection(_signalRConnection)
+                    //    {
+                    //        TraceLevel = TraceLevels.All,
+                    //        TraceWriter = Console.Out
+                    //    })
+                    //    {
+                    //        var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                    //        hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+
+                    //        await hubConnection.Start();
+                    //        var driverDetails = new DriverDetails(order, nearDriver);
+                    //        var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
+
+                    //        if (!result.Success)
+                    //            throw new Exception($"Error while notifying business about nearest driver.");
+                    //    }
+
+                    //    serviceResult.Success = true;
+                    //    serviceResult.Messages.AddMessage(MessageType.Info, "Driver found for given order.");
+                    //    transaction.Commit();
+                    //}
+
                 }
                 catch (Exception ex)
                 {
@@ -150,13 +181,10 @@ namespace DeliveryService.Controllers.Business
                     // Create order
                     await _orderService.Value.CreateOrderAsync(order);
 
-                    // TODO: Move this method into worker process
-                    // Find driver regargless of it's vehicle type
-                    var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
-                    if (driverLocation != null)
+                    // Get nearest driver
+                    var nearestDriver = await _driverApplicationService.Value.GetNearestDriverAsync(order);
+                    if (nearestDriver != null)
                     {
-                        var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
-                        // Send this information to business via SignalR
                         using (var hubConnection = new HubConnection(_signalRConnection)
                         {
                             TraceLevel = TraceLevels.All,
@@ -167,7 +195,7 @@ namespace DeliveryService.Controllers.Business
                             hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
 
                             await hubConnection.Start();
-                            var driverDetails = new DriverDetails(order, nearDriver);
+                            var driverDetails = new DriverDetails(order, nearestDriver);
                             var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
 
                             if (!result.Success)
@@ -178,6 +206,37 @@ namespace DeliveryService.Controllers.Business
                     {
                         serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
                     }
+                    // TODO: After proper test remove this part of code
+                    // Find driver regargless of it's vehicle type
+                    //var driverLocations = (await _driverLocationService.Value.FindNearestDriverLocationAsync(order)).ToList();
+                    //if (driverLocations.Any())
+                    //{
+                    //    var driversWhoRejetedOrder = await _orderHistoryService.Value.GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(order.Id);
+                    //    var nearestLocation = driverLocations.Where(c => !driversWhoRejetedOrder.Contains(c.Id)).ToList();
+                    //    var firstOrDefault = nearestLocation.FirstOrDefault();
+                    //    if (firstOrDefault != null)
+                    //    {
+                    //        var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(firstOrDefault.Id);
+                    //        // Send this information to business via SignalR
+                    //        using (var hubConnection = new HubConnection(_signalRConnection)
+                    //        {
+                    //            TraceLevel = TraceLevels.All,
+                    //            TraceWriter = Console.Out
+                    //        })
+                    //        {
+                    //            var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                    //            hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+
+                    //            await hubConnection.Start();
+                    //            var driverDetails = new DriverDetails(order, nearDriver);
+                    //            var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
+
+                    //            if (!result.Success)
+                    //                throw new Exception($"Error while notifying business about nearest driver.");
+                    //        }
+                    //    }
+                    //}
+
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");
@@ -210,6 +269,8 @@ namespace DeliveryService.Controllers.Business
                     if (driver == null) throw new Exception($"Cannot find driver by driver id: {model.DriverId}");
 
                     if (!driver.Approved) throw new Exception($"This driver is not approved by administration and is not allowed to proceed.");
+
+                    if (driver.Status != DriverStatus.Online) throw new Exception($"You can assign only online drivers to the order.");
 
                     var order = await _orderService.Value.GetByIdAsync<Order>(model.OrderId);
 

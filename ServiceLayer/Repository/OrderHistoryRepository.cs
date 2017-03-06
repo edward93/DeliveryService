@@ -45,5 +45,14 @@ namespace ServiceLayer.Repository
                             c.Action == actionType);
             return record;
         }
+
+        public async Task<IEnumerable<int>> GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(int orderId)
+        {
+            return await 
+                DbContext.OrderHistories.Where(c => c.IsDeleted == false  && c.DriverId.HasValue && 
+                (c.Action == ActionType.DriverRejectedOrder || c.Action == ActionType.DriverRejectedByBusiness))
+                    .Select(c => c.DriverId.Value)
+                    .ToListAsync();
+        }
     }
 }

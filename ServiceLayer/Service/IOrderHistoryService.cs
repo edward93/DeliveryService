@@ -10,5 +10,6 @@ namespace ServiceLayer.Service
         Task<OrderHistory> CreateNewRecordAsync(OrderHistory record);
         Task<IEnumerable<OrderHistory>> GetRejectedOrdersByDriverForCurrentDayAsync(int driverId);
         Task<OrderHistory> GetRecordByDriverIdOrderIdAndActionTypeAsync(int driverId, int orderId, ActionType actionType);
+        Task<IEnumerable<int>> GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(int orderId);
     }
 }
