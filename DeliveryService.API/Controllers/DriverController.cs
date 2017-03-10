@@ -182,13 +182,20 @@ namespace DeliveryService.API.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> GetDriverDetails()
         {
-            ServiceResult result = new ServiceResult();
+            ServiceResult serviceResult = new ServiceResult();
             try
             {
+                if (!User.IsInRole(Roles.Driver))
+                {
+                    throw new Exception("You have no permission");
+                }
+
                 var driver = await _driverService.Value.GetDriverByPersonAsync(User.Identity.GetUserId());
+                
                 var driverDocuments = await _driverUploadService.Value.GetDriverUploadsByDriverIdAsync(driver.Id);
                 var driverDocList = new List<DriverDocumentModel>();
                 var driverVehicleType = driver.VehicleType;
+
                 foreach (var document in driverDocuments)
                 {
                     if (driverVehicleType != VehicleType.Van && driverVehicleType != VehicleType.Car &&
@@ -242,18 +249,18 @@ namespace DeliveryService.API.Controllers
                     RatingAverageScore = (double)driver.Rating.AverageScore
                 };
 
-                result.Success = true;
-                result.Data = driverDetails;
+                serviceResult.Success = true;
+                serviceResult.Data = driverDetails;
 
             }
             catch (Exception exception)
             {
-                result.Success = false;
-                result.Messages.AddMessage(MessageType.Error, "Error while creating driver");
-                result.Messages.AddMessage(MessageType.Error, exception.ToString());
+                serviceResult.Success = false;
+                serviceResult.Messages.AddMessage(MessageType.Error, "Error while getting driver details");
+                serviceResult.Messages.AddMessage(MessageType.Error, exception.ToString());
             }
 
-            return Json(result, new JsonSerializerSettings
+            return Json(serviceResult, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
