@@ -44,6 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -252,6 +255,7 @@
     <Compile Include="Controllers\Business\BusinessProfileController.cs" />
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\DriversController.cs" />
+    <Compile Include="Controllers\ElmahController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LiveMapController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -286,6 +290,7 @@
     <Compile Include="ViewModels\Orders\OrderPreviewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -1030,7 +1035,9 @@
     <Content Include="Scripts\_references.js" />
     <Content Include="Style\BusinessProfile\businessProfile.css" />
     <Content Include="Style\DashBoard\dashboard.css" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -1092,6 +1099,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Hubs\" />
+    <Folder Include="Views\Elmah\" />
     <Folder Include="Views\PartnerRequests\" />
   </ItemGroup>
   <ItemGroup>
