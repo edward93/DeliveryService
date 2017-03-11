@@ -48,7 +48,7 @@ namespace SignalRSelfHost.App_Start
 
         private static object CreateMyHub(IUnityContainer p)
         {
-            var myHub = new AddRiderHub.AddRiderHub(p.Resolve<IOrderService>(), p.Resolve<IDriverService>());
+            var myHub = new AddRiderHub.AddRiderHub(p.Resolve<IOrderService>(), p.Resolve<IRiderService>());
 
             return myHub;
         }

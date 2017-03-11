@@ -17,15 +17,15 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IOrderService> _orderService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         // GET: BusinessDashboard
         public BusinessDashboardController(IConfig config, IDbContext context, 
             IOrderService orderService, 
             IPersonService personService, 
             IBusinessService businessServicec, 
-            IDriverService driverService) : base(config, context)
+            IRiderService driverService) : base(config, context)
         {
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
             _personService = new Lazy<IPersonService>(() => personService);
             _businessService = new Lazy<IBusinessService>(() => businessServicec);
             _orderService = new Lazy<IOrderService>(() => orderService);

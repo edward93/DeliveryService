@@ -30,7 +30,7 @@ namespace DeliveryService.API
             container.RegisterType<IEntityRepository, EntityRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IAddressRepository, AddressRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<ICardRepository, CardRepository>(new HierarchicalLifetimeManager());
-            container.RegisterType<IDriverRepository, DriverRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IRiderRepository, RiderRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverUploadRepository, DriverUploadRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IPersonRepository, PersonRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IBusinessRepository, BusinessRespository>(new HierarchicalLifetimeManager());
@@ -48,7 +48,7 @@ namespace DeliveryService.API
             container.RegisterType<IEntityService, EntityService>(new HierarchicalLifetimeManager());
             container.RegisterType<IAddressService, AddressService>(new HierarchicalLifetimeManager());
             container.RegisterType<ICardService, CardService>(new HierarchicalLifetimeManager());
-            container.RegisterType<IDriverService, DriverService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IRiderService, RiderService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverUploadService, DriverUploadService>(new HierarchicalLifetimeManager());
             container.RegisterType<IPersonService, PersonService>(new HierarchicalLifetimeManager());
             container.RegisterType<IBusinessService, BusinessService>(new HierarchicalLifetimeManager());

@@ -72,7 +72,7 @@
     <Compile Include="Repository\IDriverFeeRepository.cs" />
     <Compile Include="Repository\IDriverPenaltyRepository.cs" />
     <Compile Include="Repository\OrderHistoryRepository.cs" />
-    <Compile Include="Repository\DriverRepository.cs" />
+    <Compile Include="Repository\RiderRepository.cs" />
     <Compile Include="Repository\DriverUploadRepository.cs" />
     <Compile Include="Repository\EntityRepository.cs" />
     <Compile Include="Repository\IAddressRepository.cs" />
@@ -80,7 +80,7 @@
     <Compile Include="Repository\ICardRepository.cs" />
     <Compile Include="Repository\IDriverLocationRepository.cs" />
     <Compile Include="Repository\IOrderHistoryRepository.cs" />
-    <Compile Include="Repository\IDriverRepository.cs" />
+    <Compile Include="Repository\IRiderRepository.cs" />
     <Compile Include="Repository\IDriverUploadRepository.cs" />
     <Compile Include="Repository\IEntityRepository.cs" />
     <Compile Include="Repository\IOrderRepository.cs" />
@@ -104,7 +104,7 @@
     <Compile Include="Service\IDriverFeeService.cs" />
     <Compile Include="Service\IDriverPenaltyService.cs" />
     <Compile Include="Service\OrderHistoryService.cs" />
-    <Compile Include="Service\DriverService.cs" />
+    <Compile Include="Service\RiderService.cs" />
     <Compile Include="Service\DriverUploadService.cs" />
     <Compile Include="Service\EntityService.cs" />
     <Compile Include="Service\IAddressService.cs" />
@@ -112,7 +112,7 @@
     <Compile Include="Service\ICardService.cs" />
     <Compile Include="Service\IDriverLocationService.cs" />
     <Compile Include="Service\IOrderHistoryService.cs" />
-    <Compile Include="Service\IDriverService.cs" />
+    <Compile Include="Service\IRiderService.cs" />
     <Compile Include="Service\IDriverUploadService.cs" />
     <Compile Include="Service\IEntityService.cs" />
     <Compile Include="Service\IOrderService.cs" />

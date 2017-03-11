@@ -107,7 +107,7 @@
     <Compile Include="Enums\CardType.cs" />
     <Compile Include="Enums\Country.cs" />
     <Compile Include="Enums\DocumentStatus.cs" />
-    <Compile Include="Enums\DriverStatus.cs" />
+    <Compile Include="Enums\RiderStatus.cs" />
     <Compile Include="Enums\FeeType.cs" />
     <Compile Include="Enums\MessageType.cs" />
     <Compile Include="Enums\OrderStatus.cs" />

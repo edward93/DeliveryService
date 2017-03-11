@@ -22,17 +22,17 @@ namespace DeliveryService.API.Controllers
 {
     public class DriverController : BaseApiController
     {
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IDriverUploadService> _driverUploadService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
 
-        public DriverController(IDriverService service, IConfig config, IDbContext context,
+        public DriverController(IRiderService service, IConfig config, IDbContext context,
             IPersonService personService,
             IDriverUploadService driverUploadService,
             IDriverLocationService driverLocationService) : base(config, context)
         {
-            _driverService = new Lazy<IDriverService>(() => service);
+            _driverService = new Lazy<IRiderService>(() => service);
             _personService = new Lazy<IPersonService>(() => personService);
             _driverUploadService = new Lazy<IDriverUploadService>(() => driverUploadService);
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
@@ -50,7 +50,7 @@ namespace DeliveryService.API.Controllers
                 {
                     var currentPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
                     driver.Approved = false;
-                    driver.Status = DriverStatus.Offline;
+                    driver.Status = RiderStatus.Offline;
                     driver.Person = currentPerson;
                     driver.Id = currentPerson.Id;
 
@@ -261,14 +261,14 @@ namespace DeliveryService.API.Controllers
 
         [HttpPost]
         [System.Web.Http.Authorize(Roles = Roles.Driver)]
-        public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
+        public async Task<IHttpActionResult> ChangeDriverStatus(int driverId, RiderStatus newStatus)
         {
             var serviceResult = new ServiceResult();
             using (var transaction = Context.Database.BeginTransaction())
             {
                 try
                 {
-                    if (newStatus == DriverStatus.Busy) throw new Exception("Driver cannot change it's status to Busy");
+                    if (newStatus == RiderStatus.Busy) throw new Exception("Driver cannot change it's status to Busy");
 
                     await _driverService.Value.ChangeDriverStatusAsync(driverId, newStatus);
 

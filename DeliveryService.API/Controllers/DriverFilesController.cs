@@ -24,11 +24,11 @@ namespace DeliveryService.API.Controllers
     public class DriverFilesController : BaseApiController
     {
         private readonly Lazy<IDriverUploadService> _driverUploadService;
-        private readonly Lazy<IDriverService> _driverService;
-        public DriverFilesController(IConfig config, IDbContext context, IDriverUploadService uploadService, IDriverService driverService) : base(config, context)
+        private readonly Lazy<IRiderService> _driverService;
+        public DriverFilesController(IConfig config, IDbContext context, IDriverUploadService uploadService, IRiderService driverService) : base(config, context)
         {
             _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
         }
 
         [HttpPost]

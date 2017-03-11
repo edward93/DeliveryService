@@ -33,7 +33,7 @@ namespace DeliveryService.API.Controllers
     public class AccountController : BaseApiController
     {
         private readonly Lazy<IPersonService> _personService;
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IAddressService> _addressService;
         private const string LocalLoginProvider = "Local";
 
@@ -42,9 +42,9 @@ namespace DeliveryService.API.Controllers
         {
         }
 
-        public AccountController(IPersonService personService, IConfig config, IDriverService driverService, IAddressService addressService, IDbContext context) : base(config, context)
+        public AccountController(IPersonService personService, IConfig config, IRiderService driverService, IAddressService addressService, IDbContext context) : base(config, context)
         {
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
             _personService = new Lazy<IPersonService>(() => personService);
             _addressService = new Lazy<IAddressService>(() => addressService);
         }
@@ -364,7 +364,7 @@ namespace DeliveryService.API.Controllers
                         var driver = new Driver
                         {
                             Approved = false,
-                            Status = DriverStatus.Offline,
+                            Status = RiderStatus.Offline,
                             Id = person.Id,
                             Addresses = new List<Address> {driverAddress},
                             CreatedDt = DateTime.UtcNow,

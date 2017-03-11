@@ -54,7 +54,7 @@ namespace ServiceLayer.Repository
 
             var locations = await DbContext.DriverLocations.SqlQuery(sqlQuery,
                                                                         new SqlParameter("latParam", order.PickUpLocation.Lat),
-                                                                        new SqlParameter("driverStatus", DriverStatus.Online),
+                                                                        new SqlParameter("driverStatus", RiderStatus.Online),
                                                                         new SqlParameter("radius", radiusMiles),
                                                                         new SqlParameter("lonParam", order.PickUpLocation.Long)).ToListAsync();
 

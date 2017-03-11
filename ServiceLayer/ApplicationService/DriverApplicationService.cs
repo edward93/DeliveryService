@@ -8,17 +8,17 @@ namespace ServiceLayer.ApplicationService
 {
     public class DriverApplicationService : IDriverApplicationService
     {
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IOrderHistoryService> _orderHistoryService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
 
-        public DriverApplicationService(IDriverService driverService,
+        public DriverApplicationService(IRiderService driverService,
             IOrderHistoryService orderHistoryService,
             IDriverLocationService driverLocationService)
         {
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
             _orderHistoryService = new Lazy<IOrderHistoryService>(() => orderHistoryService);
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
         }
 
         public async Task<Driver> GetNearestDriverAsync(Order order)

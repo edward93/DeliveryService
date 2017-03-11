@@ -14,12 +14,12 @@ namespace DeliveryService.Controllers
     [Authorize(Roles = "Admin")]
     public class DashBoardController : BaseController
     {
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IBusinessService> _businessService;
         // GET: DashBoard
-        public DashBoardController(IConfig config, IDriverService driverService, IBusinessService businessService, IDbContext context) : base(config, context)
+        public DashBoardController(IConfig config, IRiderService driverService, IBusinessService businessService, IDbContext context) : base(config, context)
         {
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
         }
 

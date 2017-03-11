@@ -23,7 +23,7 @@ namespace DeliveryService.Controllers
         private readonly Lazy<IOrderService> _orderService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IBusinessPenaltyService> _businessPenaltyService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
         private DataTable<BusinessOrder> _ordersDataTable;
@@ -34,14 +34,14 @@ namespace DeliveryService.Controllers
             IOrderService orderService,
             IPersonService personService,
             IBusinessService businessService,
-            IDriverService driverService,
+            IRiderService driverService,
             IDriverLocationService driverLocationService,
             IBusinessPenaltyService businessPenaltyService) : base(config, context)
         {
             _businessPenaltyService = new Lazy<IBusinessPenaltyService>(() => businessPenaltyService);
             _signalRConnection = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}/";
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _personService = new Lazy<IPersonService>(() => personService);
             _orderService = new Lazy<IOrderService>(() => orderService);

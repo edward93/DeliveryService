@@ -10,31 +10,31 @@ using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
 {
-    public class DriverService : EntityService, IDriverService
+    public class RiderService : EntityService, IRiderService
     {
-        private readonly IDriverRepository _driverRepository;
-        public DriverService(IEntityRepository entityRepository,IDriverRepository repository) 
+        private readonly IRiderRepository _riderRepository;
+        public RiderService(IEntityRepository entityRepository,IRiderRepository repository) 
             : base(entityRepository)
         {
-            _driverRepository = repository;
+            _riderRepository = repository;
         }
 
         public async Task<Driver> CreateDriverAsync(Driver driver)
         {
-            return await _driverRepository.CreateDriverAsync(driver);
+            return await _riderRepository.CreateDriverAsync(driver);
         }
 
         public async Task<Driver> UpdateDriverAsync(Driver driver)
         {
-            return await _driverRepository.CreateDriverAsync(driver);
+            return await _riderRepository.CreateDriverAsync(driver);
         }
         public async Task<Driver> GetDriverByPersonAsync(string personId)
         {
-            return await _driverRepository.GetDriverByPersonId(personId);
+            return await _riderRepository.GetDriverByPersonId(personId);
         }
         public async Task<bool> DeleteDriver(int driverId)
         {
-            var driver = await _driverRepository.GetByIdAsync<Driver>(driverId);
+            var driver = await _riderRepository.GetByIdAsync<Driver>(driverId);
             if (driver != null)
             {
                 driver.IsDeleted = true;
@@ -44,7 +44,7 @@ namespace ServiceLayer.Service
             return false;
         }
 
-        public async Task ChangeDriverStatusAsync(int driverId, DriverStatus newStatus)
+        public async Task ChangeDriverStatusAsync(int driverId, RiderStatus newStatus)
         {
             var driver = await GetByIdAsync<Driver>(driverId);
 
@@ -78,17 +78,27 @@ namespace ServiceLayer.Service
 
         public async Task<int> GetOnlineDriversCountAsync()
         {
-            return await _driverRepository.GetOnlineDriversCountAsync();
+            return await _riderRepository.GetOnlineDriversCountAsync();
         }
 
         public async Task<IEnumerable<DriverDetailsWithLocation>> GetOnlineDriversAsync()
         {
-            return await _driverRepository.GetOnlineDriversAsync();
+            return await _riderRepository.GetOnlineDriversAsync();
         }
 
         public async Task<IEnumerable<DriverDetailsWithLocation>> GetBusinessDriversAsync(int businessId)
         {
-            return await _driverRepository.GetBusinessDriversAsync(businessId);
+            return await _riderRepository.GetBusinessDriversAsync(businessId);
+        }
+
+        public async Task<IEnumerable<Driver>> GetRidersByStatusAsync(RiderStatus status)
+        {
+            return await _riderRepository.GetRidersByStatusAsync(status);
+        }
+
+        public async Task UpdateRidersWithDisconnectedFromHubStatusAsync()
+        {
+            await _riderRepository.UpdateRidersWithDisconnectedFromHubStatusAsync();
         }
 
         private async Task ChangeDriverStateAsync(int driverId, bool approved, int currentPersonId)

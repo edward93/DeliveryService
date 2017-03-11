@@ -22,17 +22,17 @@ namespace DeliveryService.Controllers
     public class DriversController : BaseController
     {
 
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IDriverUploadService> _driverUploadService;
         private readonly Lazy<IPersonService> _personService;
 
         public DriversController(IConfig config,
-            IDriverService driverService,
+            IRiderService driverService,
             IDriverUploadService uploadService,
             IDbContext context,
             IPersonService personService) : base(config, context)
         {
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
             _driverUploadService = new Lazy<IDriverUploadService>(() => uploadService);
             _personService = new Lazy<IPersonService>(() => personService);
         }

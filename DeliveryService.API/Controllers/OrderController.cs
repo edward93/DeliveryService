@@ -20,7 +20,7 @@ namespace DeliveryService.API.Controllers
     public class OrderController : BaseApiController
     {
         private readonly Lazy<IOrderService> _orderService;
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IOrderHistoryService> _orderHistoryService;
         private readonly Lazy<IDriverPenaltyService> _driverPenaltyService;
@@ -29,7 +29,7 @@ namespace DeliveryService.API.Controllers
 
         public OrderController(IConfig config, IDbContext context,
             IOrderService orderService,
-            IDriverService driverService,
+            IRiderService driverService,
             IBusinessService businessService,
             IOrderHistoryService orderHistoryService,
             IDriverPenaltyService driverPenaltyService,
@@ -42,7 +42,7 @@ namespace DeliveryService.API.Controllers
             _orderHistoryService = new Lazy<IOrderHistoryService>(() => orderHistoryService);
             _orderService = new Lazy<IOrderService>(() => orderService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
         }
 
         [HttpPost]
@@ -72,7 +72,7 @@ namespace DeliveryService.API.Controllers
                     await _orderService.Value.AcceptOrderAsync(order, driver);
 
                     // TODO: Update client app with signalR!
-                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Busy);
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, RiderStatus.Busy);
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info,
@@ -413,7 +413,7 @@ namespace DeliveryService.API.Controllers
 
                     await _orderService.Value.OrderDeliveredAsync(driver, order);
 
-                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Online);
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, RiderStatus.Online);
 
                     // TODO: calculate penalties and fees and create transactions
 
@@ -467,7 +467,7 @@ namespace DeliveryService.API.Controllers
 
 
                     await _orderService.Value.OrderNotDeliveredAsync(driver, order, reason);
-                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.Online);
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, RiderStatus.Online);
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, string.Format(Config.Messages["NotDeliveredSuccess"], reason));

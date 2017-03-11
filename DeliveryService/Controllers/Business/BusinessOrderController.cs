@@ -34,7 +34,7 @@ namespace DeliveryService.Controllers.Business
         private readonly Lazy<IOrderHistoryService> _orderHistoryService;
         private readonly Lazy<IPersonService> _personService;
         private readonly Lazy<IBusinessService> _businessService;
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IBusinessPenaltyService> _businessPenaltyService;
         private readonly Lazy<IDriverLocationService> _driverLocationService;
         private readonly Lazy<IDriverApplicationService> _driverApplicationService;
@@ -46,7 +46,7 @@ namespace DeliveryService.Controllers.Business
             IOrderService orderService,
             IPersonService personService,
             IBusinessService businessService,
-            IDriverService driverService,
+            IRiderService driverService,
             IDriverLocationService driverLocationService, 
             IBusinessPenaltyService businessPenaltyService, 
             IOrderHistoryService orderHistoryService, 
@@ -57,7 +57,7 @@ namespace DeliveryService.Controllers.Business
             _businessPenaltyService = new Lazy<IBusinessPenaltyService>(() => businessPenaltyService);
             _signalRConnection = $"{Config.SignalRServerUrl}:{Config.SignalRServerPort}/";
             _driverLocationService = new Lazy<IDriverLocationService>(() => driverLocationService);
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
             _businessService = new Lazy<IBusinessService>(() => businessService);
             _personService = new Lazy<IPersonService>(() => personService);
             _orderService = new Lazy<IOrderService>(() => orderService);
@@ -270,7 +270,7 @@ namespace DeliveryService.Controllers.Business
 
                     if (!driver.Approved) throw new Exception($"This driver is not approved by administration and is not allowed to proceed.");
 
-                    if (driver.Status != DriverStatus.Online) throw new Exception($"You can assign only online drivers to the order.");
+                    if (driver.Status != RiderStatus.Online) throw new Exception($"You can assign only online drivers to the order.");
 
                     var order = await _orderService.Value.GetByIdAsync<Order>(model.OrderId);
 

@@ -18,12 +18,12 @@ namespace SignalRSelfHost.AddRiderHub
     {
         private static readonly ConnectionMapping<int> Connections = new ConnectionMapping<int>();
         private readonly Lazy<IOrderService> _orderService;
-        private readonly Lazy<IDriverService> _driverService;
+        private readonly Lazy<IRiderService> _driverService;
         public AddRiderHub(IOrderService orderService,
-            IDriverService driverService)
+            IRiderService driverService)
         {
             _orderService = new Lazy<IOrderService>(() => orderService);
-            _driverService = new Lazy<IDriverService>(() => driverService);
+            _driverService = new Lazy<IRiderService>(() => driverService);
         }
 
 
@@ -87,7 +87,7 @@ namespace SignalRSelfHost.AddRiderHub
                     int.TryParse(Context.Headers["DriverId"], out driverId);
 
                     // Change driver status
-                    await _driverService.Value.ChangeDriverStatusAsync(driverId, DriverStatus.DisconnectedFromHub);
+                    await _driverService.Value.ChangeDriverStatusAsync(driverId, RiderStatus.DisconnectedFromHub);
 
                     Connections.Remove(driverId, Context.ConnectionId);
                     Console.WriteLine($"Driver {driverId} disconnected.");

@@ -33,11 +33,11 @@ namespace AddRider.Worker
             // Register types
             _container.RegisterType<IDbContext, DbContext>();
             // Register services
-            _container.RegisterType<IDriverService, DriverService>();
+            _container.RegisterType<IRiderService, RiderService>();
 
             // Register repositories
             _container.RegisterType<IEntityRepository, EntityRepository>();
-            _container.RegisterType<IDriverRepository, DriverRepository>();
+            _container.RegisterType<IRiderRepository, RiderRepository>();
             _container.RegisterType<IOrderRepository, OrderRepository>();
         }
 
@@ -45,7 +45,7 @@ namespace AddRider.Worker
         {
             try
             {
-                var worker = new RiderWorkerProcess(_container.Resolve<IDriverService>());
+                var worker = new RiderWorkerProcess(_container.Resolve<IRiderService>());
                 await worker.RiderStatusProcessing();
             }
             catch (Exception ex)

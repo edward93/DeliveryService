@@ -19,7 +19,7 @@ namespace DeliveryService.Models.ViewModels
             DriverRating = driver.Rating.AverageScore;
             DriverLong = driver.DriverLocation.Long;
             DriverLat = driver.DriverLocation.Lat;
-            DriverStatus = EnumHelpers<DriverStatus>.GetDisplayValue(driver.Status);
+            DriverStatus = EnumHelpers<RiderStatus>.GetDisplayValue(driver.Status);
 
             if (businessId != null) BusinessId = businessId.Value;
 

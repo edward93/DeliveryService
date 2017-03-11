@@ -19,7 +19,7 @@ namespace DAL.Entities
         [Required]
         public bool Approved { get; set; }
         [Required]
-        public DriverStatus Status { get; set; }
+        public RiderStatus Status { get; set; }
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
         [ForeignKey("DriverLocation")]

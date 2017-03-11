@@ -2,7 +2,7 @@
 
 namespace DAL.Enums
 {
-    public enum DriverStatus
+    public enum RiderStatus
     {
         Online = 0,
         Offline,
