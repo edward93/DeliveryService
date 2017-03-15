@@ -58,7 +58,7 @@ namespace DeliveryService.API
             container.RegisterType<IRateService, RateService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverLocationService, DriverLocationService>(new HierarchicalLifetimeManager());
             container.RegisterType<IBusinessPenaltyService, BusinessPenaltyService>(new HierarchicalLifetimeManager());
-            container.RegisterType<IDriverPenaltyService, DriverPenaltyService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IRiderPenaltyService, RiderPenaltyService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverFeeService, DriverFeeService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDiscountService, DiscountService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDriverApplicationService, DriverApplicationService>(new HierarchicalLifetimeManager());

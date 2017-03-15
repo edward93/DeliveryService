@@ -20,5 +20,6 @@ namespace ServiceLayer.Service
         Task OrderDeliveredAsync(Driver driver, Order order);
         Task OrderNotDeliveredAsync(Driver driver, Order order, string reason);
         Task<IEnumerable<Order>> GetBusinessOrdersAsync(int businessId, OrderStatus? status);
+        Task<IEnumerable<Order>> GetOrdersThatShouldBeRejectedOnBehalfOfRider(int timeInSeconds);
     }
 }

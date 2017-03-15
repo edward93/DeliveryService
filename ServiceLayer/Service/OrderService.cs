@@ -299,6 +299,9 @@ namespace ServiceLayer.Service
             return await _orderRepository.GetBusinessOrdersAsync(businessId, status);
         }
 
-
+        public async Task<IEnumerable<Order>> GetOrdersThatShouldBeRejectedOnBehalfOfRider(int timeInSeconds)
+        {
+            return await _orderRepository.GetOrdersThatShouldBeRejectedOnBehalfOfRider(timeInSeconds);
+        }
     }
 }

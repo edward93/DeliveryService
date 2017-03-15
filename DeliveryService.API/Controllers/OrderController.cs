@@ -23,7 +23,7 @@ namespace DeliveryService.API.Controllers
         private readonly Lazy<IRiderService> _driverService;
         private readonly Lazy<IBusinessService> _businessService;
         private readonly Lazy<IOrderHistoryService> _orderHistoryService;
-        private readonly Lazy<IDriverPenaltyService> _driverPenaltyService;
+        private readonly Lazy<IRiderPenaltyService> _driverPenaltyService;
         private readonly Lazy<IDriverFeeService> _driverFeeService;
         private readonly Lazy<IBusinessPenaltyService> _businessPenaltyService;
 
@@ -32,13 +32,13 @@ namespace DeliveryService.API.Controllers
             IRiderService driverService,
             IBusinessService businessService,
             IOrderHistoryService orderHistoryService,
-            IDriverPenaltyService driverPenaltyService,
+            IRiderPenaltyService driverPenaltyService,
             IDriverFeeService driverFeeService,
             IBusinessPenaltyService businessPenaltyService) : base(config, context)
         {
             _driverFeeService = new Lazy<IDriverFeeService>(() => driverFeeService);
             _businessPenaltyService = new Lazy<IBusinessPenaltyService>(() => businessPenaltyService);
-            _driverPenaltyService = new Lazy<IDriverPenaltyService>(() => driverPenaltyService);
+            _driverPenaltyService = new Lazy<IRiderPenaltyService>(() => driverPenaltyService);
             _orderHistoryService = new Lazy<IOrderHistoryService>(() => orderHistoryService);
             _orderService = new Lazy<IOrderService>(() => orderService);
             _businessService = new Lazy<IBusinessService>(() => businessService);

@@ -79,7 +79,7 @@ namespace DeliveryService.App_Start
             container.RegisterType<IRateService, RateService>(new PerRequestLifetimeManager());
             container.RegisterType<IDriverLocationService, DriverLocationService>(new PerRequestLifetimeManager());
             container.RegisterType<IBusinessPenaltyService, BusinessPenaltyService>(new PerRequestLifetimeManager());
-            container.RegisterType<IDriverPenaltyService, DriverPenaltyService>(new PerRequestLifetimeManager());
+            container.RegisterType<IRiderPenaltyService, RiderPenaltyService>(new PerRequestLifetimeManager());
             container.RegisterType<IDriverFeeService, DriverFeeService>(new PerRequestLifetimeManager());
             container.RegisterType<IDiscountService, DiscountService>(new PerRequestLifetimeManager());
             container.RegisterType<IDriverApplicationService, DriverApplicationService>(new PerRequestLifetimeManager());

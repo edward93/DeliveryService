@@ -97,12 +97,14 @@
     <Compile Include="Service\DiscountService.cs" />
     <Compile Include="Service\DriverFeeService.cs" />
     <Compile Include="Service\DriverLocationService.cs" />
-    <Compile Include="Service\DriverPenaltyService.cs" />
+    <Compile Include="Service\RiderPenaltyService.cs" />
     <Compile Include="Service\IBusinessPenaltyService.cs" />
     <Compile Include="Service\IBusinessUploadService.cs" />
     <Compile Include="Service\IDiscountService.cs" />
     <Compile Include="Service\IDriverFeeService.cs" />
-    <Compile Include="Service\IDriverPenaltyService.cs" />
+    <Compile Include="Service\IRiderPenaltyService.cs" />
+    <Compile Include="Service\IOrderApplicationService.cs" />
+    <Compile Include="Service\OrderApplicationService.cs" />
     <Compile Include="Service\OrderHistoryService.cs" />
     <Compile Include="Service\RiderService.cs" />
     <Compile Include="Service\DriverUploadService.cs" />

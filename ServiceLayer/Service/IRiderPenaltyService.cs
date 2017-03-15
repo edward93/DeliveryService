@@ -3,7 +3,7 @@ using DAL.Entities;
 
 namespace ServiceLayer.Service
 {
-    public interface IDriverPenaltyService : IEntityService
+    public interface IRiderPenaltyService : IEntityService
     {
         Task PenalizeDriverForRejectingMoreThenThreeTimesAsync(Driver driver, Order order);
         Task CalculatePenaltyForDelayAsync(Driver driver, Order order, decimal driverArrivalDelay);

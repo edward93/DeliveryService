@@ -6,11 +6,11 @@ using ServiceLayer.Repository;
 
 namespace ServiceLayer.Service
 {
-    public class DriverPenaltyService : EntityService, IDriverPenaltyService
+    public class RiderPenaltyService : EntityService, IRiderPenaltyService
     {
         private readonly IDriverPenaltyRepository _driverPenaltyRepository;
         private readonly Lazy<IRateService> _rateService;
-        public DriverPenaltyService(IEntityRepository entityRepository, 
+        public RiderPenaltyService(IEntityRepository entityRepository, 
             IDriverPenaltyRepository driverPenaltyRepository, 
             IRateService rateService) : base(entityRepository)
 

@@ -113,5 +113,14 @@ namespace ServiceLayer.Repository
                                                       c.OrderStatus != OrderStatus.ReturnCanceled ||
                                                       c.OrderStatus != OrderStatus.RejectedByDriver)).ToListAsync();
         }
+
+        public async Task<IEnumerable<Order>> GetOrdersThatShouldBeRejectedOnBehalfOfRider(int timeInSeconds)
+        {
+            return
+                await DbContext.Orders.Where(
+                    c =>
+                        c.OrderStatus == OrderStatus.DriverAcceptedByBusiness && c.IsDeleted == false && c.AssignedDriverId.HasValue &&
+                        c.UpdatedDt >= DateTime.UtcNow.AddSeconds(-timeInSeconds)).ToListAsync();
+        }
     }
 }

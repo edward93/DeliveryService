@@ -45,14 +45,18 @@ namespace AddRider.Worker
         {
             try
             {
-                var worker = new RiderWorkerProcess(_container.Resolve<IRiderService>());
+                var worker = new RiderWorkerProcess(
+                    _container.Resolve<IRiderService>(),
+                    _container.Resolve<IOrderApplicationService>()
+                    );
                 await worker.RiderStatusProcessing();
+                await worker.RejectOrderAsync();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
-            
+
         }
     }
 }
