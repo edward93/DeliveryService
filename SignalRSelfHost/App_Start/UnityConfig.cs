@@ -40,6 +40,8 @@ namespace SignalRSelfHost.App_Start
             container.RegisterType<IOrderHistoryService, OrderHistoryService>();
             container.RegisterType<IOrderRepository, OrderRepository>();
             container.RegisterType<IOrderService, OrderService>();
+            container.RegisterType<IRiderService, RiderService>();
+            container.RegisterType<IRiderRepository, RiderRepository>();
             container.RegisterType<IDriverApplicationService, DriverApplicationService>();
             container.RegisterType<AddRiderHub.AddRiderHub>(new InjectionFactory(CreateMyHub));
 

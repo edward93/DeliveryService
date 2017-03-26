@@ -75,45 +75,56 @@ namespace SignalRSelfHost.AddRiderHub
 
         public override async Task OnDisconnected(bool stopCalled)
         {
-            Console.WriteLine($"{nameof(OnDisconnected)} has started.");
-
-            if (Context.Headers != null)
+            try
             {
+                Console.WriteLine($"{nameof(OnDisconnected)} has started.");
 
-                if (Context.Headers["DriverId"] != null)
+                if (Context.Headers != null)
                 {
-                    int driverId;
 
-                    int.TryParse(Context.Headers["DriverId"], out driverId);
+                    if (Context.Headers["DriverId"] != null)
+                    {
+                        int driverId;
 
-                    // Change driver status
-                    await _driverService.Value.ChangeDriverStatusAsync(driverId, RiderStatus.DisconnectedFromHub);
+                        int.TryParse(Context.Headers["DriverId"], out driverId);
 
-                    Connections.Remove(driverId, Context.ConnectionId);
-                    Console.WriteLine($"Driver {driverId} disconnected.");
+                        // Change driver status
+                        await _driverService.Value.ChangeDriverStatusAsync(driverId, RiderStatus.DisconnectedFromHub);
+
+                        Connections.Remove(driverId, Context.ConnectionId);
+                        Console.WriteLine($"Driver {driverId} disconnected.");
+                    }
+                    else if (Context.Headers["BusinessId"] != null)
+                    {
+                        int businessId;
+
+                        int.TryParse(Context.Headers["BusinessId"], out businessId);
+
+                        Connections.Remove(businessId, Context.ConnectionId);
+                        Console.WriteLine($"Business {businessId} disconnected.");
+                    }
+                    else if (Context.QueryString["ClientBusinessId"] != null)
+                    {
+                        int businessId;
+
+                        int.TryParse(Context.QueryString["ClientBusinessId"], out businessId);
+
+                        Connections.Remove(businessId, Context.ConnectionId);
+                        Console.WriteLine($"Business {businessId} disconnected.");
+                    }
                 }
-                else if (Context.Headers["BusinessId"] != null)
-                {
-                    int businessId;
+                Console.WriteLine($"{nameof(OnDisconnected)} finished.");
 
-                    int.TryParse(Context.Headers["BusinessId"], out businessId);
-
-                    Connections.Remove(businessId, Context.ConnectionId);
-                    Console.WriteLine($"Business {businessId} disconnected.");
-                }
-                else if (Context.QueryString["ClientBusinessId"] != null)
-                {
-                    int businessId;
-
-                    int.TryParse(Context.QueryString["ClientBusinessId"], out businessId);
-
-                    Connections.Remove(businessId, Context.ConnectionId);
-                    Console.WriteLine($"Business {businessId} disconnected.");
-                }
+                await base.OnDisconnected(stopCalled);
             }
-            Console.WriteLine($"{nameof(OnDisconnected)} finished.");
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error while disconnecting from hub.");
+                Console.WriteLine(ex.ToString());
 
-            await base.OnDisconnected(stopCalled);
+            }
+
+            
         }
 
         public override async Task OnReconnected()

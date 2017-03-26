@@ -107,8 +107,8 @@ namespace ServiceLayer.Repository
         {
             return await DbContext.Orders.Where(c => c.IsDeleted == false && c.BusinessId == businessId &&
                                                      (c.OrderStatus != OrderStatus.Delivered ||
-                                                      c.OrderStatus != OrderStatus.NotDelivered || 
-                                                      c.OrderStatus != OrderStatus.Pending || 
+                                                      c.OrderStatus != OrderStatus.NotDelivered ||
+                                                      c.OrderStatus != OrderStatus.Pending ||
                                                       c.OrderStatus != OrderStatus.ReturnConfirmed ||
                                                       c.OrderStatus != OrderStatus.ReturnCanceled ||
                                                       c.OrderStatus != OrderStatus.RejectedByDriver)).ToListAsync();
@@ -116,11 +116,12 @@ namespace ServiceLayer.Repository
 
         public async Task<IEnumerable<Order>> GetOrdersThatShouldBeRejectedOnBehalfOfRider(int timeInSeconds)
         {
+            var timeBefor = DateTime.UtcNow.AddSeconds(-timeInSeconds);
             return
                 await DbContext.Orders.Where(
                     c =>
                         c.OrderStatus == OrderStatus.DriverAcceptedByBusiness && c.IsDeleted == false && c.AssignedDriverId.HasValue &&
-                        c.UpdatedDt >= DateTime.UtcNow.AddSeconds(-timeInSeconds)).ToListAsync();
+                        c.UpdatedDt <= timeBefor).ToListAsync();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<DAL.Entities.Driver>
+﻿@using DAL.Enums
+@using Infrastructure.Helpers;
+@model IEnumerable<DAL.Entities.Driver>
 @{
     ViewBag.Title = "Drivers List";
 }
@@ -63,7 +65,7 @@
                                     <td>@item.Person.FirstName</td>
                                     <td>@item.Person.LastName</td>
                                     <td>@item.Person.Email</td>
-                                    <td>@item.Status</td>
+                                    <td>@(EnumHelpers<RiderStatus>.GetDisplayValue(item.Status))</td>
                                     <td class="text-center"><a href="#"><i class="@(item.Approved ? "fa fa-check text-navy" : "fa fa-close icon-danger") "></i></a></td>
                                     <td>@item.Person.DateOfBirth.ToString(@"dd MMMM yyyy")</td>
                                     <td>@item.Person.Sex</td>

@@ -79,8 +79,9 @@ namespace ServiceLayer.Repository
 
         public async Task<IEnumerable<Driver>> GetRidersByStatusAsync(RiderStatus status)
         {
+            var twoMinBefor = DateTime.UtcNow.AddMinutes(-2);
             var riders = await 
-                DbContext.Drivers.Where(c => c.Status == status && c.UpdatedDt >= DateTime.UtcNow.AddMinutes(-2))
+                DbContext.Drivers.Where(c => c.Status == status && c.UpdatedDt <= twoMinBefor)
                     .ToListAsync();
 
             return riders;
@@ -92,6 +93,9 @@ namespace ServiceLayer.Repository
 
             foreach (var rider in riders)
             {
+                rider.UpdatedDt = DateTime.UtcNow;
+                rider.UpdatedBy = rider.Id;
+                rider.Status = RiderStatus.Offline;
                 DbContext.Drivers.AddOrUpdate(rider);
             }
 
