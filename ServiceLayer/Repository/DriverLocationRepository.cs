@@ -35,7 +35,7 @@ namespace ServiceLayer.Repository
 		                            COS(@latParam * PI() / 180) * COS(Lat * PI() / 180) * COS((@lonParam - Long) *
 		                            PI() / 180)) *180 / PI()) *60 * 1.1515) as Distance 
                                 FROM DriverLocations inner Join Drivers on (DriverLocations.Id = Drivers.Id) 
-                                WHERE Drivers.Status = driverStatus AND Drivers.IsDeleted = 0 AND Drivers.Approved = 1) as TMP
+                                WHERE Drivers.Status = @driverStatus AND Drivers.IsDeleted = 0 AND Drivers.Approved = 1) as TMP
                             WHERE TMP.Distance <= @radius 
                             ORDER By TMP.Distance";
 

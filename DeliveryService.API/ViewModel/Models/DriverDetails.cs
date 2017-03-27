@@ -13,6 +13,7 @@ namespace DeliveryService.API.ViewModel.Models
         public List<DriverDocumentModel> DriverDocuments { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public RiderStatus RiderStatus { get; set; }
         public Sex Sex { get; set; }
         public string Email { get; set; }
         public DateTime DateOfBirth { get; set; }

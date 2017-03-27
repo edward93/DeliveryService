@@ -235,6 +235,7 @@ namespace DeliveryService.API.Controllers
                 var driverDetails = new DriverDetails
                 {
                     FirstName = driver.Person.FirstName,
+                    RiderStatus = driver.Status,
                     LastName = driver.Person.LastName,
                     Email = driver.Person.Email,
                     DateOfBirth = driver.Person.DateOfBirth,

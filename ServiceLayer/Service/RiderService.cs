@@ -48,7 +48,7 @@ namespace ServiceLayer.Service
         {
             var driver = await GetByIdAsync<Driver>(driverId);
 
-            if (driver == null) throw new Exception($"No driver found for given Id {driverId}");
+             if (driver == null) throw new Exception($"No driver found for given Id {driverId}");
 
             if (!driver.Approved) throw new Exception($"This driver (Id: {driverId}) is not approved and is not allowed to proceed");
 
