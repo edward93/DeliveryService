@@ -84,7 +84,7 @@ namespace DeliveryService.Controllers.Business
                     var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
                     if (order == null) throw new Exception($"No order found with Id:{orderId}");
 
-                    if (order.OrderStatus != OrderStatus.Pending)
+                    if (order.OrderStatus != OrderStatus.Pending || order.OrderStatus != OrderStatus.RejectedByDriver)
                         throw new Exception(
                             $"You cannot retry orders with other status than {EnumHelpers<OrderStatus>.GetDisplayValue(OrderStatus.Pending)}");
 
@@ -117,34 +117,6 @@ namespace DeliveryService.Controllers.Business
                         serviceResult.Success = false;
                         serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
                     }
-
-                    // TODO: After proper testing remove this code
-                    //var driverLocation = await _driverLocationService.Value.FindNearestDriverLocationAsync(order);
-                    //if (driverLocation != null)
-                    //{
-                    //    var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(driverLocation.Id);
-                    //    // Send this information to business via SignalR
-                    //    using (var hubConnection = new HubConnection(_signalRConnection)
-                    //    {
-                    //        TraceLevel = TraceLevels.All,
-                    //        TraceWriter = Console.Out
-                    //    })
-                    //    {
-                    //        var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
-                    //        hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
-
-                    //        await hubConnection.Start();
-                    //        var driverDetails = new DriverDetails(order, nearDriver);
-                    //        var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
-
-                    //        if (!result.Success)
-                    //            throw new Exception($"Error while notifying business about nearest driver.");
-                    //    }
-
-                    //    serviceResult.Success = true;
-                    //    serviceResult.Messages.AddMessage(MessageType.Info, "Driver found for given order.");
-                    //    transaction.Commit();
-                    //}
 
                 }
                 catch (Exception ex)
@@ -206,37 +178,6 @@ namespace DeliveryService.Controllers.Business
                     {
                         serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
                     }
-                    // TODO: After proper test remove this part of code
-                    // Find driver regargless of it's vehicle type
-                    //var driverLocations = (await _driverLocationService.Value.FindNearestDriverLocationAsync(order)).ToList();
-                    //if (driverLocations.Any())
-                    //{
-                    //    var driversWhoRejetedOrder = await _orderHistoryService.Value.GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(order.Id);
-                    //    var nearestLocation = driverLocations.Where(c => !driversWhoRejetedOrder.Contains(c.Id)).ToList();
-                    //    var firstOrDefault = nearestLocation.FirstOrDefault();
-                    //    if (firstOrDefault != null)
-                    //    {
-                    //        var nearDriver = await _driverService.Value.GetByIdAsync<Driver>(firstOrDefault.Id);
-                    //        // Send this information to business via SignalR
-                    //        using (var hubConnection = new HubConnection(_signalRConnection)
-                    //        {
-                    //            TraceLevel = TraceLevels.All,
-                    //            TraceWriter = Console.Out
-                    //        })
-                    //        {
-                    //            var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
-                    //            hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
-
-                    //            await hubConnection.Start();
-                    //            var driverDetails = new DriverDetails(order, nearDriver);
-                    //            var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
-
-                    //            if (!result.Success)
-                    //                throw new Exception($"Error while notifying business about nearest driver.");
-                    //        }
-                    //    }
-                    //}
-
 
                     serviceResult.Success = true;
                     serviceResult.Messages.AddMessage(MessageType.Info, "Order was successfully submited.");

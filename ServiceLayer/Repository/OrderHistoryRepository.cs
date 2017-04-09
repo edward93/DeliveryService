@@ -49,7 +49,7 @@ namespace ServiceLayer.Repository
         public async Task<IEnumerable<int>> GetDriverIdsWhoRejectedOrderOrGotRejectedByBusinessAsync(int orderId)
         {
             return await 
-                DbContext.OrderHistories.Where(c => c.IsDeleted == false  && c.DriverId.HasValue && 
+                DbContext.OrderHistories.Where(c => c.IsDeleted == false  && c.DriverId.HasValue && c.OrderId == orderId &&
                 (c.Action == ActionType.DriverRejectedOrder || c.Action == ActionType.DriverRejectedByBusiness))
                     .Select(c => c.DriverId.Value)
                     .ToListAsync();

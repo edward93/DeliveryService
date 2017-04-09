@@ -43,8 +43,7 @@ $(document).ready(function () {
                     var previewBtnHtml = '<button class="btn btn-primary btn-xs btnPreviewOrderDetails" style="" data-title="Preview" data-id="' +
                         row.Id +
                         '" id="btnPreviewOrder"><span class="fa fa-eye" title="Preview"></span></button>';
-
-                    if (row.OrderStatus === 'Pending') {
+                    if (row.OrderStatus === 'Pending' || row.OrderStatus === 'Rejected By Driver') {
                         return previewBtnHtml + retryBtnHtml;
 
                     } else {
