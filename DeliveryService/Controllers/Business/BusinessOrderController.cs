@@ -47,9 +47,9 @@ namespace DeliveryService.Controllers.Business
             IPersonService personService,
             IBusinessService businessService,
             IRiderService driverService,
-            IDriverLocationService driverLocationService, 
-            IBusinessPenaltyService businessPenaltyService, 
-            IOrderHistoryService orderHistoryService, 
+            IDriverLocationService driverLocationService,
+            IBusinessPenaltyService businessPenaltyService,
+            IOrderHistoryService orderHistoryService,
             IDriverApplicationService driverApplicationService) : base(config, context)
         {
             _driverApplicationService = new Lazy<IDriverApplicationService>(() => driverApplicationService);
@@ -84,39 +84,48 @@ namespace DeliveryService.Controllers.Business
                     var order = await _orderService.Value.GetByIdAsync<Order>(orderId);
                     if (order == null) throw new Exception($"No order found with Id:{orderId}");
 
-                    if (order.OrderStatus != OrderStatus.Pending || order.OrderStatus != OrderStatus.RejectedByDriver)
-                        throw new Exception(
-                            $"You cannot retry orders with other status than {EnumHelpers<OrderStatus>.GetDisplayValue(OrderStatus.Pending)}");
+                    //if (order.OrderStatus != OrderStatus.Pending || order.OrderStatus != OrderStatus.RejectedByDriver)
 
-                    var contPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
-                    var currBusiness = await _businessService.Value.GetBusinessByPersonId(contPerson.Id);
 
-                    // Get nearest driver
-                    var nearestDriver = await _driverApplicationService.Value.GetNearestDriverAsync(order);
-                    if (nearestDriver != null)
+                    if (order.OrderStatus == OrderStatus.Pending || order.OrderStatus == OrderStatus.RejectedByDriver)
                     {
-                        using (var hubConnection = new HubConnection(_signalRConnection)
-                        {
-                            TraceLevel = TraceLevels.All,
-                            TraceWriter = Console.Out
-                        })
-                        {
-                            var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
-                            hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
+                        var contPerson = await _personService.Value.GetPersonByUserIdAsync(User.Identity.GetUserId());
+                        var currBusiness = await _businessService.Value.GetBusinessByPersonId(contPerson.Id);
 
-                            await hubConnection.Start();
-                            var driverDetails = new DriverDetails(order, nearestDriver);
-                            var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
+                        // Get nearest driver
+                        var nearestDriver = await _driverApplicationService.Value.GetNearestDriverAsync(order);
+                        if (nearestDriver != null)
+                        {
+                            using (var hubConnection = new HubConnection(_signalRConnection)
+                            {
+                                TraceLevel = TraceLevels.All,
+                                TraceWriter = Console.Out
+                            })
+                            {
+                                var hubProxy = hubConnection.CreateHubProxy("AddRiderHub");
+                                hubConnection.Headers.Add("BusinessId", currBusiness.Id.ToString());
 
-                            if (!result.Success)
-                                throw new Exception($"Error while notifying business about nearest driver.");
+                                await hubConnection.Start();
+                                var driverDetails = new DriverDetails(order, nearestDriver);
+                                var result = await hubProxy.Invoke<ServiceResult>("NotifyBusiness", driverDetails);
+
+                                if (!result.Success)
+                                    throw new Exception($"Error while notifying business about nearest driver.");
+                            }
+                        }
+                        else
+                        {
+                            serviceResult.Success = false;
+                            serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
                         }
                     }
                     else
                     {
-                        serviceResult.Success = false;
-                        serviceResult.Messages.AddMessage(MessageType.Warning, "No driver was found for your order. Please try again a bit later.");
+                        throw new Exception(
+                        $"You cannot retry orders with other status than {EnumHelpers<OrderStatus>.GetDisplayValue(OrderStatus.Pending)}");
                     }
+
+                    
 
                 }
                 catch (Exception ex)
@@ -242,7 +251,7 @@ namespace DeliveryService.Controllers.Business
                         await hubConnection.Start();
                         var orderDetails = new OrderDetails(order);
                         orderDetails.Duration = model.Duration;
-                        orderDetails.DurationMins = model.Duration/60;
+                        orderDetails.DurationMins = model.Duration / 60;
 
                         var sigResult = await hubProxy.Invoke<ServiceResult>("NotifyDriverAboutOrder", orderDetails, model.DriverId);
 
